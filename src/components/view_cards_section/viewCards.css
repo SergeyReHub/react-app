@@ -1,0 +1,127 @@
+.viewCardsContainer{
+    padding: 50px 20px;
+    background-color: #000000;
+    position: relative;
+    overflow: hidden;
+}
+
+
+.gridCardsContainer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    max-width: 1600px;
+    margin: 0 auto;
+    justify-content: center;
+    position: relative;
+    z-index: 3;
+}
+
+.gridCardsContainer > * {
+    flex: 1 1 calc(33.333% - 40px);
+    min-width: 300px;
+    max-width: 600px;
+}
+
+.cardItem{
+    display: flex;
+    flex-direction: column;
+    background-color: transparent;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+    position: relative;
+}
+
+.cardItem:hover{
+    transform: translateY(-10px);
+}
+
+.cardImage{
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    background-image: 
+      linear-gradient(to bottom, transparent 50%, rgba(0, 0, 0, 1) 100%),
+      var(--card-image, none);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    align-items: center;
+    justify-content: end;
+    min-height: 300px;
+    border-radius: 10px;
+    border-style: solid;
+    border-color: gray;
+    border-width: 0 2px 2px 2px;
+}
+
+.cardItem .cardImage p{
+    font-size: 16px;
+    color: gray;
+    text-align: center;
+    margin-bottom: 5px;
+}
+
+.cardItem h1{
+    color: white;
+    text-align: center;
+    font-size: 26px;
+    z-index: 4;
+}
+
+
+.viewCardsContainer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.viewCardsContainer.left-card-hover::before {
+    background: linear-gradient(45deg, transparent 0%, rgba(100, 100, 100, 0.6) 30%, transparent 50% );
+    opacity: 1;
+}
+
+.viewCardsContainer.central-card-hover::before {
+    background: linear-gradient(to right, transparent 20%, rgba(100, 100, 100, 0.6) 50%, transparent 80%);
+    opacity: 1;
+}
+
+.viewCardsContainer.right-card-hover::before {
+    background: linear-gradient(135deg, transparent 50%,  rgba(100, 100, 100, 0.6) 80%,  transparent 100%);
+    opacity: 1;
+}
+
+.viewCardsContainer::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.viewCardsContainer.left-card-hover::after {
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.6) 5%, rgba(100, 100, 100, 0.8) 30%,rgba(100, 100, 100, 0.8) 70%, rgba(0, 0, 0, 0.6) 100%);
+    opacity: 1;
+}
+
+.viewCardsContainer.central-card-hover::after {
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.6) 5%, rgba(100, 100, 100, 0.8) 30%,rgba(100, 100, 100, 0.8) 70%, rgba(0, 0, 0, 0.6) 100%);
+    opacity: 1;
+}
+
+.viewCardsContainer.right-card-hover::after {
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.6) 5%, rgba(100, 100, 100, 0.8) 30%,rgba(100, 100, 100, 0.8) 60%, rgba(0, 0, 0, 0.6) 100%);
+    opacity: 1;
+}

@@ -1,0 +1,205 @@
+.ofUsContainer,
+.filosophyContainer {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    padding-top: 4vh;
+    padding-right: 2vw;
+    background-color: #000000;
+    max-height: 1600px;
+    height: 65vh
+}
+
+.ofUsImageContainer,
+.filosophyImageContainer {
+    display: flex;
+    flex-direction: column;
+    background-size: cover;
+    width: 50%;
+    height: 500px;
+    align-items: center;
+    padding-right: 3%;
+
+}
+
+.ofUsImageContainer img {
+    width: 80%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 15px;
+    border: none;
+    display: block;
+    outline: 25px outset #262626;
+    display: block;
+    z-index: 1000;
+}
+
+.ofUsTextContainer {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    font-size: 1.45rem;
+    font-weight: 600;
+    align-items: end;
+    padding-right: 30px;
+    text-align: start;
+}
+
+.ofUsTextContainer h1,
+.ourExpertsTextContainer h1,
+.filosophyTextContainer h1 {
+    width: 70%;
+    font-size: 36px;
+    color: #ffffffff;
+    z-index: 999;
+}
+
+.ofUsTextContainer p,
+.ourExpertsTextContainer p,
+.filosophyTextContainer p {
+    width: 70%;
+    margin-top: 25px;
+    color: #555555;
+    z-index: 999;
+}
+
+.ourExpertsContainer {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    padding-top: 5vh;
+    padding-bottom: 5vh;
+    padding-right: 2vw;
+    background-color: #000000;
+    max-height: 1600px;
+    height: 70vh;
+
+}
+
+.ourExpertsImageContainer {
+    display: flex;
+    flex-direction: column;
+    background-size: cover;
+    width: 60%;
+    height: 100%;
+    align-items: center;
+
+}
+
+.ourExpertsImageContainer img {
+    width: 70%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 15px;
+    border: none;
+    display: block;
+    outline: 25px inset #262626;
+    display: block;
+    z-index: 1000;
+}
+
+.ourExpertsTextContainer {
+    display: flex;
+    flex-direction: column;
+    width: 40%;
+    font-size: 1.45rem;
+    font-weight: 600;
+    align-items: start;
+
+}
+
+.filosophyImageContainer {
+    height: 80%;
+}
+
+.filosophyImageContainer img {
+    width: 80%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 15px;
+    border: none;
+    display: block;
+    outline: 25px outset #262626;
+    display: block;
+    z-index: 1000;
+}
+
+.filosophyTextContainer {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    font-size: 1.45rem;
+    font-weight: 600;
+    align-items: end;
+    text-align: start;
+}
+
+.filosophyContainer {
+    padding-top: 0;
+}
+
+.ofUsContainer,
+.filosophyContainer,
+.ourExpertsContainer {
+    transition: all 0.5s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Hover эффект через псевдоэлемент ::after */
+.ofUsContainer::after,
+.filosophyContainer::after,
+.ourExpertsContainer::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.ofUsContainer::after {
+    background: linear-gradient(45deg, transparent 0%, rgba(0, 0, 0, 1) 22% 40%, transparent 100%);
+}
+
+.ourExpertsContainer::after {
+    background: linear-gradient(135deg, transparent 0%, rgba(0, 0, 0, 1) 73% 78%, transparent 100%);
+}
+
+.filosophyContainer::after{
+    background: linear-gradient(45deg, transparent 0%, rgba(0, 0, 0, 1) 22% 30%, transparent 100%);
+        
+}
+
+.ofUsContainer:hover::after,
+.filosophyContainer:hover::after,
+.ourExpertsContainer:hover::after {
+    opacity: 1;
+}
+
+/* Черный градиент по краям через ::before */
+.ofUsContainer::before,
+.filosophyContainer::before,
+.ourExpertsContainer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+    opacity: 0;
+    background:  linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.6) 5%, rgb(100, 100, 100) 30%,rgb(100, 100, 100) 70%, rgba(0, 0, 0, 0.6) 100%);
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.ofUsContainer:hover::before,
+.filosophyContainer:hover::before,
+.ourExpertsContainer:hover::before {
+    opacity: 1;
+}
