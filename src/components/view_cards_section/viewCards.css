@@ -112,16 +112,16 @@
 }
 
 .viewCardsContainer.left-card-hover::after {
-    background: linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.6) 5%, rgba(100, 100, 100, 0.8) 30%,rgba(100, 100, 100, 0.8) 70%, rgba(0, 0, 0, 0.6) 100%);
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.5) 5%, rgba(100, 100, 100, 0.3) 30%,rgba(100, 100, 100, 0.8) 70%, rgba(0, 0, 0, 0.9) 100%);
     opacity: 1;
 }
 
 .viewCardsContainer.central-card-hover::after {
-    background: linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.6) 5%, rgba(100, 100, 100, 0.8) 30%,rgba(100, 100, 100, 0.8) 70%, rgba(0, 0, 0, 0.6) 100%);
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.5) 5%, rgba(100, 100, 100, 0.3) 30%,rgba(100, 100, 100, 0.8) 70%, rgba(0, 0, 0, 0.9) 100%);
     opacity: 1;
 }
 
 .viewCardsContainer.right-card-hover::after {
-    background: linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.6) 5%, rgba(100, 100, 100, 0.8) 30%,rgba(100, 100, 100, 0.8) 60%, rgba(0, 0, 0, 0.6) 100%);
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.5) 5%, rgba(100, 100, 100, 0.3) 30%,rgba(100, 100, 100, 0.8) 60%, rgba(0, 0, 0, 0.9) 100%);
     opacity: 1;
 }
