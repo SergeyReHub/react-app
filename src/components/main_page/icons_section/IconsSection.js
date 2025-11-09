@@ -1,4 +1,3 @@
-import "./IconsSection.css"
 import * as React from 'react';
 import { Box, Container, Grid, Typography } from '@mui/material';
 import ShieldTwoToneIcon from '@mui/icons-material/ShieldTwoTone';
@@ -7,10 +6,10 @@ import EmojiObjectsIcon from '@mui/icons-material/EmojiObjectsTwoTone';
 
 const SwanIcon = React.forwardRef(({
     sx,
-    bodyColor = 'rgba(213, 182, 152, 1)', // основной цвет тела
-    featherColor = '#ffffff', // цвет перьев
-    beakColor = '#FFCC66', // цвет клюва
-    legColor = '#663333', // цвет ног
+    bodyColor = 'none', // основной цвет тела
+    featherColor = 'none', // цвет перьев
+    beakColor = 'none', // цвет клюва
+    legColor = 'none', // цвет ног
     ...props
 }, ref) => (
     <Box

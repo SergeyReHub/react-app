@@ -1,0 +1,39 @@
+.contact_section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 7vh;
+    padding-right: 2vw;
+    background-color: #000000;
+    max-height: 800px;
+    height: 45vh
+}
+.contact_section h1 {
+    color: #FFFFFF;
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1vh;
+}
+.contact_section p {
+    color: #CCCCCC;
+    font-size: 1.2rem;
+    margin-bottom: 3vh;
+}
+.contact_section .contact_us {
+    background-color: #D677FF;
+    color: #FFFFFF;
+    border: none;
+    padding: 12px 24px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    width: 15vw;
+    height: 4vw;
+    transition: background-color 0.7s ease, color 0.8s ease;
+
+}
+.contact_section .contact_us:hover {
+    background-color: white;
+    color: black
+}

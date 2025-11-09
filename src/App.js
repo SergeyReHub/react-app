@@ -1,17 +1,17 @@
 import React from 'react';
-import OfUs from './components/of_us_section/OfUs';
-import MainSection from './components/main_section/MainSection';
-import ViewCards from './components/view_cards_section/ViewCards';
-import IconsSection from './components/icons_section/IconsSection';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import MainPage from './components/main_page/MainPage';
+import View_360_Page from './components/360_view_page/View_360_page'
 
 function App() {
   return (
-    <div className="App">
-      <MainSection/>
-      <OfUs/>
-      <ViewCards/>
-      <IconsSection/>
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<MainPage />} />
+        <Route path="/works" element={<p>adsfghjkhgfd</p>} />
+        <Route path="/360view" element={<View_360_Page />} />
+      </Routes>
+    </Router>
   );
 }
 
