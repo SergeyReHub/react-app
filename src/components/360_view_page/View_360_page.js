@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { ReactPhotoSphereViewer } from 'react-photo-sphere-viewer';
+import './view_360_page.css'
+import Dialog from './photo_sphere_dialod/Dialog';
+import '@photo-sphere-viewer/core/index.css';           // основной стиль (иногда нужен)
+import '@photo-sphere-viewer/markers-plugin/index.css'; // маркеры (стрелки)
+import '@photo-sphere-viewer/gallery-plugin/index.css'; // галерея
+import '@photo-sphere-viewer/virtual-tour-plugin/index.css'; // 🔥 критично для hotspots и карты
 
 // Optional: simple modal styling
 const modalStyle = {
@@ -33,21 +38,93 @@ export default function View_360_Page() {
         console.log('Response status:', res.status);
         console.log('Content-Type:', res.headers.get('content-type'));
 
-        // if (res.ok) {
-        //   // Now try to parse as JSON
-        //   let data;
-        //   try {
-        //     data = JSON.parse(text); // ← safer: we already have text
-        //   } catch (parseErr) {
-        //     throw new Error(`Invalid JSON response: ${parseErr.message}. Raw: ${text.substring(0, 200)}`);
-        //   }
-        //   setProjects(data);
-        // } else {
+        if (res.ok) {
+          // Now try to parse as JSON
+          let data;
+          try {
+            data = JSON.parse(text);
+            setProjects(data);// ← safer: we already have text
+            setError(null);
+          } catch (parseErr) {
+            setProjects(
+              [{
+                id: 1,
+                title: "Office Tour",
+                nodes: [
+                  {
+                    id: "lobby",
+                    panorama: "/images/panoramnie-kartinki-4.jpg",
+                    name: "Lobby",
+                    caption: "Main entrance",
+                    links: [
+                      {
+                        nodeId: "hallway",
+                        position: { yaw: '90deg', pitch: '0deg' }  // ← вот это критично!
+                      }
+                    ],
+                    sphereCorrection: { pan: '90deg' }
+                  },
+                  {
+                    id: "hallway",
+                    panorama: "/images/panoramnie-kartinki-4.jpg",
+                    name: "Hallway",
+                    caption: "Corridor to offices",
+                    links: [
+                      { nodeId: "lobby", position: { yaw: '270deg', pitch: '0deg' } },
+                      { nodeId: "office", position: { yaw: '0deg', pitch: '0deg' } }
+                    ]
+                  },
+                  {
+                    id: "office",
+                    panorama: "/images/panoramnie-kartinki-4.jpg",
+                    name: "Office",
+                    caption: "Open workspace",
+                    links: [
+                      { nodeId: "hallway", position: { yaw: '180deg', pitch: '0deg' } }
+                    ]
+                  }
+                ],
+                startNodeId: "lobby"
+              }]
+            );
+            setError(`Invalid JSON response: ${parseErr.message}. Raw: ${text.substring(0, 200)}`);
+          }
+
+        } else {
           // fallback
-          setProjects([
-            { id: 1, title: "Office", description: "Mock", panoramaUrl: "/images/panoramnie-kartinki-4.jpg" }
-          ]);
-        // }
+          setProjects(
+            [{
+              id: 1,
+              title: "Office Tour",
+              description: "Modern office walkthrough",
+              nodes: [
+                {
+                  id: "lobby",
+                  panorama: "/images/panoramnie-kartinki-4.jpg",
+                  name: "Lobby",
+                  caption: "Main entrance",
+                  links: [{ nodeId: "hallway" }],
+                  sphereCorrection: { pan: '90deg' }
+                },
+                {
+                  id: "hallway",
+                  panorama: "/images/panoramnie-kartinki-4.jpg",
+                  name: "Hallway",
+                  caption: "Corridor to offices",
+                  links: [{ nodeId: "lobby" }, { nodeId: "office" }]
+                },
+                {
+                  id: "office",
+                  panorama: "/images/panoramnie-kartinki-4.jpg",
+                  name: "Office",
+                  caption: "Open workspace",
+                  links: [{ nodeId: "hallway" }]
+                }
+              ],
+              startNodeId: "lobby"
+            }]
+          );
+        }
       } catch (err) {
         console.error('Fetch error:', err);
         setError(err.message);
@@ -67,74 +144,37 @@ export default function View_360_Page() {
     setSelectedProject(null);
   };
 
-  if (loading) return <p>Loading projects...</p>;
-  if (error) return <p style={{ color: 'red' }}>Error: {error}</p>;
+
+
+
+  if (loading) return <div className='loadingContainer'><p className='loading'>Loading projects...</p></div>;
 
   return (
-    <div className="ProjectsPage" style={{ padding: '20px' }}>
+    <div className="view_360_page">
       <h1>Our Projects</h1>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
+      <div className='project-list'>
         {projects.map((project) => (
           <div
+            className='project'
             key={project.id}
             onClick={() => openProject(project)}
-            style={{
-              border: '1px solid #ccc',
-              borderRadius: '8px',
-              padding: '16px',
-              cursor: 'pointer',
-              transition: 'box-shadow 0.2s',
-            }}
-            onMouseEnter={(e) => e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)'}
-            onMouseLeave={(e) => e.currentTarget.style.boxShadow = 'none'}
           >
             <h3>{project.title}</h3>
             <p>{project.description}</p>
+            <img src={project.nodes[0].panorama}></img>
           </div>
         ))}
+
       </div>
 
       {/* Modal / Dialog */}
       {selectedProject && (
-        <div style={modalStyle} onClick={closeProject}>
-          <div
-            onClick={(e) => e.stopPropagation()} // prevent closing when clicking inside
-            style={{
-              width: '90vw',
-              height: '90vh',
-              maxWidth: '1200px',
-              position: 'relative',
-            }}
-          >
-            <button
-              onClick={closeProject}
-              style={{
-                position: 'absolute',
-                top: '10px',
-                right: '10px',
-                background: 'white',
-                border: 'none',
-                borderRadius: '50%',
-                width: '32px',
-                height: '32px',
-                fontSize: '20px',
-                cursor: 'pointer',
-                zIndex: 1001,
-              }}
-            >
-              &times;
-            </button>
-            <h2 style={{ color: 'white', textAlign: 'center', marginBottom: '10px' }}>
-              {selectedProject.title}
-            </h2>
-            <ReactPhotoSphereViewer
-              src={selectedProject.panoramaUrl}
-              width="100%"
-              height="calc(90vh - 60px)" // account for title & close button
-            />
-          </div>
-        </div>
+        <Dialog
+          project={selectedProject}
+          onClose={closeProject}
+        />
       )}
+      <p>{error}</p>
     </div>
   );
 }
