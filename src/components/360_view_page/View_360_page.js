@@ -1,30 +1,55 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './view_360_page.css'
 import Dialog from './photo_sphere_dialod/Dialog';
+import ProjectsSection from './project_section/ProjectSection';
+import MainSection from './main_section/MainSection';
 import '@photo-sphere-viewer/core/index.css';           // основной стиль (иногда нужен)
 import '@photo-sphere-viewer/markers-plugin/index.css'; // маркеры (стрелки)
 import '@photo-sphere-viewer/gallery-plugin/index.css'; // галерея
 import '@photo-sphere-viewer/virtual-tour-plugin/index.css'; // 🔥 критично для hotspots и карты
 
-// Optional: simple modal styling
-const modalStyle = {
-  position: 'fixed',
-  top: 0,
-  left: 0,
-  width: '100vw',
-  height: '100vh',
-  backgroundColor: 'rgba(0,0,0,0.9)',
-  zIndex: 1000,
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-};
+
 
 export default function View_360_Page() {
   const [projects, setProjects] = useState([]);
   const [selectedProject, setSelectedProject] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const touchStartY = useRef(0);
+  const [activeSection, setActiveSection] = useState('main'); // 'main' | 'projects'
+
+  const handleWheel = (e) => {
+    if (selectedProject) return; // не реагируем, если открыто модальное окно
+
+    if (e.deltaY > 0 && activeSection === 'main') {
+      // Прокрутка вниз → показать проекты
+      e.preventDefault();
+      setActiveSection('projects');
+    } else if (e.deltaY < 0 && activeSection === 'projects') {
+      // Прокрутка вверх ← вернуться к заголовку
+      e.preventDefault();
+      setActiveSection('main');
+    }
+  };
+
+  const handleTouchStart = (e) => {
+    touchStartY.current = e.touches[0].clientY;
+  };
+
+  const handleTouchMove = (e) => {
+    if (selectedProject) return;
+    const touchY = e.touches[0].clientY;
+    const diff = touchStartY.current - touchY;
+
+    if (Math.abs(diff) > 50) { // порог 50px
+      e.preventDefault();
+      if (diff > 0 && activeSection === 'main') {
+        setActiveSection('projects');
+      } else if (diff < 0 && activeSection === 'projects') {
+        setActiveSection('main');
+      }
+    }
+  };
 
   // Fetch projects on mount
   useEffect(() => {
@@ -228,26 +253,23 @@ export default function View_360_Page() {
 
 
 
+
+
   if (loading) return <div className='loadingContainer'><p className='loading'>Loading projects...</p></div>;
 
   return (
-    <div className="view_360_page">
-      <h1>Our Projects</h1>
-      <div className='project-list'>
-        {projects.map((project) => (
-          <div
-            className='project'
-            key={project.id}
-            onClick={() => openProject(project)}
-          >
-            <h3>{project.title}</h3>
-            <p>{project.caption}</p>
-            <img src={project.nodes[0].panorama}></img>
-          </div>
-        ))}
-
-      </div>
-
+    <div className="view_360_page"
+      onWheel={handleWheel}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      style={{ touchAction: 'none' }} 
+    >
+      <MainSection isActive={activeSection === 'main'} />
+      <ProjectsSection
+        isActive={activeSection === 'projects'}
+        projects={projects}
+        openProject={openProject}
+      />
       {/* Modal / Dialog */}
       {selectedProject && (
         <Dialog

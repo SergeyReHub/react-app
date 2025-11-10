@@ -1,0 +1,45 @@
+.projects-section {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 1s ease, transform 0.6s ease;
+  z-index: 9;
+}
+
+.project-list {
+    margin: 0 50px 0 50px;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(400px, 45vw));
+    transition: opacity 0.6s ease, transform 0.6s ease;
+    gap: 20px;
+}
+
+.projects-section.hidden {
+  opacity: 0;
+  transform: scale(1.05);
+  pointer-events: none;
+}
+
+.projects-section.active {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.project {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    align-items: center;
+    border: 2px solid rgb(189, 189, 189);
+    border-radius: 8px;
+    padding: 10px;
+    margin-left: 15px;
+    cursor: pointer;
+    transition: box-shadow 0.2s, border-color 0.2s;
+}

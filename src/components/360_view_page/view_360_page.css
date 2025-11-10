@@ -26,25 +26,7 @@
 
 }
 
-.project-list {
-    margin-top: 50px;
-    display: grid;
-    grid-template-columns: repeat(3, minmax(400px, 45vw));
-    gap: 20px;
-}
 
-.project {
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    align-items: center;
-    border: 2px solid rgb(189, 189, 189);
-    border-radius: 8px;
-    padding: 10px;
-    margin-left: 15px;
-    cursor: pointer;
-    transition: box-shadow 0.2s, border-color 0.2s;
-}
 
 /* При наведении — усиливаем рамку или добавляем тень */
 .project:hover {
