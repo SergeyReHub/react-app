@@ -9,7 +9,7 @@
     justify-content: center;
     align-items: center;
     height: 100vh;
-    width: 100vw
+    width: 100vw;
 }
 
 .loading {
@@ -29,7 +29,7 @@
 .project-list {
     margin-top: 50px;
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(3, minmax(400px, 45vw));
     gap: 20px;
 }
 
@@ -38,7 +38,7 @@
     flex-direction: column;
     position: relative;
     align-items: center;
-    border: 2px solid white;   /* ✅ ширина + стиль + цвет */
+    border: 2px solid rgb(189, 189, 189);
     border-radius: 8px;
     padding: 10px;
     margin-left: 15px;
@@ -49,9 +49,12 @@
 /* При наведении — усиливаем рамку или добавляем тень */
 .project:hover {
     border-color: #333;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.247);
 }
 
 .project h3, .project p{
     color: white;
+}
+.project img{
+    width: 100%;
 }

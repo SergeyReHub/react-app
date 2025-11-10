@@ -50,42 +50,115 @@ export default function View_360_Page() {
               [{
                 id: 1,
                 title: "Office Tour",
+                description: "asdfhj",
                 nodes: [
                   {
-                    id: "lobby",
+                    id: 1,
                     panorama: "/images/panoramnie-kartinki-4.jpg",
+                    thumbnail: "/images/panoramnie-kartinki-4.jpg",
                     name: "Lobby",
-                    caption: "Main entrance",
-                    links: [
-                      {
-                        nodeId: "hallway",
-                        position: { yaw: '90deg', pitch: '0deg' }  // ← вот это критично!
-                      }
-                    ],
-                    sphereCorrection: { pan: '90deg' }
+                    caption: "[1] Main entrance",
+                    links: [{ nodeId: 2 }],
+                    gps: [55.7815, 37.6759, 1],
+                    sphereCorrection: { pan: "33deg" }
                   },
                   {
-                    id: "hallway",
+                    id: 2,
                     panorama: "/images/panoramnie-kartinki-4.jpg",
+                    thumbnail: "/images/panoramnie-kartinki-4.jpg",
                     name: "Hallway",
-                    caption: "Corridor to offices",
-                    links: [
-                      { nodeId: "lobby", position: { yaw: '270deg', pitch: '0deg' } },
-                      { nodeId: "office", position: { yaw: '0deg', pitch: '0deg' } }
-                    ]
+                    caption: "[2] Corridor to offices",
+                    links: [{ nodeId: 1 }, { nodeId: 3 }],
+                    gps: [55.7816, 37.6760, 1],
+                    sphereCorrection: { pan: "66deg" }
                   },
                   {
-                    id: "office",
+                    id: 3,
                     panorama: "/images/panoramnie-kartinki-4.jpg",
+                    thumbnail: "/images/panoramnie-kartinki-4.jpg",
                     name: "Office",
-                    caption: "Open workspace",
-                    links: [
-                      { nodeId: "hallway", position: { yaw: '180deg', pitch: '0deg' } }
-                    ]
+                    caption: "[3] Open workspace",
+                    links: [{ nodeId: 2 }],
+                    gps: [55.7817, 37.6761, 1],
+                    sphereCorrection: { pan: "99deg" }
                   }
-                ],
-                startNodeId: "lobby"
-              }]
+                ]
+              },
+              {
+                id: 1,
+                title: "Office Tour",
+                description: "asdfhj",
+                nodes: [
+                  {
+                    id: 1,
+                    panorama: "/images/panoramnie-kartinki-4.jpg",
+                    thumbnail: "/images/panoramnie-kartinki-4.jpg",
+                    name: "Lobby",
+                    caption: "[1] Main entrance",
+                    links: [{ nodeId: 2 }],
+                    gps: [55.7815, 37.6759, 1],
+                    sphereCorrection: { pan: "33deg" }
+                  },
+                  {
+                    id: 2,
+                    panorama: "/images/panoramnie-kartinki-4.jpg",
+                    thumbnail: "/images/panoramnie-kartinki-4.jpg",
+                    name: "Hallway",
+                    caption: "[2] Corridor to offices",
+                    links: [{ nodeId: 1 }, { nodeId: 3 }],
+                    gps: [55.7816, 37.6760, 1],
+                    sphereCorrection: { pan: "66deg" }
+                  },
+                  {
+                    id: 3,
+                    panorama: "/images/panoramnie-kartinki-4.jpg",
+                    thumbnail: "/images/panoramnie-kartinki-4.jpg",
+                    name: "Office",
+                    caption: "[3] Open workspace",
+                    links: [{ nodeId: 2 }],
+                    gps: [55.7817, 37.6761, 1],
+                    sphereCorrection: { pan: "99deg" }
+                  }
+                ]
+              },
+              {
+                id: 1,
+                title: "Office Tour",
+                description: "asdfhj",
+                nodes: [
+                  {
+                    id: 1,
+                    panorama: "/images/panoramnie-kartinki-4.jpg",
+                    thumbnail: "/images/panoramnie-kartinki-4.jpg",
+                    name: "Lobby",
+                    caption: "[1] Main entrance",
+                    links: [{ nodeId: 2 }],
+                    gps: [55.7815, 37.6759, 1],
+                    sphereCorrection: { pan: "33deg" }
+                  },
+                  {
+                    id: 2,
+                    panorama: "/images/panoramnie-kartinki-4.jpg",
+                    thumbnail: "/images/panoramnie-kartinki-4.jpg",
+                    name: "Hallway",
+                    caption: "[2] Corridor to offices",
+                    links: [{ nodeId: 1 }, { nodeId: 3 }],
+                    gps: [55.7816, 37.6760, 1],
+                    sphereCorrection: { pan: "66deg" }
+                  },
+                  {
+                    id: 3,
+                    panorama: "/images/panoramnie-kartinki-4.jpg",
+                    thumbnail: "/images/panoramnie-kartinki-4.jpg",
+                    name: "Office",
+                    caption: "[3] Open workspace",
+                    links: [{ nodeId: 2 }],
+                    gps: [55.7817, 37.6761, 1],
+                    sphereCorrection: { pan: "99deg" }
+                  }
+                ]
+              }
+              ]
             );
             setError(`Invalid JSON response: ${parseErr.message}. Raw: ${text.substring(0, 200)}`);
           }
@@ -96,33 +169,41 @@ export default function View_360_Page() {
             [{
               id: 1,
               title: "Office Tour",
-              description: "Modern office walkthrough",
+              description: "asdfhj",
               nodes: [
                 {
-                  id: "lobby",
+                  id: 1,
                   panorama: "/images/panoramnie-kartinki-4.jpg",
+                  thumbnail: "/images/panoramnie-kartinki-4.jpg",
                   name: "Lobby",
-                  caption: "Main entrance",
-                  links: [{ nodeId: "hallway" }],
-                  sphereCorrection: { pan: '90deg' }
+                  caption: "[1] Main entrance",
+                  links: [{ nodeId: 2 }],
+                  gps: [55.7815, 37.6759, 1],
+                  sphereCorrection: { pan: "33deg" }
                 },
                 {
-                  id: "hallway",
+                  id: 2,
                   panorama: "/images/panoramnie-kartinki-4.jpg",
+                  thumbnail: "/images/panoramnie-kartinki-4.jpg",
                   name: "Hallway",
-                  caption: "Corridor to offices",
-                  links: [{ nodeId: "lobby" }, { nodeId: "office" }]
+                  caption: "[2] Corridor to offices",
+                  links: [{ nodeId: 1 }, { nodeId: 3 }],
+                  gps: [55.7816, 37.6760, 1],
+                  sphereCorrection: { pan: "66deg" }
                 },
                 {
-                  id: "office",
+                  id: 3,
                   panorama: "/images/panoramnie-kartinki-4.jpg",
+                  thumbnail: "/images/panoramnie-kartinki-4.jpg",
                   name: "Office",
-                  caption: "Open workspace",
-                  links: [{ nodeId: "hallway" }]
+                  caption: "[3] Open workspace",
+                  links: [{ nodeId: 2 }],
+                  gps: [55.7817, 37.6761, 1],
+                  sphereCorrection: { pan: "99deg" }
                 }
-              ],
-              startNodeId: "lobby"
-            }]
+              ]
+            }
+            ]
           );
         }
       } catch (err) {
@@ -160,7 +241,7 @@ export default function View_360_Page() {
             onClick={() => openProject(project)}
           >
             <h3>{project.title}</h3>
-            <p>{project.description}</p>
+            <p>{project.caption}</p>
             <img src={project.nodes[0].panorama}></img>
           </div>
         ))}
