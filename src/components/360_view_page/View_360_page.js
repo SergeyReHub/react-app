@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './view_360_page.css'
 import Dialog from './photo_sphere_dialod/Dialog';
-import ProjectsSection from './project_section/ProjectSection';
+import ProjectsSection from './project_section/ProjectsSection';
 import MainSection from './main_section/MainSection';
 import '@photo-sphere-viewer/core/index.css';           // основной стиль (иногда нужен)
 import '@photo-sphere-viewer/markers-plugin/index.css'; // маркеры (стрелки)
 import '@photo-sphere-viewer/gallery-plugin/index.css'; // галерея
 import '@photo-sphere-viewer/virtual-tour-plugin/index.css'; // 🔥 критично для hotspots и карты
+import { useNavigate } from 'react-router-dom';
 
 
 
@@ -17,6 +18,12 @@ export default function View_360_Page() {
   const [error, setError] = useState(null);
   const touchStartY = useRef(0);
   const [activeSection, setActiveSection] = useState('main'); // 'main' | 'projects'
+
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate('/'); // программный переход на корень
+  };
 
   const handleWheel = (e) => {
     if (selectedProject) return; // не реагируем, если открыто модальное окно
@@ -262,8 +269,12 @@ export default function View_360_Page() {
       onWheel={handleWheel}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
-      style={{ touchAction: 'none' }} 
+      style={{ touchAction: 'none' }}
     >
+      <div className={`global-header ${activeSection === 'projects' ? 'active' : 'hidden'}`}>
+        <p onClick={handleClick}>M.GROUP</p>
+      </div>
+
       <MainSection isActive={activeSection === 'main'} />
       <ProjectsSection
         isActive={activeSection === 'projects'}

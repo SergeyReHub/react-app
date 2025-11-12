@@ -12,7 +12,7 @@ const ProjectsSection = ({ isActive, projects, openProject }) => {
             onClick={() => openProject(project)}
           >
             <h3>{project.title}</h3>
-            <p>{project.caption}</p>
+            <p>{project.description}</p>
             <img src={project.nodes[0].panorama}></img>
           </div>
         ))}

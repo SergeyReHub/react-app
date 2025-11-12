@@ -13,9 +13,9 @@
 }
 
 .project-list {
-    margin: 0 50px 0 50px;
+    margin: -200px 50px 0 50px;
     display: grid;
-    grid-template-columns: repeat(3, minmax(400px, 45vw));
+    grid-template-columns: repeat(3, minmax(300px, 45vw));
     transition: opacity 0.6s ease, transform 0.6s ease;
     gap: 20px;
 }
@@ -23,7 +23,6 @@
 .projects-section.hidden {
   opacity: 0;
   transform: scale(1.05);
-  pointer-events: none;
 }
 
 .projects-section.active {
@@ -41,5 +40,29 @@
     padding: 10px;
     margin-left: 15px;
     cursor: pointer;
+    
     transition: box-shadow 0.2s, border-color 0.2s;
+}
+
+/* При наведении — усиливаем рамку или добавляем тень */
+.project:hover {
+    border-color: #333;
+    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.247);
+}
+
+.project h3, .project p{
+    color: white;
+}
+.project h3 {
+    margin: 10px 0 5px 0;
+    font-size: 24px;
+    font-weight: 600;
+}
+.project p {
+    margin: 0 0 10px 0;
+    font-size: 20px;
+    font-weight: 400;
+}
+.project img{
+    width: 100%;
 }
