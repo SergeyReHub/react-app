@@ -127,7 +127,7 @@ export default function IconsSection() {
                     left: 0,
                     right: 0,
                     bottom: 0,
-                    background: 'linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.5) 5%, rgba(100, 100, 100, 0.3) 30%, rgba(100, 100, 100, 0.6) 70%, rgba(0, 0, 0, 0.9) 100%)',
+                    background: 'linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(244, 81, 225, 0.12) 10%, rgba(100, 100, 100, 0.3) 30%, rgba(100, 100, 100, 0.6) 70%, rgba(0, 0, 0, 0.9) 100%)',
                     opacity: 1,
                     pointerEvents: 'none',
                     zIndex: 2,

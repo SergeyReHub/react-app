@@ -1,0 +1,109 @@
+.lastSection-container {
+    height: 13vw;
+    display: flex;
+    flex-direction: row;
+    background-color: black;
+    border-top: 1px solid #727272;
+    background-image: linear-gradient(to top, transparent 30%, rgba(255, 0, 238, 0.193) 100%);
+}
+
+.beauty-block {
+    flex: 1;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: baseline;
+    /* ← это заставит дочерние элементы растягиваться по ширине самого широкого */
+    margin-left: 20px;
+    margin-top: 30px;
+}
+
+
+
+
+
+.nadpisi {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-top: 5px;
+}
+
+.nadpisi p {
+    /* p — определяет ширину контейнера */
+    width: fit-content;
+    /* ← сжимается по содержимому, но не растягивается */
+    /* или max-width: 500px; если нужен лимит */
+    color: rgb(195, 195, 195);
+    font-size: 1.2vw;
+    font-weight: 400;
+    white-space: normal;
+}
+
+.nadpisi h2 {
+    width: 100%; 
+    white-space: normal;
+    /* ← 100% от ширины .nadpisi = ширина <p> */
+    /* Можно добавить выравнивание: */
+    text-align: justify;
+    /* или center / justify */
+    text-align-last: justify;
+    color: white;
+    font-size: 1.7vw;
+}
+
+
+
+.beauty-block-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    column-gap: 40px;
+}
+
+.beauty-block .brand {
+    font-size: 2vw;
+    font-weight: bold;
+    display: flex;
+    flex-direction: row;
+    column-gap: 5px;
+    align-items: center;
+}
+
+.clicks-block {
+    padding-right: 50px;
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    margin: 0 auto;
+    
+}
+
+.clicks-block div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    transition: background-color 0.3s ease;
+    margin-bottom: 30px;
+}
+
+.clicks-block p {
+    color: #757474;
+    font-size: 1vw;
+}
+
+.clicks-block h3 {
+    color: white;
+    font-size: 1.3vw;
+    margin-bottom: 5px;
+}
+
+.one-click-block p{
+    text-decoration: underline;
+    transition: all 0.5s ease-out;
+}
+.one-click-block p:hover{
+    cursor: pointer;
+    color: rgb(209, 208, 208);
+}

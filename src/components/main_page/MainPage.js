@@ -4,6 +4,7 @@ import MainSection from './main_section/MainSection';
 import ViewCards from './view_cards_section/ViewCards';
 import IconsSection from './icons_section/IconsSection';
 import ContactSection from './contacts_section/ContactSection';
+import LastSection from './last_section/LastSection';
 
 function MainPage() {
   return (
@@ -13,6 +14,7 @@ function MainPage() {
       <ViewCards/>
       <IconsSection/>
       <ContactSection/>
+      <LastSection/>
     </div>
   );
 }
