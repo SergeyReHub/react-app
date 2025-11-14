@@ -6,7 +6,7 @@
     padding-right: 2vw;
     background-color: black;
     background-image: 
-      linear-gradient(to bottom, transparent 30%, rgba(255, 0, 238, 0.29) 100%);
+      linear-gradient(to bottom, transparent 70%, rgba(255, 0, 238, 0.29) 100%);
     max-height: 800px;
     height: 45vh
 }
@@ -36,6 +36,6 @@
 
 }
 .contact_section .contact_us:hover {
-    background-color: white;
+    background-color: rgb(190, 190, 190);
     color: black
 }

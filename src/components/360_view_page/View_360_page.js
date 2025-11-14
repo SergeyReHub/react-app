@@ -271,8 +271,13 @@ export default function View_360_Page() {
       onTouchMove={handleTouchMove}
       style={{ touchAction: 'none' }}
     >
-      <div className={`global-header ${activeSection === 'projects' ? 'active' : 'hidden'}`}>
-        <p onClick={handleClick}>M.GROUP</p>
+      <div className={'global-header'}>
+        <span className="brand"
+          onClick={handleClick}>
+          <span style={{ color: 'rgba(253, 69, 69, 0.58)' }}>M</span>
+          <span style={{ color: 'rgba(253, 253, 253, 1)' }}>.</span>
+          <span style={{ color: 'rgba(200, 200, 200, 1)' }}>GROUP</span>
+        </span>
       </div>
 
       <MainSection isActive={activeSection === 'main'} />
@@ -288,7 +293,6 @@ export default function View_360_Page() {
           onClose={closeProject}
         />
       )}
-      <p>{error}</p>
     </div>
   );
 }

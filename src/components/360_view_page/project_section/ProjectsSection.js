@@ -13,7 +13,7 @@ const ProjectsSection = ({ isActive, projects, openProject }) => {
           >
             <h3>{project.title}</h3>
             <p>{project.description}</p>
-            <img src={project.nodes[0].panorama}></img>
+            <img src={project.nodes[0].panorama} alt={project.title} />
           </div>
         ))}
         </div>

@@ -9,14 +9,12 @@
     padding: 4rem 1rem;
     color: #fff;
     text-align: center;
-    /* background-image can be set from the component via inline style or a CSS variable */
-    background-image: 
-      linear-gradient(to bottom, transparent 60%, rgba(0, 0, 0, 1) 100%),
-      var(--main-bg-image, none);
+    
     background-size: cover;
     background-color: black;
 
 }
+
 
 .overlay {
     position: absolute;
