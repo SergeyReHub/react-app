@@ -37,3 +37,11 @@
     border-left-width: 1px;
 
 }
+
+.psv-virtual-tour-tooltip img{
+    margin: 0;
+}
+
+.psv-navbar{
+    padding-bottom: 10px;
+}

@@ -1,14 +1,22 @@
 .lastSection-container {
-    height: 13vw;
+    background-color: black;
+    background-image: linear-gradient(to top, transparent 30%, rgba(255, 0, 238, 0.193) 100%);
+    display: flex;
+    min-height: 14vw;
+    flex-direction: column;
+    padding-bottom: 5px;
+}
+
+.lastSection-main {
     display: flex;
     flex-direction: row;
-    background-color: black;
+    background-color: transparent;
     border-top: 1px solid #727272;
-    background-image: linear-gradient(to top, transparent 30%, rgba(255, 0, 238, 0.193) 100%);
+
 }
 
 .beauty-block {
-    flex: 1;
+    flex: 0.65;
     display: inline-flex;
     flex-direction: column;
     align-items: baseline;
@@ -40,7 +48,7 @@
 }
 
 .nadpisi h2 {
-    width: 100%; 
+    width: 100%;
     white-space: normal;
     /* ← 100% от ширины .nadpisi = ширина <p> */
     /* Можно добавить выравнивание: */
@@ -69,23 +77,63 @@
     align-items: center;
 }
 
+
+
+.messagers-icons-block {
+    flex: 0.2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: white;
+}
+
+.three-messager-icons {
+    display: grid;
+    grid-template-columns: auto auto;
+    grid-template-rows: auto auto;
+    grid-auto-flow: row;
+    gap: 8px;
+    margin-top: 30px;
+    width: 100%;
+}
+
+.three-messager-icons img {
+    grid-column: span 1;
+    width: 3vw;
+    height: 3vw;
+    cursor: pointer;
+}
+.three-messager-icons .icon{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    grid-column: span 1;
+}
+.three-messager-icons .top-icon #whatsapp{
+    margin-left: 15px;
+}
+.three-messager-icons .bottom-icon{
+    grid-column: span 2;
+
+}
+
+
 .clicks-block {
     padding-right: 50px;
     flex: 1;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    margin: 0 auto;
-    
+    margin-top: 30px;
+
 }
 
 .clicks-block div {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    padding-right: 10px;
 
     transition: background-color 0.3s ease;
-    margin-bottom: 30px;
 }
 
 .clicks-block p {
@@ -99,11 +147,28 @@
     margin-bottom: 5px;
 }
 
-.one-click-block p{
+.one-click-block p {
     text-decoration: underline;
     transition: all 0.5s ease-out;
 }
-.one-click-block p:hover{
+
+.one-click-block p:hover {
     cursor: pointer;
     color: rgb(209, 208, 208);
+}
+
+.footer-block {
+    position: relative;
+
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    border-top: 1px dotted #727272;
+    width: 50%;
+    margin-top: 20px;
+    margin-right: 20px;
+    text-align: start;
+    color: gray;
+    padding-top: 15px;
+    margin-left: 20px;
 }

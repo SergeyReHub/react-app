@@ -271,7 +271,7 @@ export default function View_360_Page() {
       onTouchMove={handleTouchMove}
       style={{ touchAction: 'none' }}
     >
-      <div className={'global-header'}>
+      <div className='global-header'>
         <span className="brand"
           onClick={handleClick}>
           <span style={{ color: 'rgba(253, 69, 69, 0.58)' }}>M</span>

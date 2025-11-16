@@ -91,3 +91,8 @@ legend {
 input[type='file'] {
 	max-width: 100%;
 }
+
+html, body {
+  overscroll-behavior: none; /* ← ключевое! */
+  /* или overscroll-behavior-y: contain; если нужен только по вертикали */
+}

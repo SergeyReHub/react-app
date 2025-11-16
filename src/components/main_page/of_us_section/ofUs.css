@@ -27,7 +27,6 @@
     height: 100%;
     object-fit: cover;
     border-radius: 15px;
-    border: 15px outset #545454;
     display: block;
     display: block;
     z-index: 1000;
@@ -90,8 +89,6 @@
     height: 100%;
     object-fit: cover;
     border-radius: 15px;
-    border: 15px inset #545454;
-    display: block;
     display: block;
     z-index: 1000;
 }
@@ -115,7 +112,6 @@
     height: 100%;
     object-fit: cover;
     border-radius: 15px;
-    border: 15px outset #545454;
     display: block;
     z-index: 1000;
 }

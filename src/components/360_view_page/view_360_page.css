@@ -15,7 +15,7 @@
     background-color: black;
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
+    height: 100vh;
     background-image: 
         /* 1. Тёмный оверлей (сверху) */
         linear-gradient(rgba(0, 0, 0, 0.631), rgba(0, 0, 0, 0.26)),
@@ -49,4 +49,5 @@
     text-align: center;
     font-size: 40px;
     margin-left: 52px;
+    text-decoration: underline #ffffff34;
 }
