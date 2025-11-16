@@ -1,0 +1,90 @@
+.feedback-container {
+    display: flex;
+    flex-direction: column;
+    width: 100vw;
+    min-height: 100vh;
+    background-color: black;
+    background-image:
+        /* 1. Вертикальный розовый градиент */
+        linear-gradient(to top,
+            rgba(7, 7, 7, 0.726) 0%,
+            rgba(255, 0, 238, 0.219) 100%),
+
+        /* 2. Горизонтальный градиент (розово-красный → чёрный) */
+        linear-gradient(to right,
+            rgba(202, 37, 37, 0.3) 0%,
+            transparent 40%,
+            transparent 60%,
+            rgba(202, 37, 37, 0.3) 100%);
+
+}
+
+.header {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    align-items: center;
+    /* вертикальное выравнивание по центру */
+    justify-content: center;
+    /* центрируем общий контент по умолчанию */
+    position: relative;
+    /* для позиционирования логотипа слева */
+    padding-bottom: 10px;
+    padding-top: 16px;
+}
+
+.header h2 {
+    font-size: 34px;
+    font-weight: 600;
+    color: #ffffff;
+    text-decoration: underline #4a4a4a34;
+}
+
+.header .brand {
+    position: absolute;
+    left: 0;
+    margin: 0;
+    font-size: 34px;
+    font-weight: 600;
+    color: #ffffff;
+    /* можно добавить padding-left, если нужно отступить от края */
+    cursor: pointer;
+    text-decoration: underline #ffffff34;
+}
+
+.header .brand:hover {
+    text-decoration: underline #ffffffaa;
+}
+
+.feedback-form {
+
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    color: white;
+
+
+
+}
+
+.feedback-form-container {
+
+    align-self: center;
+    width: 30%;
+    margin-top: 40px;
+    background-image:
+        linear-gradient(to right,
+            transparent 0%,
+            rgba(97, 15, 15, 0.123) 15%,
+            rgba(105, 28, 28, 0.267) 75%,
+            transparent 100%);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.205);
+    border-radius: 10px;
+    padding: 20px;
+    z-index: 4;
+}
+
+.feedback-form label {
+    margin-top: 20px;
+    font-size: 18px;
+}

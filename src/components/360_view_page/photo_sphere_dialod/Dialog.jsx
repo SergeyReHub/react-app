@@ -9,6 +9,7 @@ import { VirtualTourPlugin } from '@photo-sphere-viewer/virtual-tour-plugin';
 import { GalleryPlugin } from '@photo-sphere-viewer/gallery-plugin';
 import { MarkersPlugin } from '@photo-sphere-viewer/markers-plugin';
 import CancelIcon from '@mui/icons-material/Cancel';
+import IosShareIcon from '@mui/icons-material/IosShare';
 import './dialog.css';
 
 // const markerLighthouse = {
@@ -79,6 +80,36 @@ const Dialog = ({ project, onClose }) => {
     };
   }, [project]); // ✅ Добавьте зависимость от `project`, иначе эффект не обновится при смене проекта
 
+  function onShare() {
+    const title = project?.title || '360° тур';
+    const text = project?.description || 'Посмотрите этот интерактивный 360° тур.';
+    const url = window.location.href + '/' + project.id; // или project.shareUrl, если у вас есть отдельная ссылка
+
+    if (navigator.share) {
+      navigator.share({
+        title,
+        text,
+        url,
+      })
+        .then(() => console.log('Контент успешно отправлен'))
+        .catch((error) => {
+          if (error.name !== 'AbortError') {
+            console.warn('Ошибка при шеринге:', error);
+          }
+        });
+    } else {
+      // fallback: копирование ссылки в буфер + уведомление
+      navigator.clipboard
+        .writeText(url)
+        .then(() => {
+          alert('Ссылка скопирована в буфер обмена!');
+        })
+        .catch((err) => {
+          console.error('Не удалось скопировать ссылку:', err);
+          alert('Не удалось скопировать ссылку. Попробуйте вручную.');
+        });
+    }
+  }
 
   return (
     <div
@@ -106,7 +137,24 @@ const Dialog = ({ project, onClose }) => {
             zIndex: 1001,
           }}
         />
-
+        <IosShareIcon
+          onClick={onShare}
+          sx={{
+            position: 'absolute',
+            top: '10px',
+            left: '16px',
+            fontSize: 60,
+            cursor: 'pointer',
+            color: 'rgba(48, 48, 48, 1)',
+            backgroundColor: 'rgba(0, 0, 0, 0.16)',
+            borderRadius: '10%',
+            transition: 'transform 0.3s ease',
+            '&:hover': {
+              transform: 'scale(1.1)',
+            },
+            zIndex: 1001,
+          }}
+        />
         <div id="viewer" ref={viewerRef} style={{ width: '100%', height: '100%' }}></div>
       </div>
     </div>

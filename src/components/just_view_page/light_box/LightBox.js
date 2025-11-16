@@ -1,8 +1,10 @@
 import React, { useEffect, useState, useCallback } from "react";
 import "./light_box.css";
+import IosShareIcon from '@mui/icons-material/IosShare';
 
 
-export default function LightBox({set_lightbox, lightbox, projects}) {
+
+export default function LightBox({ set_lightbox, lightbox, projects }) {
 
     const closeLightbox = () => set_lightbox({ open: false, projectIndex: 0, photoIndex: 0 });
 
@@ -48,11 +50,62 @@ export default function LightBox({set_lightbox, lightbox, projects}) {
         }
     };
 
+    function onShare() {
+        let { projectIndex, photoIndex } = lightbox;
+        const currentProject = projects[projectIndex];
+        const title = currentProject?.title || '360° тур';
+        const text = currentProject?.description || 'Посмотрите этот интерактивный 360° тур.';
+        const url = window.location.href + '/' + currentProject.id; // или project.shareUrl, если у вас есть отдельная ссылка
+
+        if (navigator.share) {
+            navigator.share({
+                title,
+                text,
+                url,
+            })
+                .then(() => console.log('Контент успешно отправлен'))
+                .catch((error) => {
+                    if (error.name !== 'AbortError') {
+                        console.warn('Ошибка при шеринге:', error);
+                    }
+                });
+        } else {
+            // fallback: копирование ссылки в буфер + уведомление
+            navigator.clipboard
+                .writeText(url)
+                .then(() => {
+                    alert('Ссылка скопирована в буфер обмена!');
+                })
+                .catch((err) => {
+                    console.error('Не удалось скопировать ссылку:', err);
+                    alert('Не удалось скопировать ссылку. Попробуйте вручную.');
+                });
+        }
+    }
+
     return (
         <div className="just-view-page">
             {lightbox.open && projects[lightbox.projectIndex] && (
                 <div className="just-view-page__lightbox-overlay" onClick={closeLightbox}>
                     <div className="just-view-page__lightbox-content" onClick={(e) => e.stopPropagation()}>
+                        <IosShareIcon
+                            onClick={onShare}
+                            sx={{
+                                position: 'absolute',
+                                top: '10px',
+                                left: '16px',
+                                fontSize: 60,
+                                cursor: 'pointer',
+                                color: 'rgba(211, 211, 211, 1)',
+                                backgroundColor: 'rgba(92, 92, 92, 0.12)',
+                                borderRadius: '10%',
+                                transition: 'transform 0.3s ease',
+                                '&:hover': {
+                                    transform: 'scale(1.1)',
+                                },
+                                zIndex: 1001,
+                            }}
+                        />
                         <button
                             className="just-view-page__lightbox-close"
                             onClick={closeLightbox}

@@ -141,7 +141,8 @@ export default function JustViewPage({ apiUrl = "/api/projects/photos" }) {
             {lightbox.open && projects[lightbox.projectIndex] && (
                 <LightBox projects={projects}
                 set_lightbox={setLightbox}
-                lightbox={lightbox}/>
+                lightbox={lightbox}
+                />
             )}
             {error && <div className="just-view-page__error">⚠️ {error}</div>}
         </div>

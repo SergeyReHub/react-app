@@ -7,6 +7,7 @@ import '@photo-sphere-viewer/core/index.css';           // основной ст
 import '@photo-sphere-viewer/markers-plugin/index.css'; // маркеры (стрелки)
 import '@photo-sphere-viewer/gallery-plugin/index.css'; // галерея
 import '@photo-sphere-viewer/virtual-tour-plugin/index.css'; // 🔥 критично для hotspots и карты
+
 import { useNavigate } from 'react-router-dom';
 
 
