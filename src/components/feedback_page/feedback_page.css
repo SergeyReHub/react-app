@@ -1,4 +1,5 @@
 .feedback-container {
+    padding: 20px;
     display: flex;
     flex-direction: column;
     width: 100vw;
@@ -78,7 +79,7 @@
             rgba(97, 15, 15, 0.123) 15%,
             rgba(105, 28, 28, 0.267) 75%,
             transparent 100%);
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.205);
+    box-shadow: 0 17px 60px rgba(0, 0, 0, 0.671);
     border-radius: 10px;
     padding: 20px;
     z-index: 4;
@@ -87,4 +88,105 @@
 .feedback-form label {
     margin-top: 20px;
     font-size: 18px;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
 }
+
+.feedback-form .desc-label {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.feedback-form input,
+.feedback-form textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    box-sizing: border-box; /* гарантирует, что padding/border не увеличивают ширину */
+    border: 1px solid #55555596;
+    border-radius: 4px;
+    background-color: rgba(30, 30, 30, 0.349);
+    color: white;
+}
+
+
+.email-submit-block{
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+
+.feedback-form button {
+    align-self: center;
+    padding: 10px 20px;
+    background-color: #c20554;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 15px;
+    transition: background-color ease-out 0.3s;
+}
+
+.feedback-form button:hover {
+    background-color: #eb50af;
+}
+
+.feedback-form .email-submit-button{
+    align-self: flex-start;
+    background-color: #8f3359;
+    padding: 7px 15px;
+    margin: auto 0;
+}
+
+.feedback-form .email-submit-button:hover{
+    background-color: #b14b70;
+}
+
+.email-submit-block input{
+    margin: auto 0 ;
+    align-self: center;
+    width: 30%;
+}
+
+
+/* Подсветка ошибки */
+.email-submit-button.error,
+.verification-input.error {
+    border: 2px solid #ff5555;
+    box-shadow: 0 0 6px rgba(255, 85, 85, 0.6);
+    background-color: #a0364e;
+}
+
+.email-submit-button.disappear{
+    display: none;
+    pointer-events: none;
+}
+
+.verification-input {
+    padding: 8px 12px;
+    font-size: 16px;
+    border-radius: 4px;
+    background-color: rgba(30, 30, 30, 0.349);
+    color: white;
+    border: 1px solid #55555596;
+    box-sizing: border-box;
+    flex: 1;
+    min-width: 100px;
+}
+
+/* Состояние кнопки "Отправить заявку" при блокировке */
+.feedback-form .submit-button.disabled {
+    background-color: #777;
+    cursor: not-allowed;
+}
+
+.feedback-form .submit-button.disabled:hover {
+    background-color: #777;
+}
+
