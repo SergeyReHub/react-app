@@ -5,7 +5,8 @@ function FeedBackPage() {
     const [isCodeSent, setIsCodeSent] = useState(false);
     const [isEmailConfirmed, setIsEmailConfirmed] = useState(false);
     const [userCode, setUserCode] = useState('');
-    const [emailError, setEmailError] = useState(false); // для подсветки
+    const [emailError, setEmailError] = useState(false);
+    const [codeError, setCodeError] = useState(false); // для подсветки
     const [disappearCodeSent, setDisappearCodeSent] = useState(false);
 
     // Для демо: сгенерируем простой код — можно заменить на серверный
@@ -22,13 +23,17 @@ function FeedBackPage() {
         // Здесь можно вызвать API: /api/send-verification-code
         const email = emailInputRef.current?.value;
         if (!email || !/\S+@\S+\.\S+/.test(email)) {
+            setEmailError(true);
             alert("Пожалуйста, введите корректный email.");
             return;
+        }
+        else {
+            setEmailError(false);
         }
 
         console.log(`Отправляем код на ${email}. Код: ${verificationCode}`); // для демо
         setIsCodeSent(true);
-        setEmailError(false);
+        setCodeError(false);
 
         // Фокус на поле ввода кода
         setTimeout(() => codeInputRef.current?.focus(), 0);
@@ -39,10 +44,10 @@ function FeedBackPage() {
             setIsEmailConfirmed(true);
             setIsCodeSent(false);
             setUserCode('');
-            setEmailError(false);
+            setCodeError(false);
             setDisappearCodeSent(true);
         } else {
-            setEmailError(true);
+            setCodeError(true);
             alert("Неверный код подтверждения.");
         }
     };
@@ -51,7 +56,7 @@ function FeedBackPage() {
         e.preventDefault();
 
         if (!isEmailConfirmed) {
-            setEmailError(true);
+            setCodeError(true);
             // Прокрутим и сфокусируемся на email-блоке
             emailInputRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
             emailInputRef.current?.focus();
@@ -92,16 +97,22 @@ function FeedBackPage() {
                         Ваш email:
                         <input
                             ref={emailInputRef}
-                            className="email-input"
+                            className={`email-input ${emailError ? 'error' : ''}`}
                             type="email"
                             name="email"
-                            required
+                            // Убираем `required` — валидация будет ручной
+                            onChange={(e) => {
+                                const value = e.target.value;
+                                // Проверка: если поле не пустое и не соответствует формату — ошибка
+                                const isValid = /\S+@\S+\.\S+/.test(value);
+                                setEmailError(value !== '' && !isValid);
+                            }}
                         />
                         <div className="email-submit-block">
                             {!isCodeSent ? (
                                 <button
                                     type="button"
-                                    className={`email-submit-button ${disappearCodeSent ? 'disappear' : ''} ${emailError ? 'error' : ''}`}
+                                    className={`email-submit-button ${disappearCodeSent ? 'disappear' : ''} ${codeError ? 'error' : ''}`}
                                     onClick={handleSendCode}
                                     title="Нажмите чтобы отправить код подтверждения на email"
                                 >
@@ -118,12 +129,12 @@ function FeedBackPage() {
                                         value={userCode}
                                         onChange={(e) => setUserCode(e.target.value)}
                                         placeholder="Код из письма"
-                                        className={`verification-input ${emailError ? 'error' : ''}`}
+                                        className={`verification-input ${codeError ? 'error' : ''}`}
                                         required
                                     />
                                     <button
                                         type="button"
-                                        className={`email-submit-button ${emailError ? 'error' : ''}`}
+                                        className={`email-submit-button ${codeError ? 'error' : ''}`}
                                         onClick={handleConfirmCode}
                                         title="Подтвердите код из письма"
                                     >

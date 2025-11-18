@@ -148,6 +148,12 @@
     background-color: #b14b70;
 }
 
+.email-input.error{
+    border: 2px solid #ff5555;
+    box-shadow: 0 0 6px rgba(255, 85, 85, 0.6);
+    background-color: #a0364e;
+}
+
 .email-submit-block input{
     margin: auto 0 ;
     align-self: center;
