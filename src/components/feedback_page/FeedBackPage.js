@@ -1,41 +1,43 @@
 import React, { useState, useRef } from 'react';
-import "./feedback_page.css"
+import "./feedback_page.css";
 
 function FeedBackPage() {
     const [isCodeSent, setIsCodeSent] = useState(false);
     const [isEmailConfirmed, setIsEmailConfirmed] = useState(false);
     const [userCode, setUserCode] = useState('');
+    const [nameValue, setNameValue] = useState('');
     const [emailError, setEmailError] = useState(false);
-    const [codeError, setCodeError] = useState(false); // для подсветки
+    const [codeError, setCodeError] = useState(false);
+    const [nameError, setNameError] = useState(false);
     const [disappearCodeSent, setDisappearCodeSent] = useState(false);
 
-    // Для демо: сгенерируем простой код — можно заменить на серверный
+    // Для телефона
+    const [rawPhoneDigits, setRawPhoneDigits] = useState(''); // только цифры (до 10)
+    const [phoneError, setPhoneError] = useState(false);
+
+    // Для демо: код
     const [verificationCode] = useState(Math.floor(100000 + Math.random() * 900000).toString());
 
     const emailInputRef = useRef(null);
     const codeInputRef = useRef(null);
+    const phoneInputRef = useRef(null);
 
     const handleClick = () => {
         window.location.href = '/';
     };
 
     const handleSendCode = () => {
-        // Здесь можно вызвать API: /api/send-verification-code
         const email = emailInputRef.current?.value;
         if (!email || !/\S+@\S+\.\S+/.test(email)) {
             setEmailError(true);
             alert("Пожалуйста, введите корректный email.");
             return;
         }
-        else {
-            setEmailError(false);
-        }
+        setEmailError(false);
 
-        console.log(`Отправляем код на ${email}. Код: ${verificationCode}`); // для демо
+        console.log(`Отправляем код на ${email}. Код: ${verificationCode}`);
         setIsCodeSent(true);
         setCodeError(false);
-
-        // Фокус на поле ввода кода
         setTimeout(() => codeInputRef.current?.focus(), 0);
     };
 
@@ -52,27 +54,112 @@ function FeedBackPage() {
         }
     };
 
+    // Форматирование телефона: "+7 (XXX) XXX-XX-XX"
+    // Чистая функция форматирования: НИКАКИХ setState!
+    const formatPhone = (digits) => {
+        const cleaned = digits.replace(/\D/g, '').slice(0, 10);
+        if (cleaned.length === 0) return '+7';
+
+        let formatted = '+7';
+        if (cleaned.length >= 1) formatted += ` (${cleaned.slice(0, 3)}`;
+        if (cleaned.length > 3) formatted += `) ${cleaned.slice(3, 6)}`;
+        if (cleaned.length > 6) formatted += `-${cleaned.slice(6, 8)}`;
+        if (cleaned.length > 8) formatted += `-${cleaned.slice(8, 10)}`;
+
+        return formatted;
+    };
+    const handlePhoneChange = (e) => {
+        // Получаем введённый текст
+        let input = e.target.value;
+
+        // Удаляем всё, кроме цифр (включая +7, если вдруг ввели)
+        let digitsOnly = input.replace(/\D/g, '');
+
+        // Если в начале был +7 — уберём его (мы сами добавим)
+        if (digitsOnly.startsWith('7')) {
+            digitsOnly = digitsOnly.slice(1);
+        } else if (digitsOnly.startsWith('8')) {
+            digitsOnly = digitsOnly.slice(1);
+        }
+        // Оставляем максимум 10 цифр
+        digitsOnly = digitsOnly.slice(0, 10);
+
+        // Обновляем состояние — только здесь!
+        setRawPhoneDigits(digitsOnly);
+
+        // Форматируем и устанавливаем значение в input
+        const formatted = formatPhone(digitsOnly);
+        e.target.value = formatted;
+
+        // Валидация
+        const isValid = digitsOnly.length === 10;
+        setPhoneError(!isValid);
+    };
+
+    const handlePhoneKeyDown = (e) => {
+        // Запрещаем ввод букв и спецсимволов, кроме Backspace/Delete
+        if (e.key.length === 1 && /\D/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Delete') {
+            e.preventDefault();
+        }
+    };
+
+    const handlePhonePaste = (e) => {
+        e.preventDefault();
+        const pasted = e.clipboardData.getData('text');
+        const digits = pasted.replace(/\D/g, '').slice(0, 10);
+        const formatted = formatPhone(digits);
+        e.target.value = formatted;
+    };
+
+    // Фокус — вставляем курсор в конец
+    const handlePhoneFocus = (e) => {
+        // Убедимся, что значение актуально
+        e.target.value = formatPhone(rawPhoneDigits);
+        // Переместим каретку в конец
+        setTimeout(() => {
+            const len = e.target.value.length;
+            e.target.setSelectionRange(len, len);
+        }, 0);
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
 
+        // Валидация имени
+        const name = e.target.name.value.trim();
+        if (name === '') {
+            setNameError(true);
+            e.target.name.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            e.target.name.focus();
+            return;
+        }
+
+        // Валидация email
         if (!isEmailConfirmed) {
             setCodeError(true);
-            // Прокрутим и сфокусируемся на email-блоке
             emailInputRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
             emailInputRef.current?.focus();
             return;
         }
 
-        // Здесь — отправка формы на сервер
+        // Валидация телефона
+        if (rawPhoneDigits.length !== 10) {
+            setPhoneError(true);
+            phoneInputRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            phoneInputRef.current?.focus();
+            alert("Пожалуйста, введите корректный номер телефона.");
+            return;
+        }
+
         const formData = new FormData(e.target);
         const data = {
             name: formData.get('name'),
             email: formData.get('email'),
+            phone: `+7${rawPhoneDigits}`, // сохраняем как +7XXXXXXXXXX
             projectDescription: formData.get('projectDescription')
         };
         console.log('Форма отправлена:', data);
         alert("Заявка успешно отправлена!");
-        // Можно сделать redirect или очистку формы
     };
 
     return (
@@ -90,7 +177,22 @@ function FeedBackPage() {
                 <form className='feedback-form' onSubmit={handleSubmit}>
                     <label>
                         Ваше имя:
-                        <input className="name-input" type="text" name="name" required />
+                        <input className={`name-input ${nameError ? 'error' : ''}`}
+                            type="text"
+                            name="name"
+                            value={nameValue}
+                            onChange={(e) => {
+                                const val = e.target.value;
+                                setNameValue(val);
+                                if (val.trim().length >= 2) {
+                                    setNameError(false); // сбрасываем ошибку при вводе
+                                }
+                            }}
+                            onBlur={(e) => {
+                                const val = e.target.value.trim();
+                                setNameError(val.length < 2);
+                            }}
+                            required />
                     </label>
 
                     <label>
@@ -100,10 +202,8 @@ function FeedBackPage() {
                             className={`email-input ${emailError ? 'error' : ''}`}
                             type="email"
                             name="email"
-                            // Убираем `required` — валидация будет ручной
                             onChange={(e) => {
                                 const value = e.target.value;
-                                // Проверка: если поле не пустое и не соответствует формату — ошибка
                                 const isValid = /\S+@\S+\.\S+/.test(value);
                                 setEmailError(value !== '' && !isValid);
                             }}
@@ -145,11 +245,24 @@ function FeedBackPage() {
                         </div>
                     </label>
 
-                    <label>
+                    {/* Телефон */}
+                    <label htmlFor="phone">
                         Ваш номер телефона:
-                        <input className="phone-input" type="text" name="phone"
+                        <input
+                            ref={phoneInputRef}
+                            id="phone"
+                            name="phone"
+                            type="tel"
+                            className={`phone-input ${phoneError ? 'error' : ''}`}
+                            onChange={handlePhoneChange}
+                            value={formatPhone(rawPhoneDigits)}
+                            onKeyDown={handlePhoneKeyDown}
+                            onPaste={handlePhonePaste}
+                            onFocus={handlePhoneFocus}
+                            autoComplete="tel"
                             inputMode="numeric"
-                            pattern="[0-9]*" required />
+                            placeholder="+7 (___) ___-__-__"
+                        />
                     </label>
 
                     <label className='desc-label'>
@@ -175,6 +288,4 @@ function FeedBackPage() {
     );
 }
 
-
 export default FeedBackPage;
-

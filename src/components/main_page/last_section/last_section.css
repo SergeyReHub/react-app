@@ -77,14 +77,13 @@
     align-items: center;
 }
 
-
-
 .messagers-icons-block {
     flex: 0.2;
     display: flex;
     flex-direction: column;
     align-items: center;
     color: white;
+    padding: 0 80px
 }
 
 .three-messager-icons {
@@ -92,9 +91,14 @@
     grid-template-columns: auto auto;
     grid-template-rows: auto auto;
     grid-auto-flow: row;
-    gap: 8px;
+    row-gap: 15px;
+    /* вертикальный отступ (между строками) */
+    column-gap: 0px;
     margin-top: 30px;
     width: 100%;
+    background-color: transparent;
+    box-shadow: 0 0 0 0 transparent;
+    transition: background-color 2s ease, box-shadow 2s ease;
 }
 
 .three-messager-icons img {
@@ -103,17 +107,40 @@
     height: 3vw;
     cursor: pointer;
 }
-.three-messager-icons .icon{
+
+.three-messager-icons svg {
+    grid-column: span 1;
+    width: 3vw;
+    height: 3vw;
+    cursor: pointer;
+}
+
+.st0 {
+    fill: #97CF26;
+}
+
+.st1 {
+    fill: #A169F7;
+}
+
+.st2 {
+    fill: #FF6163;
+}
+
+.st3 {
+    fill: #00AAFF;
+}
+
+.three-messager-icons .icon {
     display: flex;
     align-items: center;
     justify-content: center;
     grid-column: span 1;
 }
-.three-messager-icons .top-icon #whatsapp{
-    margin-left: 15px;
-}
-.three-messager-icons .bottom-icon{
-    grid-column: span 2;
+
+
+.three-messager-icons .bottom-icon {
+    grid-column: span 1;
 
 }
 
@@ -152,6 +179,11 @@
     transition: all 0.5s ease-out;
 }
 
+.clicks-block .lighted-like-important{
+    color: rgb(226, 36, 36);
+    font-weight: 900;
+}
+
 .one-click-block p:hover {
     cursor: pointer;
     color: rgb(209, 208, 208);
@@ -171,4 +203,113 @@
     color: gray;
     padding-top: 15px;
     margin-left: 20px;
+}
+
+
+
+
+
+/* Всплывающая карточка адреса */
+.address-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    /* попап сверху */
+    padding-top: 80px;
+    opacity: 1;
+    pointer-events: auto;
+    transition: opacity 0.3s ease;
+}
+
+.address-popup-content {
+    background: #1a1a1a;
+    color: white;
+    border-radius: 12px;
+    padding: 20px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+    position: relative;
+    transform: translateY(-20px);
+    transition: transform 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+    border: 1px solid #333;
+}
+
+.address-popup.visible .address-popup-content {
+    transform: translateY(0);
+}
+
+/* Стрелка/хвостик (опционально) */
+.address-popup-content::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 10px solid #1a1a1a;
+}
+
+/* Кнопка закрытия */
+.address-popup-close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: #333;
+    color: white;
+    border: none;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+
+.address-popup-close:hover {
+    background: #fd4545;
+}
+
+/* Кнопка "Открыть в картах" */
+.address-popup-button {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    margin-top: 16px;
+    background: #631a83;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.address-popup-button:hover {
+    background: #8a2bae;
+}
+
+/* Адаптив: на узких экранах */
+@media (max-width: 600px) {
+    .address-popup {
+        padding-top: 60px;
+    }
+
+    .address-popup-content {
+        width: 95%;
+        padding: 16px;
+    }
 }

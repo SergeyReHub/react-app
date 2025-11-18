@@ -168,6 +168,17 @@
     box-shadow: 0 0 6px rgba(255, 85, 85, 0.6);
     background-color: #a0364e;
 }
+.phone-input.error {
+    border: 2px solid #ff5555;
+    box-shadow: 0 0 6px rgba(255, 85, 85, 0.6);
+    background-color: #a0364e;
+}
+.name-input.error {
+    border: 2px solid #ff5555;
+    box-shadow: 0 0 6px rgba(255, 85, 85, 0.6);
+    background-color: #a0364e;
+}
+
 
 .email-submit-button.disappear{
     display: none;

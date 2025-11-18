@@ -21,7 +21,7 @@
     font-size: 1.2rem;
     margin-bottom: 3vh;
 }
-.contact_section .contact_us {
+.contact_section .contact_us  {
     background-color: #631a83;
     color: #FFFFFF;
     border: none;
@@ -32,7 +32,7 @@
     cursor: pointer;
     width: 15vw;
     height: 4vw;
-    transition: background-color 0.7s ease, color 0.8s ease;
+    transition: background-color 0.7s ease, color 0.8s ease, box-shadow 3s ease;
 
 }
 .contact_section .contact_us:hover {

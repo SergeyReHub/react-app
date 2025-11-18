@@ -1,3 +1,55 @@
 body {
   font-family: 'Inter', sans-serif;
 }
+
+
+
+
+
+/* Эффект пульсации для выделения кнопок */
+/* Анимация подсветки: пульсация + тень */
+.pulse-highlight {
+  animation: pulseGlow 1.5s ease-in-out infinite;
+  position: relative;
+}
+
+@keyframes pulseGlow {
+  0% {
+    box-shadow: 0 0 0 0 rgba(189, 56, 89, 0.4);
+    transform: scale(1);
+  }
+
+  50% {
+    box-shadow: 0 0 0 30px rgba(253, 69, 69, 0);
+    transform: scale(1.03);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(253, 69, 69, 0);
+    transform: scale(1);
+  }
+}
+
+/* Если кнопка внутри Link — убедимся, что анимация применяется */
+.pulse-highlight,
+.pulse-highlight * {
+  transition: box-shadow 1s, transform 0.7s;
+}
+
+
+/* Эффект подсвечивания кнопки "Связаться с нами" */
+.underline-highlight {
+  position: relative;
+  box-shadow:
+    0 0 0 3px #b432ff,
+    0 0 40px 40px rgba(247, 132, 222, 0.4);
+
+}
+
+.for-imgs {
+  position: relative;
+  background-color: rgba(247, 132, 222, 0.4);
+  box-shadow:
+    0 0 40px 40px rgba(247, 132, 222, 0.4);
+}
+

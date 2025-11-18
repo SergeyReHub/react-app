@@ -3,7 +3,13 @@ import React from "react";
 import "./MainSection.css"
 import { Link } from 'react-router-dom';
 
-export default function MainSection() {
+export default function MainSection({ navigate, examplesButtonRef, view360ButtonRef }) {
+    const moveToJustView = () => {
+        navigate('/just_view');
+    }
+    const moveTo360View = () => {
+        navigate('/360view');
+    }
     return (
         <section
             aria-label="Main hero"
@@ -20,6 +26,8 @@ export default function MainSection() {
                 <div className="buttonsContainer">
                     <Link to="/just_view"> {/* Изменил на /works */}
                         <button
+                            onClick={moveToJustView}
+                            ref={examplesButtonRef}
                             style={{ backgroundColor: 'white', color: 'black' }}
                             type="button"
                             className="button"
@@ -29,6 +37,8 @@ export default function MainSection() {
                     </Link>
                     <Link to="/360view"> {/* Добавил отдельный маршрут */}
                         <button
+                            onClick={moveTo360View}
+                            ref={view360ButtonRef}
                             style={{ backgroundColor: 'rgb(25, 25, 25)', color: 'white' }}
                             type="button"
                             className="button"

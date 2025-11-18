@@ -1,15 +1,19 @@
 import * as React from 'react';
 import "./contact_section.css";
-import { Link } from 'react-router-dom';
 
 
-export default function ContactSection() {
-
+export default function ContactSection({ navigate, contactButtonRef }) {
+    const moveTeFeedBack = () => {
+        navigate('/feedback');
+    }
     return (
-        <Link to='/feedback' className='contact_section'>
+        <div className='contact_section'>
             <h1>Готовы создать арт-объект вашей мечты?</h1>
             <p>Поговорим о вашем будущем проекте — минимализм и индустриальный шик в каждом элементе.</p>
-            <button className='contact_us'>Обсудить проект</button>
-        </Link>
+            <button
+                ref={contactButtonRef}
+                onClick={moveTeFeedBack}
+                className='contact_us'>Обсудить проект</button>
+        </div>
     );
 }
