@@ -5,6 +5,8 @@ import View_360_Page from './components/360_view_page/View_360_page'
 import View_360_Project_Page from './components/project_page_360/ProjectPage';
 import JustViewPage from './components/just_view_page/JustViewPage';
 import FeedBackPage from './components/feedback_page/FeedBackPage';
+import PricesAndConditions from './components/prices_page/PricesPage';
+import FaqPage from './components/faq_page/FaqPage';
 
 function App() {
   return (
@@ -15,6 +17,8 @@ function App() {
         <Route path="/360view/:id" element={<View_360_Project_Page />} />
         <Route path="/just_view" element={<JustViewPage />} />
         <Route path="/feedback" element={<FeedBackPage/>}/>
+        <Route path="/prices_and_conditions" element={<PricesAndConditions/>}/>
+        <Route path="/faq" element={<FaqPage/>}/>
       </Routes>
     </Router>
   );

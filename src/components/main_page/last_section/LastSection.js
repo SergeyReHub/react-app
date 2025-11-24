@@ -13,8 +13,16 @@ export default function LastSection({ navigate,
     const addressPopupRef = useRef(null);
     const imgsContainerRef = useRef(null);
 
+    const navigateToPrices = () => {
+        navigate('/prices_and_conditions');
+    };
+
     const moveToAboutUsPage = () => {
         navigate('/about_us');
+    };
+
+     const moveToFaq = () => {
+        navigate('/faq');
     };
 
     const moveToExamples = () => {
@@ -119,6 +127,38 @@ export default function LastSection({ navigate,
             document.removeEventListener('keydown', handleEscape);
         };
     }, [isAddressVisible]);
+
+    // Opens Telegram chat/channel in a new tab.
+    // Replace `YourTelegramUsername` with your actual t.me username (without @).
+    const telegramHandler = () => {
+        const url = 'https://t.me/+79774517692';
+        window.open(url, '_blank', 'noopener,noreferrer');
+    };
+
+    // Opens WhatsApp chat. Replace phone number with full international number (no +, e.g. 79991234567).
+    // You can include a prefilled message using the `text` param.
+    const whatsappHandler = () => {
+        const phone = '79774517692'; // <-- replace with your number
+        const text = encodeURIComponent('Здравствуйте! Хочу узнать подробности.');
+        const url = `https://wa.me/${phone}?text=${text}`;
+        window.open(url, '_blank', 'noopener,noreferrer');
+    };
+
+    // Opens user's mail client with a prefilled email. Replace address/subject/body as needed.
+    const mailHandler = () => {
+        const address = 'info@example.com'; // <-- replace with real email
+        const subject = encodeURIComponent('Вопрос с сайта');
+        const body = encodeURIComponent('Здравствуйте,%0D%0AХотел бы узнать...');
+        const mailto = `mailto:${address}?subject=${subject}&body=${body}`;
+        // Using window.location to invoke mail client.
+        window.location.href = mailto;
+    };
+
+    // Opens Avito (or a listing/company page) in a new tab. Replace with the actual Avito URL.
+    const avitoHandler = () => {
+        const url = 'https://www.avito.ru/moskva/predlozheniya_uslug/skala_v_interere_aktsentnaya_stena_artbeton_3431330522'; // <-- replace with real Avito URL
+        window.open(url, '_blank', 'noopener,noreferrer');
+    };
     return (
         <section className="lastSection-container">
             <div className="lastSection-main">
@@ -139,16 +179,24 @@ export default function LastSection({ navigate,
                 <div className="messagers-icons-block">
                     <div ref={imgsContainerRef} className="three-messager-icons">
                         <span className="icon">
-                            <img src="/assets/icons8-telegram.svg" alt="telegram" />
+                            <img
+                                onClick={telegramHandler}
+                                src="/assets/icons8-telegram.svg" alt="telegram" />
                         </span>
                         <span className="icon top-icon">
-                            <img id="whatsapp" src="/assets/whatsapp-logo-4463.svg" alt="whatsapp" />
+                            <img
+                                onClick={whatsappHandler}
+                                id="whatsapp" src="/assets/whatsapp-logo-4463.svg" alt="whatsapp" />
                         </span>
                         <span className="icon bottom-icon">
-                            <img src="/assets/mail_ru_logo_icon_147267.svg" alt="mail" />
+                            <img
+                                onClick={mailHandler}
+                                src="/assets/mail_ru_logo_icon_147267.svg" alt="mail" />
                         </span>
                         <span className="icon bottom-icon">
-                            <svg x="0px" y="0px"
+                            <svg
+                                onClick={avitoHandler}
+                                x="0px" y="0px"
                                 viewBox="0 0 600 600" >
                                 <g>
                                     <g>
@@ -167,7 +215,9 @@ export default function LastSection({ navigate,
                         <h3>Компания</h3>
                         <p onClick={moveToAboutUsPage}>
                             О нас</p>
-                        <p className="lighted-like-important">
+                        <p
+                            onClick={navigateToPrices}
+                            className="lighted-like-important">
                             Цены и условия</p>
                         <p onClick={moveToExamples}>Примеры работ</p>
                     </div>
@@ -187,7 +237,7 @@ export default function LastSection({ navigate,
                         <p onClick={showReviewsDialog}>Отзывы</p>
                         <p onClick={moveToAboutUsPage}>Поддержка</p>
 
-                        <p>FAQ</p>
+                        <p onClick={moveToFaq}>Вопросы и ответы</p>
                     </div>
                 </div>
                 {isAddressVisible && (

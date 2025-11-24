@@ -161,6 +161,7 @@ function FeedBackPage() {
         console.log('Форма отправлена:', data);
         alert("Заявка успешно отправлена!");
     };
+    
 
     return (
         <div className='feedback-container'>
