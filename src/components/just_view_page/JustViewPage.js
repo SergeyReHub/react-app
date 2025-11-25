@@ -1,150 +1,167 @@
+// src/components/just_view_page/JustViewPage.js
 import React, { useEffect, useState, useCallback } from "react";
-import "./just_view_page.css";
 import { useNavigate } from 'react-router-dom';
+
+// ✅ CSS Modules
+import styles from './just_view_page.module.css';
+
+// ✅ Child components (должны тоже использовать свои модули)
 import ProjectSection from "./projects_section/ProjectSection";
 import LightBox from "./light_box/LightBox";
-// Fallback data to use if fetching fails
+
+// Fallback data
 const FALLBACK_PROJECTS = [
-    {
-        id: "demo",
-        name: "Sample Project",
-        photos: [
-            {
-                id: "ph1",
-                url: "images/panoramnie-kartinki-4.jpg",
-                caption: "This is a demo image. Data failed to load.",
-            },
-            {
-                id: "ph2",
-                url: "images/example.jpeg",
-                caption: "Check your network or API endpoint.",
-            },
-        ],
-    },
-    {
-        id: "demo",
-        name: "Sample Project",
-        photos: [
-            {
-                id: "ph1",
-                url: "images/panoramnie-kartinki-4.jpg",
-                caption: "This is a demo image. Data failed to load.",
-            },
-            {
-                id: "ph2",
-                url: "images/example.jpeg",
-                caption: "Check your network or API endpoint.",
-            },
-        ],
-    },
+  {
+    id: "demo-1",
+    name: "Sample Project",
+    photos: [
+      {
+        id: "ph1",
+        url: "images/panoramnie-kartinki-4.jpg",
+        caption: "This is a demo image. Data failed to load.",
+      },
+      {
+        id: "ph2",
+        url: "images/example.jpeg",
+        caption: "Check your network or API endpoint.",
+      },
+    ],
+  },
+  {
+    id: "demo-2",
+    name: "Another Project",
+    photos: [
+      {
+        id: "ph3",
+        url: "images/panoramnie-kartinki-4.jpg",
+        caption: "Fallback image 3.",
+      },
+      {
+        id: "ph4",
+        url: "images/example.jpeg",
+        caption: "Fallback image 4.",
+      },
+    ],
+  },
 ];
 
 export default function JustViewPage({ apiUrl = "/api/projects/photos" }) {
-    const [projects, setProjects] = useState([]); // normalized: [{ id, name, photos: [...] }]
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const [lightbox, setLightbox] = useState({ open: false, projectIndex: 0, photoIndex: 0 });
-    const navigate = useNavigate();
+  const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [lightbox, setLightbox] = useState({ open: false, projectIndex: 0, photoIndex: 0 });
 
-    const fetchData = useCallback(async () => {
-        setLoading(true);
-        setError(null);
-        const controller = new AbortController();
-        try {
-            const res = await fetch(apiUrl, { signal: controller.signal });
-            if (!res.ok) throw new Error(`HTTP ${res.status}: ${res.statusText}`);
-            const data = await res.json();
+  const navigate = useNavigate();
 
-            let normalized = [];
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    const controller = new AbortController();
+    try {
+      const res = await fetch(apiUrl, { signal: controller.signal });
+      if (!res.ok) throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+      
+      // 🛡 Защита от SmartCaptcha (HTML вместо JSON)
+      const contentType = (res.headers.get('content-type') || '').toLowerCase();
+      if (!contentType.includes('application/json')) {
+        throw new Error('Response is not JSON (possibly SmartCaptcha)');
+      }
 
-            if (Array.isArray(data) && data.length > 0) {
-                if (data[0].photos) {
-                    // grouped by project
-                    normalized = data.map((p) => ({
-                        id: p.id,
-                        name: p.name,
-                        photos: Array.isArray(p.photos)
-                            ? p.photos.map((ph) => ({
-                                id: ph.id,
-                                url: ph.url,
-                                caption: ph.caption,
-                            }))
-                            : [],
-                    }));
-                } else {
-                    // flat array
-                    const map = new Map();
-                    data.forEach((ph) => {
-                        const pid = ph.id;
-                        const pname = ph.name;
-                        map.get(pid).photos.push({
-                            id: ph.id,
-                            url: ph.url,
-                            caption: ph.caption,
-                        });
-                    });
-                    normalized = Array.from(map.values());
-                }
+      const data = await res.json();
+
+      let normalized = [];
+      if (Array.isArray(data) && data.length > 0) {
+        if (data[0].photos) {
+          // grouped by project
+          normalized = data.map((p) => ({
+            id: p.id ?? p.name,
+            name: p.name ?? 'Untitled',
+            photos: Array.isArray(p.photos)
+              ? p.photos.map((ph) => ({
+                  id: ph.id ?? ph.url,
+                  url: ph.url,
+                  caption: ph.caption ?? '',
+                }))
+              : [],
+          }));
+        } else {
+          // flat array → group by projectId
+          const map = new Map();
+          data.forEach((ph) => {
+            const pid = ph.projectId ?? ph.id ?? 'unknown';
+            const pname = ph.projectName ?? `Project ${pid}`;
+            if (!map.has(pid)) {
+              map.set(pid, { id: pid, name: pname, photos: [] });
             }
-
-            setProjects(normalized);
-        } catch (err) {
-            if (err.name !== "AbortError") {
-                setError(err.message || "Failed to fetch project photos");
-                // ✅ fallback on error
-                setProjects(FALLBACK_PROJECTS);
-            }
-        } finally {
-            setLoading(false);
+            map.get(pid).photos.push({
+              id: ph.id ?? ph.url,
+              url: ph.url,
+              caption: ph.caption ?? '',
+            });
+          });
+          normalized = Array.from(map.values());
         }
-        return () => controller.abort();
-    }, [apiUrl]);
+      }
 
-    useEffect(() => {
-        const cleanup = fetchData();
-        return () => {
-            if (typeof cleanup === "function") cleanup();
-        };
-    }, [fetchData]);
-
-   
-
-    
-    
-
-    const handleClick = () => {
-        navigate('/');
+      setProjects(normalized);
+    } catch (err) {
+      if (err.name !== "AbortError") {
+        console.warn('Using fallback data:', err.message);
+        setError(err.message || "Failed to fetch");
+        setProjects(FALLBACK_PROJECTS);
+      }
+    } finally {
+      setLoading(false);
     }
 
-    return (
-        <div className="just-view-page">
-            <div className="header">
-                <span className="brand"
-                    onClick={handleClick}>
-                    <span style={{ color: 'rgba(253, 69, 69, 0.58)' }}>M</span>
-                    <span style={{ color: 'rgba(253, 253, 253, 1)' }}>.</span>
-                    <span style={{ color: 'rgba(200, 200, 200, 1)' }}>GROUP</span>
-                </span>
-                <h2>Проекты с фото-списком</h2>
-            </div>
+    return () => controller.abort();
+  }, [apiUrl]);
 
-            {loading && <div className="just-view-page__loader">Loading photos…</div>}
+  useEffect(() => {
+    const cleanup = fetchData();
+    return () => {
+      if (typeof cleanup === "function") cleanup();
+    };
+  }, [fetchData]);
 
+  const handleClick = () => {
+    navigate('/');
+  };
 
-            {!loading && !error && projects.length === 0 && (
-                <div className="just-view-page__loader">No photos found</div>
-            )}
+  return (
+    <div className={styles.page}>
+      <div className={styles.header}>
+        <span className={styles.brand} onClick={handleClick}>
+          <span style={{ color: 'rgba(253, 69, 69, 0.58)' }}>M</span>
+          <span style={{ color: 'rgba(253, 253, 253, 1)' }}>.</span>
+          <span style={{ color: 'rgba(200, 200, 200, 1)' }}>GROUP</span>
+        </span>
+        <h2 className={styles.title}>Проекты с фото-списком</h2>
+      </div>
 
-            <ProjectSection  projects={projects} 
-            set_light_box = {setLightbox}/>
+      {loading && <div className={styles.loader}>Loading photos…</div>}
+      {!loading && !error && projects.length === 0 && (
+        <div className={styles.loader}>No photos found</div>
+      )}
 
-            {lightbox.open && projects[lightbox.projectIndex] && (
-                <LightBox projects={projects}
-                set_lightbox={setLightbox}
-                lightbox={lightbox}
-                />
-            )}
-            {error && <div className="just-view-page__error">⚠️ {error}</div>}
-        </div>
-    );
+      <ProjectSection projects={projects} set_light_box={setLightbox} />
+
+      {lightbox.open && projects[lightbox.projectIndex] && (
+        <LightBox
+          projects={projects}
+          set_lightbox={setLightbox}
+          lightbox={lightbox}
+          // Передаём классы, если LightBox не на модулях (временно)
+          classNameOverrides={{
+            img: styles.lightboxImg,
+            navBtn: styles.navBtn,
+            navPrev: styles.navPrev,
+            navNext: styles.navNext,
+          }}
+        />
+      )}
+
+      {error && <div className={styles.error}>⚠️ {error}</div>}
+    </div>
+  );
 }

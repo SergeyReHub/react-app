@@ -86,7 +86,7 @@ export default function FaqPage() {
 
   // === Загрузка порции вопросов (page ≥ 1) ===
   const loadFaqs = async (pageNum) => {
-    if (!hasMore || loading) return;
+    if (!hasMore || !loading) return;
 
     setLoading(true);
     try {
@@ -141,6 +141,11 @@ export default function FaqPage() {
   // === Первая загрузка ===
   useEffect(() => {
     loadFaqs(1);
+  }, []);
+
+  useEffect(() => {
+    // Скроллим наверх при монтировании
+    window.scrollTo(0, 0);
   }, []);
 
   // === Бесконечный скролл (только если API работает) ===

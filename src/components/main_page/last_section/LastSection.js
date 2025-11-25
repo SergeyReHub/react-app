@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
-import "./last_section.css"
+import "./last_section.css";
+import { useLocation } from "react-router-dom";
 
 
 
@@ -12,16 +13,17 @@ export default function LastSection({ navigate,
     const addressTriggerRef = useRef(null);
     const addressPopupRef = useRef(null);
     const imgsContainerRef = useRef(null);
+    const location = useLocation();
 
     const navigateToPrices = () => {
         navigate('/prices_and_conditions');
     };
 
     const moveToAboutUsPage = () => {
-        navigate('/about_us');
+        navigate('/about');
     };
 
-     const moveToFaq = () => {
+    const moveToFaq = () => {
         navigate('/faq');
     };
 
@@ -52,26 +54,61 @@ export default function LastSection({ navigate,
     const underlineContactButtons = () => {
         const button = contactButtonRef?.current;
         if (!button) return;
+
+        // === 1. Прокрутка к зоне контактов ===
+        // Ищем оба ключевых элемента
+        const contactUsButton = document.querySelector('.contact_us');
+        const messagersBlock = document.querySelector('.messagers-icons-block');
+
+        if (contactUsButton && messagersBlock) {
+            // Вычисляем среднюю позицию между ними по вертикали
+            const top1 = contactUsButton.getBoundingClientRect().top + window.scrollY;
+            const top2 = messagersBlock.getBoundingClientRect().top + window.scrollY;
+            const midY = (top1 + top2) / 2 - window.innerHeight / 2 + 100; // центрируем немного выше середины экрана
+
+            // Плавная прокрутка
+            window.scrollTo({
+                top: midY,
+                behavior: 'smooth',
+            });
+
+            // Добавляем небольшую задержку перед анимацией, чтобы прокрутка завершилась
+            setTimeout(() => {
+                triggerAnimation(button);
+            }, 600);
+        } else {
+            // Если элементы не найдены — всё равно запускаем анимацию (например, при SSR или lazy-load)
+            triggerAnimation(button);
+        }
+    };
+
+    // Вспомогательная функция — сама анимация
+    const triggerAnimation = (button) => {
         button.classList.add('underline-highlight');
 
-        const imgsConstainer = imgsContainerRef?.current;
-        imgsConstainer.classList.add('for-imgs');
+        const imgsContainer = imgsContainerRef?.current;
+        if (imgsContainer) {
+            imgsContainer.classList.add('for-imgs');
 
-        const imgs = imgsContainerRef.current?.querySelectorAll('span');
-        imgs.forEach((img, index) => {
-            // Добавляем класс анимации с задержкой
-            setTimeout(() => {
-                img.style.transform = 'scale(1.2)';
-                img.style.transition = 'transform 0.5s ease';
+            const imgs = imgsContainer.querySelectorAll('span');
+            imgs.forEach((img, index) => {
                 setTimeout(() => {
-                    img.style.transform = 'scale(1)';
-                }, 800);
-            }, index * 300);
-        });
-        setTimeout(() => {
-            button.classList.remove('underline-highlight');
-            imgsConstainer.classList.remove('for-imgs');
-        }, 12000);
+                    img.style.transform = 'scale(1.2)';
+                    img.style.transition = 'transform 0.5s ease';
+                    setTimeout(() => {
+                        img.style.transform = 'scale(1)';
+                    }, 800);
+                }, index * 300);
+            });
+
+            // Убираем классы через 12 сек
+            setTimeout(() => {
+                button.classList.remove('underline-highlight');
+                if (imgsContainer) {
+                    imgsContainer.classList.remove('for-imgs');
+                }
+            }, 12000);
+        }
     };
 
     const underlineSocialsButtons = () => {
@@ -103,6 +140,21 @@ export default function LastSection({ navigate,
     const showReviewsDialog = () => {
 
     };
+
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        if (params.get('action') === 'contact') {
+            // 1. Чистим URL, не перезагружая страницу
+            navigate('/', { replace: true });
+
+            // 2. Запускаем анимацию в следующем тике — после полного монтирования
+            const timer = setTimeout(() => {
+                underlineContactButtons();
+            }, 100); // 100 мс достаточно для рендеринга DOM
+
+            return () => clearTimeout(timer);
+        }
+    }, []);
 
     useEffect(() => {
         const handleClickOutside = (e) => {
@@ -236,7 +288,6 @@ export default function LastSection({ navigate,
                         <h3>Полезное</h3>
                         <p onClick={showReviewsDialog}>Отзывы</p>
                         <p onClick={moveToAboutUsPage}>Поддержка</p>
-
                         <p onClick={moveToFaq}>Вопросы и ответы</p>
                     </div>
                 </div>

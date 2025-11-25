@@ -1,11 +1,9 @@
-import React, { useEffect, useState, useCallback } from "react";
-import "./light_box.css";
+// src/components/just_view_page/light_box/LightBox.js
+import React from "react";
 import IosShareIcon from '@mui/icons-material/IosShare';
-
-
+import styles from './light_box.module.css';
 
 export default function LightBox({ set_lightbox, lightbox, projects }) {
-
     const closeLightbox = () => set_lightbox({ open: false, projectIndex: 0, photoIndex: 0 });
 
     const showNext = () => {
@@ -15,10 +13,8 @@ export default function LightBox({ set_lightbox, lightbox, projects }) {
 
         const nextPhotoIndex = photoIndex + 1;
         if (nextPhotoIndex < currentProject.photos.length) {
-            // Есть следующее фото в этом же проекте
             set_lightbox((s) => ({ ...s, photoIndex: nextPhotoIndex }));
         } else {
-            // Перейти к первому фото следующего проекта
             const nextProjectIndex = (projectIndex + 1) % projects.length;
             set_lightbox({
                 open: true,
@@ -35,10 +31,8 @@ export default function LightBox({ set_lightbox, lightbox, projects }) {
 
         const prevPhotoIndex = photoIndex - 1;
         if (prevPhotoIndex >= 0) {
-            // Есть предыдущее фото в этом же проекте
             set_lightbox((s) => ({ ...s, photoIndex: prevPhotoIndex }));
         } else {
-            // Перейти к последнему фото предыдущего проекта
             const prevProjectIndex = (projectIndex - 1 + projects.length) % projects.length;
             const prevProject = projects[prevProjectIndex];
             const lastPhotoIndex = prevProject.photos.length - 1;
@@ -50,109 +44,95 @@ export default function LightBox({ set_lightbox, lightbox, projects }) {
         }
     };
 
-    function onShare() {
-        let { projectIndex, photoIndex } = lightbox;
+    const onShare = () => {
+        const { projectIndex } = lightbox;
         const currentProject = projects[projectIndex];
-        const title = currentProject?.title || '360° тур';
-        const text = currentProject?.description || 'Посмотрите этот интерактивный 360° тур.';
-        const url = window.location.href + '/' + currentProject.id; // или project.shareUrl, если у вас есть отдельная ссылка
+        const title = currentProject?.name || 'M.GROUP — Артбетон';
+        const text = 'Посмотрите этот проект от M.GROUP';
+        const url = `${window.location.origin}/just_view`; // или динамическая ссылка
 
         if (navigator.share) {
-            navigator.share({
-                title,
-                text,
-                url,
-            })
-                .then(() => console.log('Контент успешно отправлен'))
-                .catch((error) => {
-                    if (error.name !== 'AbortError') {
-                        console.warn('Ошибка при шеринге:', error);
-                    }
+            navigator.share({ title, text, url })
+                .catch(err => {
+                    if (err.name !== 'AbortError') console.warn('Share failed:', err);
                 });
         } else {
-            // fallback: копирование ссылки в буфер + уведомление
-            navigator.clipboard
-                .writeText(url)
-                .then(() => {
-                    alert('Ссылка скопирована в буфер обмена!');
-                })
-                .catch((err) => {
-                    console.error('Не удалось скопировать ссылку:', err);
-                    alert('Не удалось скопировать ссылку. Попробуйте вручную.');
-                });
+            navigator.clipboard.writeText(url)
+                .then(() => alert('Ссылка скопирована!'))
+                .catch(() => alert('Не удалось скопировать ссылку.'));
         }
-    }
+    };
+
+    if (!lightbox.open || !projects[lightbox.projectIndex]) return null;
+
+    const currentProject = projects[lightbox.projectIndex];
+    const currentPhoto = currentProject.photos[lightbox.photoIndex];
 
     return (
-        <div className="just-view-page">
-            {lightbox.open && projects[lightbox.projectIndex] && (
-                <div className="just-view-page__lightbox-overlay" onClick={closeLightbox}>
-                    <div className="just-view-page__lightbox-content" onClick={(e) => e.stopPropagation()}>
-                        <IosShareIcon
-                            onClick={onShare}
-                            sx={{
-                                position: 'absolute',
-                                top: '10px',
-                                left: '16px',
-                                fontSize: 60,
-                                cursor: 'pointer',
-                                color: 'rgba(211, 211, 211, 1)',
-                                backgroundColor: 'rgba(92, 92, 92, 0.12)',
-                                borderRadius: '10%',
-                                transition: 'transform 0.3s ease',
-                                '&:hover': {
-                                    transform: 'scale(1.1)',
-                                },
-                                zIndex: 1001,
-                            }}
-                        />
+        <div className={styles.overlay} onClick={closeLightbox}>
+            <div className={styles.content} onClick={(e) => e.stopPropagation()}>
+                {/* Share icon — MUI, но позиционируем через CSS */}
+                <IosShareIcon
+                    onClick={onShare}
+                    sx={{
+                        position: 'absolute',
+                        top: '20px',
+                        left: '24px',
+                        fontSize: 40,
+                        cursor: 'pointer',
+                        color: '#ddd',
+                        backgroundColor: 'rgba(30, 30, 30, 0.6)',
+                        borderRadius: '50%',
+                        padding: '8px',
+                        transition: 'all 0.25s ease',
+                        '&:hover': {
+                            color: '#ffd700',
+                            backgroundColor: 'rgba(177, 91, 255, 0.4)',
+                            transform: 'scale(1.15)',
+                        },
+                        zIndex: 1003,
+                    }}
+                />
+
+                <button className={styles.closeBtn} onClick={closeLightbox} aria-label="Закрыть">
+                    ✕
+                </button>
+
+                <img
+                    src={currentPhoto.url}
+                    alt={currentPhoto.caption || currentProject.name}
+                    className={styles.img}
+                />
+
+                {currentProject.photos.length > 1 && (
+                    <>
                         <button
-                            className="just-view-page__lightbox-close"
-                            onClick={closeLightbox}
-                            aria-label="Close"
+                            className={`${styles.navBtn} ${styles.navPrev}`}
+                            onClick={showPrev}
+                            aria-label="Предыдущее фото"
                         >
-                            ✕
+                            ‹
                         </button>
+                        <button
+                            className={`${styles.navBtn} ${styles.navNext}`}
+                            onClick={showNext}
+                            aria-label="Следующее фото"
+                        >
+                            ›
+                        </button>
+                    </>
+                )}
 
-                        <img
-                            src={projects[lightbox.projectIndex].photos[lightbox.photoIndex].url}
-                            alt={projects[lightbox.projectIndex].photos[lightbox.photoIndex].caption || ""}
-                            className="just-view-page__lightbox-img"
-                        />
-
-                        {projects[lightbox.projectIndex].photos.length > 1 && (
-                            <>
-                                <button
-                                    className="just-view-page__nav-btn just-view-page__nav-prev"
-                                    onClick={showPrev}
-                                    aria-label="Previous"
-                                >
-                                    ‹
-                                </button>
-                                <button
-                                    className="just-view-page__nav-btn just-view-page__nav-next"
-                                    onClick={showNext}
-                                    aria-label="Next"
-                                >
-                                    ›
-                                </button>
-                            </>
-                        )}
-
-                        <div className="just-view-page__lightbox-info">
-                            <div className="just-view-page__lightbox-title">{projects[lightbox.projectIndex].name}</div>
-                            <div className="just-view-page__lightbox-counter">
-                                {lightbox.photoIndex + 1} / {projects[lightbox.projectIndex].photos.length}
-                            </div>
-                            {projects[lightbox.projectIndex].photos[lightbox.photoIndex].caption && (
-                                <div className="just-view-page__lightbox-caption">
-                                    {projects[lightbox.projectIndex].photos[lightbox.photoIndex].caption}
-                                </div>
-                            )}
-                        </div>
+                <div className={styles.info}>
+                    <div className={styles.title}>{currentProject.name}</div>
+                    <div className={styles.counter}>
+                        {lightbox.photoIndex + 1} / {currentProject.photos.length}
                     </div>
+                    {currentPhoto.caption && (
+                        <div className={styles.caption}>{currentPhoto.caption}</div>
+                    )}
                 </div>
-            )}
+            </div>
         </div>
     );
 }

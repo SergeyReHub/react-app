@@ -1,5 +1,5 @@
 // src/components/prices_page/PricesPage.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './prices_page.css';
 
@@ -45,6 +45,11 @@ export default function PricesPage() {
     const navToMain = () => {
         navigate('/');
     };
+
+    useEffect(() => {
+        // Скроллим наверх при монтировании
+        window.scrollTo(0, 0);
+    }, []);
 
     return (
         <div className="prices-full">

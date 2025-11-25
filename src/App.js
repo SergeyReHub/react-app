@@ -7,6 +7,7 @@ import JustViewPage from './components/just_view_page/JustViewPage';
 import FeedBackPage from './components/feedback_page/FeedBackPage';
 import PricesAndConditions from './components/prices_page/PricesPage';
 import FaqPage from './components/faq_page/FaqPage';
+import AboutUs from './components/about_us_page/AboutUs'
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <Route path="/feedback" element={<FeedBackPage/>}/>
         <Route path="/prices_and_conditions" element={<PricesAndConditions/>}/>
         <Route path="/faq" element={<FaqPage/>}/>
+        <Route path='/about' element={<AboutUs/>}/>
       </Routes>
     </Router>
   );

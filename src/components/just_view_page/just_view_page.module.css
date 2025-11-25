@@ -1,0 +1,129 @@
+/* just_view_page.module.css */
+
+.page {
+  width: 100%;
+  height: 100vh;
+  padding: 16px;
+  background-color: black;
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.2)),
+    linear-gradient(to top, transparent 30%, rgba(255, 0, 238, 0.177) 100%),
+    linear-gradient(to right,
+      rgba(224, 138, 138, 0.3) 0%,
+      transparent 40%,
+      transparent 60%,
+      rgba(224, 138, 138, 0.3) 100%
+    );
+  overflow: auto;
+}
+
+.header {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding-bottom: 10px;
+  padding-top: 16px;
+}
+
+.title {
+  font-size: 34px;
+  font-weight: 600;
+  color: #ffffff;
+  text-decoration: underline #4a4a4a34;
+  margin: 0;
+}
+
+.brand {
+  position: absolute;
+  left: 0;
+  margin: 0;
+  font-size: 34px;
+  font-weight: 600;
+  color: #ffffff;
+  cursor: pointer;
+  text-decoration: underline #ffffff34;
+}
+
+.loader,
+.error {
+  text-align: center;
+  padding: 40px 0;
+  font-size: 16px;
+}
+
+.loader {
+  color: #f0f0f0;
+}
+
+.error {
+  color: #d32f2f;
+  background-color: #ffebee;
+  border-radius: 8px;
+  margin: 0 16px;
+}
+
+/* Lightbox-specific styles (kept for LightBox component, but scoped) */
+.lightboxImg {
+  max-width: 95vw;
+  max-height: 80vh;
+  width: auto;
+  height: auto;
+  display: block;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+.navBtn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(30, 30, 30, 0.6);
+  color: #fff;
+  border: none;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+  transition: background 0.2s, transform 0.2s;
+  z-index: 1002;
+  user-select: none;
+}
+
+.navBtn:hover {
+  background: rgba(122, 122, 122, 0.8);
+  transform: translateY(-50%) scale(1.05);
+}
+
+.navPrev {
+  left: clamp(16px, 4vw, 40px);
+}
+
+.navNext {
+  right: clamp(16px, 4vw, 40px);
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  .page {
+    padding: 12px;
+  }
+
+  .lightboxImg {
+    max-height: 65vh;
+  }
+
+  .navBtn {
+    width: 48px;
+    height: 48px;
+    font-size: 20px;
+  }
+}
