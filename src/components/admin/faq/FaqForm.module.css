@@ -1,0 +1,152 @@
+/* FaqForm.module.css */
+.formCard {
+  background: #15151f;
+  border-radius: 16px;
+  padding: 28px;
+  width: 90%;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow-y: auto;
+  color: #e0e0e0;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.formCard h2 {
+  margin: 0 0 24px;
+  font-size: 1.8rem;
+  color: #fff;
+}
+
+.formGroup {
+  margin-bottom: 24px;
+}
+
+.formGroup label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #ddd;
+}
+
+.formGroup input {
+  width: 100%;
+  padding: 12px;
+  background: #222;
+  border: 1px solid #333;
+  border-radius: 8px;
+  color: white;
+  font-size: 1.05rem;
+}
+
+/* Toolbar */
+.toolbar {
+  display: flex;
+  gap: 6px;
+  padding: 8px;
+  background: #1a1a2a;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.toolbar button {
+  background: #2c2c3a;
+  color: #b15bff;
+  border: 1px solid #444;
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.toolbar button:hover {
+  background: #3a3a4a;
+  border-color: #b15bff;
+}
+
+.toolbar button:nth-child(4) {
+  color: #ffd700;
+}
+
+.spacer {
+  flex: 1;
+  min-width: 12px;
+}
+
+/* Editor */
+.editor {
+  min-height: 200px;
+  padding: 16px;
+  background: #121218;
+  border: 1px solid #333;
+  border-radius: 8px;
+  outline: none;
+  line-height: 1.6;
+  font-size: 1.05rem;
+  color: #e0e0e0;
+  overflow-y: auto;
+}
+
+.editor:focus {
+  border-color: #b15bff;
+  box-shadow: 0 0 0 2px rgba(177, 91, 255, 0.2);
+}
+
+.editor p {
+  margin: 0 0 12px;
+}
+
+.editor strong {
+  color: #ffd700;
+}
+
+.editor em {
+  color: #b15bff;
+}
+
+.editor a {
+  color: #4dabf7;
+  text-decoration: underline;
+}
+
+/* Actions */
+.actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.saveBtn, .cancelBtn {
+  flex: 1;
+  padding: 14px;
+  border: none;
+  border-radius: 10px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.saveBtn {
+  background: linear-gradient(135deg, #b15bff, #ff3b30);
+  color: white;
+}
+
+.saveBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(177, 91, 255, 0.3);
+}
+
+.cancelBtn {
+  background: #2c2c2c;
+  color: #aaa;
+}
+
+.cancelBtn:hover {
+  background: #3a3a3a;
+}

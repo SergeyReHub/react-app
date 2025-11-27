@@ -1,0 +1,13 @@
+/* AdminPage.module.css */
+.container {
+  display: flex;
+  height: 100vh;
+  background: #0a0a0a;
+}
+
+.main {
+  flex: 1;
+  padding: 24px;
+  overflow: auto;
+  background: #0f0f0f;
+}

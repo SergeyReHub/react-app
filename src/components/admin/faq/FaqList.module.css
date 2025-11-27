@@ -1,0 +1,109 @@
+/* FaqList.module.css */
+.page {
+  padding: 20px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.btnAdd {
+  background: linear-gradient(135deg, #b15bff, #8a2be2);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.item {
+  background: #1a1a1a;
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid #2c2c2c;
+  transition: border-color 0.2s;
+}
+
+.item:hover {
+  border-color: #b15bff;
+}
+
+.q {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #fff;
+  margin: 0 0 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #333;
+}
+
+.a {
+  color: #ccc;
+  line-height: 1.6;
+  margin-bottom: 16px;
+  font-size: 1.02rem;
+}
+
+.a strong {
+  color: #ffd700;
+}
+
+.a em {
+  color: #b15bff;
+  font-style: italic;
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+}
+
+.actions button {
+  flex: 1;
+  padding: 8px;
+  border-radius: 6px;
+  border: none;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.actions button:nth-child(1) {
+  background: #2c2c3a;
+  color: #b15bff;
+}
+
+.btnDelete {
+  background: #2c2c2c;
+  color: #ff5252;
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.loader {
+  text-align: center;
+  padding: 40px;
+  color: #aaa;
+  font-size: 1.1rem;
+}

@@ -1,0 +1,52 @@
+/* Projects360List.module.css */
+.page { padding: 20px; }
+.header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+.btnAdd {
+  background: linear-gradient(135deg, #b15bff, #8a2be2);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+.card {
+  background: #1a1a1a;
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid #2c2c2c;
+}
+.cardHeader { display: flex; justify-content: space-between; margin-bottom: 12px; }
+.cardMeta { color: #777; font-size: 0.9rem; }
+.cardDesc { color: #aaa; margin-bottom: 16px; line-height: 1.5; }
+.cardActions { display: flex; gap: 8px; }
+.btnEdit {
+  flex: 1;
+  background: #2c2c3a;
+  color: #b15bff;
+  border: 1px solid #b15bff;
+  padding: 8px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.btnDelete {
+  flex: 1;
+  background: #2c2c2c;
+  color: #ff5252;
+  border: 1px solid #ff5252;
+  padding: 8px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.formOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.loader, .error { text-align: center; padding: 40px; }
+.error { color: #ff5252; }

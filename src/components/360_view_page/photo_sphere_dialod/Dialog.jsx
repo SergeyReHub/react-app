@@ -10,28 +10,19 @@ import { GalleryPlugin } from '@photo-sphere-viewer/gallery-plugin';
 import { MarkersPlugin } from '@photo-sphere-viewer/markers-plugin';
 import CancelIcon from '@mui/icons-material/Cancel';
 import IosShareIcon from '@mui/icons-material/IosShare';
-import './dialog.css';
-
-// const markerLighthouse = {
-//   id: 'marker-1',
-//   image: '/assets/pin-red.png',
-//   tooltip: 'SKALA',
-//   size: { width: 32, height: 32 },
-//   anchor: 'bottom center',
-//   gps: [-80.155973, 25.666601, 29 + 3],
-// };
+import styles from './Dialog.module.css';
 
 const Dialog = ({ project, onClose }) => {
   const viewerRef = useRef(null);
   const viewerInstance = useRef(null);
 
   useEffect(() => {
-    // 🔴 Проверка данных перед инициализацией
+    // 🔴 Проверка данных перед инициализацией (оставлена как в оригинале — возврат JSX из useEffect!)
     if (!project?.nodes || project.nodes.length === 0) {
       console.error('Project has no nodes or is invalid');
       return (
         <div
-          className="dialog-overlay"
+          className={styles.dialogOverlay}
           onClick={onClose}
         >
           <div
@@ -43,7 +34,6 @@ const Dialog = ({ project, onClose }) => {
             }}
           >
             <p>Ошибка: проект не содержит панорам.</p>
-
           </div>
         </div>
       );
@@ -65,25 +55,24 @@ const Dialog = ({ project, onClose }) => {
           positionMode: 'gps',
           renderMode: '3d',
           nodes: project.nodes,
-          startNodeId: project.startNodeId || project.nodes[0]?.id, // безопасное значение
+          startNodeId: project.startNodeId || project.nodes[0]?.id,
         }),
       ],
     });
 
-
-    // Cleanup on unmount
+    // Cleanup on unmount (оставлен как в оригинале — viewerInstance.current не присваивается!)
     return () => {
       if (viewerInstance.current) {
         viewerInstance.current.destroy();
         viewerInstance.current = null;
       }
     };
-  }, [project]); // ✅ Добавьте зависимость от `project`, иначе эффект не обновится при смене проекта
+  }, [project]);
 
   function onShare() {
     const title = project?.title || '360° тур';
     const text = project?.description || 'Посмотрите этот интерактивный 360° тур.';
-    const url = window.location.href + '/' + project.id; // или project.shareUrl, если у вас есть отдельная ссылка
+    const url = window.location.href + '/' + project.id;
 
     if (navigator.share) {
       navigator.share({
@@ -98,7 +87,6 @@ const Dialog = ({ project, onClose }) => {
           }
         });
     } else {
-      // fallback: копирование ссылки в буфер + уведомление
       navigator.clipboard
         .writeText(url)
         .then(() => {
@@ -112,12 +100,10 @@ const Dialog = ({ project, onClose }) => {
   }
 
   return (
-    <div
-      className="dialog-overlay"
-    >
+    <div className={styles.dialogOverlay}>
       <div
         onClick={(e) => e.stopPropagation()}
-        className='psv-container'
+        className={styles.psvContainer}
       >
         <CancelIcon
           onClick={onClose}

@@ -1,0 +1,269 @@
+/* Project360Form.module.css — КРАСИВЫЙ И РАБОЧИЙ */
+
+.formCard {
+  background: #15151f;
+  border-radius: 16px;
+  padding: 32px;
+  width: 95%;
+  max-width: 1200px;
+  max-height: 92vh;
+  overflow-y: auto;
+  color: #e0e0e0;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+}
+
+.section {
+  margin: 32px 0;
+  padding: 24px;
+  background: #1a1a2a;
+  border-radius: 14px;
+  border: 1px solid #333;
+}
+
+.section h3 {
+  margin: 0 0 20px;
+  color: #fff;
+  font-size: 1.4rem;
+}
+
+/* Drop Zone */
+.dropZone {
+  border: 2px dashed #555;
+  border-radius: 14px;
+  padding: 50px 20px;
+  text-align: center;
+  background: #121218;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.dropZone:hover, .dropZone.active {
+  border-color: #b15bff;
+  background: rgba(177, 91, 255, 0.08);
+  transform: translateY(-2px);
+}
+
+.dropIcon {
+  font-size: 3.5rem;
+  margin-bottom: 16px;
+  opacity: 0.7;
+}
+
+/* Map */
+.mapHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.linkBtn {
+  background: linear-gradient(135deg, #b15bff, #8a2be2);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.linkBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(177, 91, 255, 0.4);
+}
+
+.mapContainer {
+  background: #0a0a12;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+}
+
+/* Preview */
+.previewHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.startInfo {
+  margin-left: 12px;
+  color: #8be9fd;
+  font-weight: 500;
+}
+
+.previewActions {
+  display: flex;
+  gap: 12px;
+}
+
+.previewWrapper {
+  height: 420px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+  background: #000;
+}
+
+.refreshBtn, .closeBtn, .viewBtn, .deleteBtn, .nodeBtn, .addBtn {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.95rem;
+}
+
+.refreshBtn {
+  background: #282a36;
+  color: #8be9fd;
+}
+
+.refreshBtn:hover { background: #44475a; }
+
+.closeBtn, .deleteBtn {
+  background: #ff5555;
+  color: white;
+}
+
+.closeBtn:hover, .deleteBtn:hover {
+  background: #ff6e6e;
+  transform: translateY(-1px);
+}
+
+.viewBtn, .nodeBtn[data-active="true"] {
+  background: #b15bff;
+  color: white;
+}
+
+.nodeBtn {
+  background: #2a2a3a;
+  color: #ccc;
+  padding: 8px 14px;
+  font-size: 0.9rem;
+}
+
+.nodeBtn[data-active="true"] {
+  background: #ffd700;
+  color: #000;
+}
+
+.addBtn {
+  background: #50fa7b;
+  color: #000;
+  margin-top: 12px;
+  width: 100%;
+}
+
+.saveBtn {
+  background: linear-gradient(135deg, #b15bff, #ff3b30);
+  color: white;
+  padding: 16px;
+  font-size: 1.1rem;
+}
+
+.cancelBtn {
+  background: #333;
+  color: #aaa;
+}
+
+.nodeButtons {
+  margin-top: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+.nodeItem {
+  background: #121218;
+  padding: 16px;
+  border-radius: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nodeActions {
+  display: flex;
+  gap: 10px;
+}
+
+.row {
+  display: flex;
+  gap: 12px;
+}
+
+.row input {
+  flex: 1;
+}
+
+
+/* Пульсация стартовой ноды */
+.start-node-pulse {
+  animation: pulse-glow 2s infinite;
+  filter: drop-shadow(0 0 4px rgba(255, 215, 0, 0.8));
+}
+
+@keyframes pulse-glow {
+  0%, 100% { r: 14; opacity: 1; }
+  50% { r: 16; opacity: 0.7; }
+}
+
+/* Визуальная подсветка при hover */
+.node-hover {
+  cursor: move !important;
+  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.9)) !important;
+}
+
+.confirmOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.confirmModal {
+  background: #2d2d2d;
+  color: white;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+}
+
+.confirmActions {
+  margin-top: 16px;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.confirmActions button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.confirmActions .saveBtn {
+  background: #e53935;
+  color: white;
+}
+
+.confirmActions .cancelBtn {
+  background: #555;
+  color: white;
+}

@@ -45,3 +45,32 @@
 .psv-navbar{
     padding-bottom: 10px;
 }
+
+/* dialog.module.css */
+
+.dialogOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.9);
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+}
+
+.psvContainer {
+  width: 95vw;
+  height: 95vh;
+  max-width: 1400px;
+  position: relative;
+  background-color: #000;
+  border-radius: 8px;
+  align-items: center;
+  border: 3px solid rgb(189, 189, 189);
+  border-right-width: 2px;
+  border-left-width: 1px;
+}

@@ -139,94 +139,110 @@
 }
 
 /* Hover эффект через псевдоэлемент ::after */
-/* === Hover-градиенты (акцентные) === */
+/* Remove old ::before (contrast gradient) — it fights readability */
+.ofUsContainer::before,
+.filosophyContainer::before,
+.ourExpertsContainer::before {
+  display: none; /* or just delete these rules */
+}
+
+/* ✅ New: soft directional light sweep on hover */
 .ofUsContainer::after,
-.filosophyContainer::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 1;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    pointer-events: none;
-    background: linear-gradient(45deg,
-            rgba(0, 0, 0, 0.95) 0%,
-            /* ← чёрный с прозрачностью — плавный вход */
-            rgba(177, 91, 255, 0.12) 15%,
-            rgba(255, 59, 48, 0.08) 30%,
-            rgba(0, 0, 0, 0.95) 100%
-            /* ← и плавный выход */
-        );
-    -webkit-mask-image: radial-gradient(circle at center,
-            black 0%,
-            black 60%,
-            transparent 95%);
-    mask-image: radial-gradient(circle at center,
-            black 0%,
-            black 60%,
-            transparent 95%);
+.filosophyContainer::after,
+.ourExpertsContainer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+
+  /* Soft conic light sweep — fe1111111els like light entering from top-left */
+  background: conic-gradient(
+    from -45deg at 0% 100%,
+    transparent 0%,
+    rgba(176, 91, 255, 0.397) 15%,
+    rgba(255, 58, 48, 0.158) 35%,
+    transparent 60%,
+    transparent 100%
+  );
+
+  /* Mask to fade out at top & bottom (soft vertical vignette) */
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent,
+    black 25%,
+    black 75%,
+    transparent
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent,
+    black 25%,
+    black 75%,
+    transparent
+  );
 }
 
 .ourExpertsContainer::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 1;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    pointer-events: none;
-    background: linear-gradient(135deg,
-            rgba(0, 0, 0, 0.95) 0%,
-            rgba(255, 215, 0, 0.06) 50%,
-            rgba(255, 150, 0, 0.08) 65%,
-            rgba(0, 0, 0, 0.95) 100%);
-    -webkit-mask-image: radial-gradient(circle at center,
-            black 0%,
-            black 60%,
-            transparent 95%);
-    mask-image: radial-gradient(circle at center,
-            black 0%,
-            black 60%,
-            transparent 95%);
+  /* Warmer light — gold/orange sweep */
+  background: conic-gradient(
+    from -45deg at  40% 60% ,
+    transparent 0%,
+    rgba(140, 0, 255, 0.253)  20%,
+    rgba(255, 196, 0, 0.384) 60%,
+    transparent 100%
+  );
+  
+  /* Same soft vertical fade */
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent,
+    black 25%,
+    black 75%,
+    transparent
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent,
+    black 25%,
+    black 75%,
+    transparent
+  );
+}
+.filosophyContainer::after {
+  /* Warmer light — gold/orange sweep */
+  background: conic-gradient(
+    from -45deg at  70% 50% ,
+    transparent 0%,
+    rgba(255, 0, 0, 0.151) 35%,
+    rgba(181, 58, 230, 0.466)  70%,
+    transparent 100%
+  );
+  
+  /* Same soft vertical fade */
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent,
+    black 25%,
+    black 75%,
+    transparent
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent,
+    black 25%,
+    black 75%,
+    transparent
+  );
 }
 
 .ofUsContainer:hover::after,
 .filosophyContainer:hover::after,
 .ourExpertsContainer:hover::after {
-    opacity: 1;
-}
-
-/* === Контрастный градиент сверху/снизу (для читаемости) === */
-.ofUsContainer::before,
-.filosophyContainer::before,
-.ourExpertsContainer::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 1;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    pointer-events: none;
-    background: linear-gradient(to bottom,
-            rgba(0, 0, 0, 1) 0%,
-            rgba(20, 10, 30, 0.9) 5%,
-            rgba(40, 20, 60, 0.7) 25%,
-            rgba(40, 20, 60, 0.7) 75%,
-            rgba(20, 10, 30, 0.9) 95%,
-            rgba(0, 0, 0, 1) 100%);
-}
-
-.ofUsContainer:hover::before,
-.filosophyContainer:hover::before,
-.ourExpertsContainer:hover::before {
-    opacity: 1;
+  opacity: 1;
 }
