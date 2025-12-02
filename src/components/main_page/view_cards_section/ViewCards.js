@@ -26,6 +26,9 @@ export default function ViewCards({
     }
     return (
         <section id="view-cards" aria-label="About us section" className={`viewCardsContainer ${getContainerClass()}`}>
+            <h2 className="viewCardsHeading">
+                Мы работаем со всем
+            </h2>
             <div className='gridCardsContainer'>
                 <div className='cardItem'>
                     <div className="cardImage"

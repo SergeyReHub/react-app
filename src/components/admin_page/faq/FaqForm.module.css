@@ -79,18 +79,42 @@
 }
 
 /* Editor */
+/* FaqForm.module.css */
+
 .editor {
-  min-height: 200px;
-  padding: 16px;
-  background: #121218;
-  border: 1px solid #333;
-  border-radius: 8px;
-  outline: none;
-  line-height: 1.6;
-  font-size: 1.05rem;
+  min-height: 180px;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background: #353535;
+  /* тёмный фон */
   color: #e0e0e0;
-  overflow-y: auto;
+  /* светлый текст */
+  line-height: 1.5;
+  outline: none;
 }
+
+.editor ul {
+  list-style: none;
+  /* отключаем нативные маркеры */
+  padding-left: 1.8em;
+  margin: 0.8em 0;
+}
+
+.editor ul li {
+  position: relative;
+}
+
+.editor ul li::before {
+  content: "•";
+  color: #ffffff;
+  font-weight: bold;
+  position: absolute;
+  left: -1.5em;
+  width: 1em;
+  text-align: center;
+}
+
 
 .editor:focus {
   border-color: #b15bff;
@@ -121,7 +145,8 @@
   margin-top: 24px;
 }
 
-.saveBtn, .cancelBtn {
+.saveBtn,
+.cancelBtn {
   flex: 1;
   padding: 14px;
   border: none;

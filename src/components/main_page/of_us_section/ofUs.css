@@ -1,167 +1,123 @@
 .ofUsContainer,
-.filosophyContainer {
-    display: flex;
-    align-items: center;
-    flex-direction: row;
-    padding-top: 4vh;
-    padding-right: 2vw;
-    background-color: #000000;
-    max-height: 1600px;
-    height: 65vh
+.filosophyContainer,
+.ourExpertsContainer {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  padding-right: 2vw;
+  background-color: #000000;
+  max-height: 1600px;
+  height: 65vh;
+  transition: all 0.5s ease;
+  position: relative;
+  overflow: hidden;
 }
 
-.ofUsImageContainer,
-.filosophyImageContainer {
-    display: flex;
-    flex-direction: column;
-    background-size: cover;
-    width: 50%;
-    height: 500px;
-    align-items: center;
-    padding-right: 3%;
+/* ———— Общие стили текста и изображений ———— */
 
-}
-
-.ofUsImageContainer img {
-    width: 80%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 15px;
-    display: block;
-    display: block;
-    z-index: 1000;
-}
-
-.ofUsTextContainer {
-    display: flex;
-    flex-direction: column;
-    width: 50%;
-    font-size: 1.45rem;
-    font-weight: 600;
-    align-items: end;
-    padding-right: 30px;
-    text-align: start;
+.ofUsTextContainer,
+.ourExpertsTextContainer,
+.filosophyTextContainer {
+  display: flex;
+  flex-direction: column;
+  font-size: 1.45rem;
+  font-weight: 600;
+  padding-right: 30px;
+  text-align: start;
+  z-index: 999;
 }
 
 .ofUsTextContainer h1,
 .ourExpertsTextContainer h1,
 .filosophyTextContainer h1 {
-    width: 70%;
-    font-size: 36px;
-    color: #ffffffff;
-    z-index: 999;
+  width: 70%;
+  font-size: 36px;
+  color: #ffffff;
 }
 
 .ofUsTextContainer p,
 .ourExpertsTextContainer p,
 .filosophyTextContainer p {
-    width: 70%;
-    margin-top: 25px;
-    color: #555555;
-    z-index: 999;
+  width: 70%;
+  margin-top: 25px;
+  color: #555555;
 }
 
-.ourExpertsContainer {
-    display: flex;
-    align-items: center;
-    flex-direction: row;
-    padding-top: 5vh;
-    padding-bottom: 5vh;
-    padding-right: 2vw;
-    background-color: #000000;
-    max-height: 1600px;
-    height: 70vh;
-
-}
-
-.ourExpertsImageContainer {
-    display: flex;
-    flex-direction: column;
-    background-size: cover;
-    width: 60%;
-    height: 100%;
-    align-items: center;
-
-}
-
-.ourExpertsImageContainer img {
-    width: 70%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 15px;
-    display: block;
-    z-index: 1000;
-}
-
-.ourExpertsTextContainer {
-    display: flex;
-    flex-direction: column;
-    width: 40%;
-    font-size: 1.45rem;
-    font-weight: 600;
-    align-items: start;
-
-}
-
+.ofUsImageContainer,
+.ourExpertsImageContainer,
 .filosophyImageContainer {
-    height: 80%;
+  display: flex;
+  flex-direction: column;
+  width: 50%;
+  height: 500px;
+  align-items: center;
+  padding-right: 3%;
 }
 
+.ofUsImageContainer img,
+.ourExpertsImageContainer img,
 .filosophyImageContainer img {
-    width: 80%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 15px;
-    display: block;
-    z-index: 1000;
+  width: 80%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 15px;
+  display: block;
+  z-index: 1000;
 }
 
-.filosophyTextContainer {
-    display: flex;
-    flex-direction: column;
-    width: 50%;
-    font-size: 1.45rem;
-    font-weight: 600;
-    align-items: end;
-    text-align: start;
-}
-
-.filosophyContainer {
-    padding-top: 0;
-}
+/* ———— Специфичные размеры ———— */
 
 .ofUsContainer,
-.filosophyContainer,
-.ourExpertsContainer {
-    transition: all 0.5s ease;
-    position: relative;
-    overflow: hidden;
+.filosophyContainer {
+  padding-top: 4vh;
+  height: 65vh;
 }
 
-/* Hover эффект через псевдоэлемент ::after */
-/* Remove old ::before (contrast gradient) — it fights readability */
+.ofUsContainer .ofUsTextContainer,
+.filosophyContainer .filosophyTextContainer {
+  width: 50%;
+  align-items: end;
+}
+
+.ourExpertsContainer {
+  padding-top: 5vh;
+  padding-bottom: 5vh;
+  height: 70vh;
+}
+
+.ourExpertsContainer .ourExpertsTextContainer {
+  width: 40%;
+  align-items: start;
+}
+
+.ourExpertsContainer .ourExpertsImageContainer {
+  width: 60%;
+}
+
+.filosophyContainer .filosophyImageContainer {
+  height: 80%;
+}
+
+/* ———— Hover-эффект (оставляем как есть, только для desktop) ———— */
+/* Убираем градиенты на мобильных, чтобы не мешать touch-взаимодействию */
+
 .ofUsContainer::before,
 .filosophyContainer::before,
 .ourExpertsContainer::before {
-  display: none; /* or just delete these rules */
+  display: none;
 }
 
-/* ✅ New: soft directional light sweep on hover */
 .ofUsContainer::after,
 .filosophyContainer::after,
 .ourExpertsContainer::after {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
   z-index: 2;
   opacity: 0;
   transition: opacity 0.5s ease;
   pointer-events: none;
-
-  /* Soft conic light sweep — fe1111111els like light entering from top-left */
   background: conic-gradient(
     from -45deg at 0% 100%,
     transparent 0%,
@@ -170,79 +126,105 @@
     transparent 60%,
     transparent 100%
   );
-
-  /* Mask to fade out at top & bottom (soft vertical vignette) */
-  -webkit-mask-image: linear-gradient(
-    to bottom,
-    transparent,
-    black 25%,
-    black 75%,
-    transparent
-  );
-  mask-image: linear-gradient(
-    to bottom,
-    transparent,
-    black 25%,
-    black 75%,
-    transparent
-  );
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black 25%, black 75%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, black 25%, black 75%, transparent);
 }
 
 .ourExpertsContainer::after {
-  /* Warmer light — gold/orange sweep */
   background: conic-gradient(
-    from -45deg at  40% 60% ,
+    from -45deg at 40% 60%,
     transparent 0%,
-    rgba(140, 0, 255, 0.253)  20%,
+    rgba(140, 0, 255, 0.253) 20%,
     rgba(255, 196, 0, 0.384) 60%,
     transparent 100%
   );
-  
-  /* Same soft vertical fade */
-  -webkit-mask-image: linear-gradient(
-    to bottom,
-    transparent,
-    black 25%,
-    black 75%,
-    transparent
-  );
-  mask-image: linear-gradient(
-    to bottom,
-    transparent,
-    black 25%,
-    black 75%,
-    transparent
-  );
 }
+
 .filosophyContainer::after {
-  /* Warmer light — gold/orange sweep */
   background: conic-gradient(
-    from -45deg at  70% 50% ,
+    from -45deg at 70% 50%,
     transparent 0%,
     rgba(255, 0, 0, 0.151) 35%,
-    rgba(181, 58, 230, 0.466)  70%,
+    rgba(181, 58, 230, 0.466) 70%,
     transparent 100%
-  );
-  
-  /* Same soft vertical fade */
-  -webkit-mask-image: linear-gradient(
-    to bottom,
-    transparent,
-    black 25%,
-    black 75%,
-    transparent
-  );
-  mask-image: linear-gradient(
-    to bottom,
-    transparent,
-    black 25%,
-    black 75%,
-    transparent
   );
 }
 
-.ofUsContainer:hover::after,
-.filosophyContainer:hover::after,
-.ourExpertsContainer:hover::after {
-  opacity: 1;
+@media (min-width: 769px) {
+  .ofUsContainer:hover::after,
+  .filosophyContainer:hover::after,
+  .ourExpertsContainer:hover::after {
+    opacity: 1;
+  }
+}
+
+/* ———— 📱 АДАПТИВНОСТЬ НА МОБИЛЬНЫХ (< 768px) ———— */
+
+@media (max-width: 768px) {
+  .ofUsContainer,
+  .ourExpertsContainer,
+  .filosophyContainer {
+    flex-direction: column;
+    height: auto;
+    padding: 3vh 4vw;
+    gap: 30px;
+  }
+  
+
+  /* ВСЕ текстовые контейнеры — ПЕРВЫМИ */
+  .ofUsTextContainer,
+  .ourExpertsTextContainer,
+  .filosophyTextContainer {
+    width: 90% !important;
+    padding-right: 0;
+    order: 1; /* ← важное: текст идёт первым */
+  }
+
+  /* ВСЕ изображения — ВТОРЫМИ */
+  .ofUsImageContainer,
+  .ourExpertsImageContainer,
+  .filosophyImageContainer {
+    width: 100%;
+    height: auto;
+    padding-right: 0;
+    order: 2; /* ← изображения идут после текста */
+  }
+
+  .ofUsImageContainer,
+  .ourExpertsImageContainer,
+  .filosophyImageContainer  {
+    width: 100% !important;
+    height: 40vh !important;
+    max-height: 300px !important;
+    object-fit: cover;
+  }
+
+  .ofUsImageContainer img,
+  .ourExpertsImageContainer img,
+  .filosophyImageContainer img  {
+    width: 85% !important;
+    height: 40vh !important;
+    max-height: 300px !important;
+    object-fit: cover;
+  }
+
+  /* Уменьшение шрифтов */
+  .ofUsTextContainer h1,
+  .ourExpertsTextContainer h1,
+  .filosophyTextContainer h1 {
+    font-size: 28px;
+    width: 100%;
+    text-align: center;
+  }
+
+  .ofUsTextContainer p,
+  .ourExpertsTextContainer p,
+  .filosophyTextContainer p {
+    font-size: 1.1rem;
+    width: 100%;
+    margin-top: 16px;
+    text-align: center;
+  }
+
+ 
 }

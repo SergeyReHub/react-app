@@ -45,20 +45,27 @@ export default function LightBox({ set_lightbox, lightbox, projects }) {
     };
 
     const onShare = () => {
-        const { projectIndex } = lightbox;
+        const { projectIndex, photoIndex } = lightbox;
         const currentProject = projects[projectIndex];
-        const title = currentProject?.name || 'M.GROUP — Артбетон';
+        if (!currentProject) return;
+
+        // ✅ Корректная ссылка: например, /project/abc123
+        const projectUrl = `${window.location.origin}/${encodeURIComponent(currentProject.id)}`;
+
+        // Опционально: можно добавить #photo-5 для якоря, если нужно
+        // const fullUrl = `${projectUrl}#photo-${photoIndex}`;
+
+        const title = currentProject.name || 'M.GROUP — Артбетон';
         const text = 'Посмотрите этот проект от M.GROUP';
-        const url = `${window.location.origin}/just_view`; // или динамическая ссылка
 
         if (navigator.share) {
-            navigator.share({ title, text, url })
+            navigator.share({ title, text, url: projectUrl })
                 .catch(err => {
                     if (err.name !== 'AbortError') console.warn('Share failed:', err);
                 });
         } else {
-            navigator.clipboard.writeText(url)
-                .then(() => alert('Ссылка скопирована!'))
+            navigator.clipboard.writeText(projectUrl)
+                .then(() => alert('Ссылка на проект скопирована!'))
                 .catch(() => alert('Не удалось скопировать ссылку.'));
         }
     };

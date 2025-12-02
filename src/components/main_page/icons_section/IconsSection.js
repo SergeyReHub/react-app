@@ -3,6 +3,7 @@ import { Box, Container, Grid, Typography } from '@mui/material';
 import ShieldTwoToneIcon from '@mui/icons-material/ShieldTwoTone';
 import AutorenewIcon from '@mui/icons-material/AutorenewTwoTone';
 import EmojiObjectsIcon from '@mui/icons-material/EmojiObjectsTwoTone';
+import './IconsSection.css'; // ✅ Подключаем CSS
 
 const SwanIcon = React.forwardRef(({
     sx,
@@ -61,182 +62,73 @@ const SwanIcon = React.forwardRef(({
 ));
 
 export default function IconsSection() {
-    const [hoveredIcon, setHoveredIcon] = React.useState(null);
+  const [hoveredIcon, setHoveredIcon] = React.useState(null);
 
-    const handleIconHover = (iconName) => {
-        setHoveredIcon(iconName);
-    };
+  const handleIconHover = (iconName) => {
+    setHoveredIcon(iconName);
+  };
 
-    const handleIconLeave = () => {
-        setHoveredIcon(null);
-    };
+  const handleIconLeave = () => {
+    setHoveredIcon(null);
+  };
 
-    const getGradientStyle = () => {
-        switch (hoveredIcon) {
-            case 'shield':
-                return {
-                    background: 'linear-gradient(45deg, transparent 0%, rgba(255, 5, 5, 0.2) 40%, transparent 60%)',
-                };
-            case 'star':
-                return {
-                    background: 'linear-gradient(to right, transparent 0%, rgba(34, 253, 5, 0.2) 43%, transparent 70%)',
-                };
-            case 'air':
-                return {
-                    background: 'linear-gradient(to right, transparent 0%, rgba(240, 248, 0, 0.2) 57%, transparent 80%)',
-                };
-            case 'swan': // Changed from 'view' to 'swan'
-                return {
-                    background: 'linear-gradient(to right, transparent 0%, rgba(204, 0, 255, 0.2) 75%, transparent 90%)',
-                };
-            default:
-                return {
-                    background: 'linear-gradient(to right, transparent 0%, rgba(100, 100, 100, 0.2) 50%, transparent 100%)',
-                };
-        }
-    };
+  // ✅ Формируем динамический класс
+  const containerClass = `iconsSection${hoveredIcon ? ` ${hoveredIcon}-hover` : ''}`;
 
-    return (
-        <Container
-            component="section"
-            aria-label="Icons section"
-            sx={{
-                backgroundColor: 'black',
-                px: 0,
-                paddingTop: 2,
-                paddingBottom: 6,
-                position: 'relative',
-                overflow: 'hidden',
-                '&::before': {
-                    content: '""',
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    opacity: 1,
-                    pointerEvents: 'none',
-                    zIndex: 1,
-                    transition: 'background 0.3s ease',
-                    ...getGradientStyle(),
-                },
-                '&::after': {
-                    content: '""',
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    background: 'linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(244, 81, 225, 0.12) 10%, rgba(100, 100, 100, 0.3) 30%, rgba(100, 100, 100, 0.6) 70%, rgba(0, 0, 0, 0.9) 100%)',
-                    opacity: 1,
-                    pointerEvents: 'none',
-                    zIndex: 2,
-                }
-            }}
-            maxWidth={false}
-        >
-            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', p: 2, position: 'relative', zIndex: 3 }}>
-                <Typography variant="h2" color="white" fontWeight="600" textAlign={'center'}>
-                    Наши преимущества
-                </Typography>
+  return (
+    <Container
+      component="section"
+      aria-label="Наши преимущества"
+      className={containerClass} // ✅ Теперь стили через CSS
+      maxWidth={false}
+      sx={{ px: { xs: 2, sm: 4 } }} // минимальный MUI-микс
+    >
+      <Typography variant="h2" className="iconsSection-title">
+        Наши преимущества
+      </Typography>
+
+      <Grid container spacing={3} justifyContent="center">
+        {[
+          {
+            name: 'shield',
+            icon: <ShieldTwoToneIcon sx={{ color: 'rgb(220, 120, 120)' }} />,
+            title: 'Прочность',
+          },
+          {
+            name: 'star',
+            icon: <AutorenewIcon sx={{ color: 'rgb(120, 200, 140)' }} />,
+            title: 'Экологичность',
+          },
+          {
+            name: 'air',
+            icon: <EmojiObjectsIcon sx={{ color: 'rgb(220, 210, 140)' }} />,
+            title: 'Уникальность',
+          },
+          {
+            name: 'swan',
+            icon: (
+              <SwanIcon
+                bodyColor="rgb(214, 119, 255)"
+                featherColor="transparent"
+                beakColor="white"
+                legColor="rgb(180, 90, 255)"
+              />
+            ),
+            title: 'Изящество',
+          },
+        ].map((item) => (
+          <Grid item xs={12} sm={6} md={3} key={item.name}>
+            <Box
+              className="iconCard"
+              onMouseEnter={() => handleIconHover(item.name)}
+              onMouseLeave={handleIconLeave}
+            >
+              {item.icon}
+              <Typography className="iconCard-title">{item.title}</Typography>
             </Box>
-
-            <Grid container spacing={5} justifyContent="center" sx={{ position: 'relative', zIndex: 3 }}>
-                <Grid item xs={12} sm={6} md={3}>
-                    <Box
-                        sx={{ background: 'transparent', display: 'flex', flexDirection: 'column', alignItems: 'center', p: 2 }}
-                        onMouseEnter={() => handleIconHover('shield')}
-                        onMouseLeave={handleIconLeave}
-                    >
-                        <ShieldTwoToneIcon
-                            sx={{
-                                fontSize: 90,
-                                color: 'rgba(162, 118, 118, 1)',
-                                mb: 2,
-                                transition: 'transform 0.3s ease',
-                                '&:hover': {
-                                    transform: 'scale(1.1)',
-                                },
-                            }}
-                        />
-                        <Typography variant="h5" component="h2" color="white" fontWeight="bold">
-                            Прочность
-                        </Typography>
-                    </Box>
-                </Grid>
-
-                <Grid item xs={12} sm={6} md={3}>
-                    <Box
-                        sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', p: 2 }}
-                        onMouseEnter={() => handleIconHover('star')}
-                        onMouseLeave={handleIconLeave}
-                    >
-                        <AutorenewIcon
-                            sx={{
-                                fontSize: 90,
-                                color: 'rgba(142, 184, 144, 1)',
-                                mb: 2,
-                                transition: 'transform 0.3s ease',
-                                '&:hover': {
-                                    transform: 'scale(1.1)',
-                                },
-                            }}
-                        />
-                        <Typography variant="h5" component="h2" color="white" fontWeight="bold">
-                            Экологичность
-                        </Typography>
-                    </Box>
-                </Grid>
-
-                <Grid item xs={12} sm={6} md={3}>
-                    <Box
-                        sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', p: 2 }}
-                        onMouseEnter={() => handleIconHover('air')}
-                        onMouseLeave={handleIconLeave}
-                    >
-                        <EmojiObjectsIcon
-                            sx={{
-                                fontSize: 90,
-                                color: 'rgba(189, 194, 147, 1)',
-                                mb: 2,
-                                transition: 'transform 0.3s ease',
-                                '&:hover': {
-                                    transform: 'scale(1.1)',
-                                },
-                            }}
-                        />
-                        <Typography variant="h5" component="h2" color="white" fontWeight="bold">
-                            Уникальность
-                        </Typography>
-                    </Box>
-                </Grid>
-
-                <Grid item xs={12} sm={6} md={3}>
-                    <Box
-                        sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', p: 2 }}
-                        onMouseEnter={() => handleIconHover('swan')} // Changed from 'view' to 'swan'
-                        onMouseLeave={handleIconLeave}
-                    >
-                        <SwanIcon
-                            bodyColor="rgba(214, 119, 255, 0.44)" // основной цвет
-                            featherColor="transparent" // белые перья
-                            beakColor="white" // оранжевый клюв
-                            legColor="rgba(214, 119, 255, 0.44)" // темно-коричневые ноги
-                            sx={{
-                                fontSize: 90,
-                                mb: 2,
-                                transition: 'transform 0.3s ease',
-                                '&:hover': {
-                                    transform: 'scale(1.1)',
-                                },
-                            }}
-                        />
-                        <Typography variant="h5" component="h2" color="white" fontWeight="bold">
-                            Изящество
-                        </Typography>
-                    </Box>
-                </Grid>
-            </Grid>
-        </Container>
-    );
+          </Grid>
+        ))}
+      </Grid>
+    </Container>
+  );
 }

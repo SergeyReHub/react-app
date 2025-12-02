@@ -1,0 +1,186 @@
+/* IconsSection.css */
+
+.iconsSection {
+    background-color: #000000;
+    padding-top: 32px;
+    padding-bottom: 48px;
+    position: relative;
+    overflow: hidden;
+    /* Основной градиент — тёмный фон с глубиной */
+}
+
+.iconsSection::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    z-index: 1;
+    background: linear-gradient(to bottom,
+            rgba(0, 0, 0, 1) 0%,
+            rgba(40, 20, 60, 0.6) 20%,
+            rgba(60, 30, 90, 0.4) 50%,
+            rgba(40, 20, 60, 0.6) 80%,
+            rgba(0, 0, 0, 1) 100%);
+}
+
+/* Динамический акцентный градиент — управляется через JS-классы */
+.iconsSection.shield-hover::before,
+.iconsSection.star-hover::before,
+.iconsSection.air-hover::before,
+.iconsSection.swan-hover::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    z-index: 2;
+    opacity: 1;
+    transition: opacity 0.4s ease;
+}
+
+.iconsSection.shield-hover::before {
+    /* Красный — прочность */
+    background: radial-gradient(circle at 25% 40%, rgba(255, 30, 30, 0.15) 0%, transparent 40%);
+}
+
+.iconsSection.star-hover::before {
+    /* Зелёный — экологичность */
+    background: radial-gradient(circle at 45% 30%, rgba(40, 200, 80, 0.12) 0%, transparent 45%);
+}
+
+.iconsSection.air-hover::before {
+    /* Жёлтый — уникальность/идея */
+    background: radial-gradient(circle at 55% 70%, rgba(255, 220, 0, 0.1) 0%, transparent 50%);
+}
+
+.iconsSection.swan-hover::before {
+    /* Фиолетовый — изящество */
+    background: radial-gradient(circle at 80% 60%, rgba(180, 80, 255, 0.15) 0%, transparent 45%);
+}
+
+/* Без hover → акцент приглушён */
+.iconsSection::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    z-index: 2;
+    opacity: 0.3;
+    background: radial-gradient(circle at center, rgba(100, 100, 130, 0.08) 0%, transparent 60%);
+    transition: opacity 0.4s ease;
+}
+
+.iconsSection.shield-hover::before,
+.iconsSection.star-hover::before,
+.iconsSection.air-hover::before,
+.iconsSection.swan-hover::before {
+    opacity: 0.7;
+}
+
+/* Заголовок */
+.iconsSection-title {
+    color: white;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 40px;
+    position: relative;
+    z-index: 3;
+}
+
+/* Иконка-карточка */
+.iconCard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* ← горизонтальное центрирование ВНУТРИ карточки */
+    justify-content: center;
+    /* ← вертикальное центрирование, если высота фиксирована */
+    padding: 20px 16px;
+    background: transparent;
+    transition: transform 0.3s cubic-bezier(0.2, 0, 0, 1);
+    cursor: pointer;
+    position: relative;
+    z-index: 3;
+
+    /* 🔑 Ключевые исправления: */
+    width: 100%;
+    /* ← растягиваем на 100% колонки Grid */
+    max-width: 280px;
+    /* ← ограничиваем, чтобы не было огромных на десктопе */
+    margin: 0 auto;
+    /* ← центрируем карточку ВНУТРИ своей Grid-ячейки */
+    text-align: center;
+    /* ← на случай, если Typography не центрирует */
+}
+
+.iconCard .MuiTypography-root {
+    text-align: center !important;
+    width: 100%;
+    padding: 0 8px;
+    /* минимальный padding для переноса длинных слов */
+}
+
+.iconCard:hover {
+    transform: translateY(-8px);
+}
+
+.iconCard svg,
+.iconCard .MuiSvgIcon-root {
+    font-size: 5.2rem;
+    margin-bottom: 16px;
+    transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.iconCard:hover svg,
+.iconCard:hover .MuiSvgIcon-root {
+    transform: scale(1.12);
+}
+
+.iconCard-title {
+    color: white;
+    font-weight: 700;
+    text-align: center;
+    font-size: 1.3rem;
+    line-height: 1.3;
+}
+
+/* 📱 МОБИЛЬНАЯ ВЕРСИЯ */
+@media (max-width: 768px) {
+    .iconsSection {
+        padding-top: 24px !important;
+        padding-bottom: 32px !important;
+    }
+
+    .iconsSection-title {
+        font-size: 2.5rem !important;
+        margin-bottom: 32px !important;
+    }
+
+    .iconCard {
+        padding: 12px;
+    }
+
+    .iconCard svg,
+    .iconCard .MuiSvgIcon-root {
+        font-size: 3.6rem;
+        margin-bottom: 12px;
+    }
+
+    .iconCard-title {
+        font-size: 1.2rem;
+    }
+
+    /* Упрощаем эффекты — убираем ::before на мобильных (не для hover) */
+    .iconsSection::before,
+    .iconsSection::after {
+        display: none;
+    }
+}
