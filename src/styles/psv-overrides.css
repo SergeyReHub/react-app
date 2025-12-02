@@ -1,0 +1,11 @@
+
+
+.psv-tooltip-content{
+  padding: 5px !important;
+  z-index: 1000;
+}
+
+.psv-tooltip-content img{
+  align-self: center;
+  margin: 0 auto;
+}

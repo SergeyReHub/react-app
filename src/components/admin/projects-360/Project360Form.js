@@ -1,12 +1,21 @@
 // src/components/admin/projects-360/Project360Form.js
 import React, { useState, useRef, useCallback, useEffect } from 'react';
+import '../../../styles/psv-overrides.css';
 import styles from './Project360Form.module.css';
 import MiniTourPreview from '../preview_sphere/MiniTourPreview';
+import '@photo-sphere-viewer/core/index.css';
+import '@photo-sphere-viewer/markers-plugin/index.css';
+import '@photo-sphere-viewer/gallery-plugin/index.css';
+import '@photo-sphere-viewer/virtual-tour-plugin/index.css';
+import { Viewer } from '@photo-sphere-viewer/core';
+import { VirtualTourPlugin } from '@photo-sphere-viewer/virtual-tour-plugin';
+import { GalleryPlugin } from '@photo-sphere-viewer/gallery-plugin';
+import { MarkersPlugin } from '@photo-sphere-viewer/markers-plugin';
 
 const EMPTY_PROJECT = { id: Date.now().toString(), title: '', description: '', nodes: [] };
 const MAP_SIZE = 400;
 const MAP_CENTER = MAP_SIZE / 2;
-const MAP_SCALE = 8000; // 0.01° ≈ 1.1 км → 800 пикселей
+const MAP_SCALE = 100000; // 0.01° ≈ 1.1 м → 800 пикселей
 
 export default function Project360Form({ id, initialData, onSave, onCancel }) {
   const [formData, setFormData] = useState(initialData || EMPTY_PROJECT);
@@ -17,54 +26,24 @@ export default function Project360Form({ id, initialData, onSave, onCancel }) {
   const [hoveredNodeId, setHoveredNodeId] = useState(null);
 
   const [dragState, setDragState] = useState(null); // { nodeId, startX, startY, startGps }
+  const [tempNodePositions, setTempNodePositions] = useState({});
 
-  const [draggedNodeId, setDraggedNodeId] = useState(null);
   const [unlinkConfirmation, setUnlinkConfirmation] = useState(null); // { from, to }
-  const dragOffset = useRef({ x: 0, y: 0 });
+
+  const [closeButtonVisibility, setCloseButtonVisibility] = useState(false);
+
   const fileInputRef = useRef(null);
+  const manualFileInputRef = useRef(null);
+
+  const viewerRef = useRef(null);
+
+  const viewerInstanceRef = useRef(null); // ← один источник правды
+
+  const [editingAltitude, setEditingAltitude] = useState(null); // { nodeId, altitude }
 
 
-  // Глобальные обработчики (в useEffect)
-  useEffect(() => {
-    const handleDrag = (e) => {
-      if (!draggedNodeId) return;
 
-      const svg = document.querySelector(`.${styles.mapContainer} svg`);
-      if (!svg) return;
 
-      const pt = svg.createSVGPoint();
-      pt.x = e.clientX;
-      pt.y = e.clientY;
-      const { x, y } = pt.matrixTransform(svg.getScreenCTM().inverse());
-
-      const newX = x - dragOffset.current.x;
-      const newY = y - dragOffset.current.y;
-
-      // Обновляем GPS в состоянии
-      setFormData(prev => ({
-        ...prev,
-        nodes: prev.nodes.map(n =>
-          n.id === draggedNodeId
-            ? { ...n, gps: pixelToGps({ x: newX, y: newY }) }
-            : n
-        )
-      }));
-    };
-
-    const handleDragEnd = () => {
-      setDraggedNodeId(null);
-    };
-
-    window.addEventListener('pointermove', handleDrag);
-    window.addEventListener('pointerup', handleDragEnd);
-    window.addEventListener('pointercancel', handleDragEnd);
-
-    return () => {
-      window.removeEventListener('pointermove', handleDrag);
-      window.removeEventListener('pointerup', handleDragEnd);
-      window.removeEventListener('pointercancel', handleDragEnd);
-    };
-  }, [draggedNodeId, formData.nodes]);
 
   // === Загрузка ===
   const handleDrop = useCallback((e) => {
@@ -83,8 +62,8 @@ export default function Project360Form({ id, initialData, onSave, onCancel }) {
 
     const newNodes = imageFiles.map((file, i) => {
       const nodeId = `node_${Date.now()}_${i}`;
-      const lat = 55.7817 + (Math.random() - 0.5) * 0.04;
-      const lon = 37.6761 + (Math.random() - 0.5) * 0.04;
+      const lat = 55.7817 + (Math.random() - 0.99) * 0.001;
+      const lon = 37.6761 + (Math.random() - 0.99) * 0.001;
 
       return {
         id: nodeId,
@@ -92,7 +71,7 @@ export default function Project360Form({ id, initialData, onSave, onCancel }) {
         panorama: URL.createObjectURL(file),
         thumbnail: URL.createObjectURL(file),
         caption: file.name,
-        gps: [lon, lat, 1 + i * 0.1], // ← ИСПРАВЛЕНО: lon, lat (долгота, широта)
+        gps: [lon, lat, 1], // ← ИСПРАВЛЕНО: lon, lat (долгота, широта)
         sphereCorrection: { pan: '0deg' },
         links: [],
       };
@@ -129,14 +108,42 @@ export default function Project360Form({ id, initialData, onSave, onCancel }) {
   };
 
   const removeNode = (nodeId) => {
-    setFormData(prev => ({
-      ...prev,
-      nodes: prev.nodes
+    setFormData(prev => {
+      const newNodes = prev.nodes
         .filter(n => n.id !== nodeId)
-        .map(n => ({ ...n, links: n.links.filter(l => l.nodeId !== nodeId) }))
-    }));
-    if (previewStartNodeId === nodeId) setPreviewStartNodeId(formData.nodes[0]?.id || null);
+        .map(n => ({ ...n, links: n.links.filter(l => l.nodeId !== nodeId) }));
+
+      // Если удалили последнюю ноду — закрываем превью
+      if (newNodes.length === 0) {
+        setPreviewStartNodeId(null);
+        setCloseButtonVisibility(false);
+        if (viewerInstanceRef.current) {
+          try {
+            viewerInstanceRef.current.destroy();
+          } catch (e) { }
+          viewerInstanceRef.current = null;
+        }
+      }
+
+      // Если удалили текущую стартовую — переключаемся на первую или null
+      const newStartId = prev.startNodeId === nodeId
+        ? (newNodes[0]?.id || null)
+        : prev.startNodeId;
+
+      return {
+        ...prev,
+        nodes: newNodes,
+        startNodeId: newStartId,
+      };
+    });
+
+    // Если удалили текущую открытую в превью — закрываем или переключаем
+    if (previewStartNodeId === nodeId) {
+      const remainingNode = formData.nodes.find(n => n.id !== nodeId);
+      setPreviewStartNodeId(remainingNode?.id || null);
+    }
   };
+
   const unlinkNodes = (nodeIdA, nodeIdB) => {
     setFormData(prev => ({
       ...prev,
@@ -159,17 +166,6 @@ export default function Project360Form({ id, initialData, onSave, onCancel }) {
   };
 
 
-  // === Ручное добавление ===
-  const addManualNode = () => {
-    if (!newNode.id.trim() || !newNode.name.trim() || !newNode.panorama.trim()) {
-      alert('Заполните ID, Название и Панораму');
-      return;
-    }
-    const node = { ...newNode, links: [], gps: [37.6761, 55.7817, 1], sphereCorrection: { pan: '0deg' } };
-    setFormData(prev => ({ ...prev, nodes: [...prev.nodes, node] }));
-    setPreviewStartNodeId(node.id);
-    setNewNode({ id: '', name: '', panorama: '', thumbnail: '', caption: '' });
-  };
 
   const handleChange = e => setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
   const handleNodeChange = e => setNewNode(prev => ({ ...prev, [e.target.name]: e.target.value }));
@@ -201,16 +197,113 @@ export default function Project360Form({ id, initialData, onSave, onCancel }) {
   const activeStartId = previewStartNodeId || formData.nodes[0]?.id || null;
   const startNode = formData.nodes.find(n => n.id === activeStartId);
 
+  // Функция создания viewer
+  const createViewer = useCallback(() => {
+    if (!viewerRef.current || formData.nodes.length === 0) return;
+
+    // Если уже есть — сначала убиваем
+    if (viewerInstanceRef.current) {
+      try { viewerInstanceRef.current.destroy(); } catch (e) { }
+    }
+
+    const viewer = new Viewer({
+      container: viewerRef.current,
+      loadingImg: '/assets/loader.gif',
+      touchmoveTwoFingers: true,
+      mousewheelCtrlKey: true,
+      defaultYaw: '130deg',
+      navbar: 'zoom move gallery caption fullscreen',
+      plugins: [
+        MarkersPlugin,
+        GalleryPlugin.withConfig({ thumbnailSize: { width: 100, height: 100 } }),
+        [VirtualTourPlugin, {
+          positionMode: 'gps',
+          renderMode: '3d',
+          arrowStyle: { color: '#d5d5d5', hoverColor: '#ff6b00', outlineColor: '#000' },
+          showLinkTooltip: true,  // ← Включаем tooltip
+
+          nodes: formData.nodes.map(n => ({
+            ...n,
+            id: String(n.id),
+            thumbnail: n.thumbnail || n.panorama,
+            caption: n.name,
+            links: n.links.map(l => ({ nodeId: String(l.nodeId) }))
+          }))
+        }]
+      ]
+    });
+
+    viewerInstanceRef.current = viewer;
+
+    viewer.addEventListener('ready', () => {
+      const tour = viewer.getPlugin(VirtualTourPlugin);
+      if (tour && activeStartId) {
+        tour.setCurrentNode(String(activeStartId), { renderArrows: true });
+      }
+      setCloseButtonVisibility(true);
+    });
+
+  }, [formData.nodes, activeStartId]);
+
+  // ЕДИНСТВЕННЫЙ useEffect — решает ВСЁ
+  useEffect(() => {
+    // Если превью закрыто — ничего не делаем
+    if (previewStartNodeId === null) {
+      if (viewerInstanceRef.current) {
+        try { viewerInstanceRef.current.destroy(); } catch (e) { }
+        viewerInstanceRef.current = null;
+      }
+      return;
+    }
+
+    // Если viewer ещё не создан — создаём
+    if (!viewerInstanceRef.current) {
+      createViewer();
+      return;
+    }
+
+    // Если viewer уже есть — просто обновляем данные
+    const tour = viewerInstanceRef.current.getPlugin(VirtualTourPlugin);
+    if (!tour) return;
+
+    // Обновляем ноды
+    tour.setNodes(formData.nodes.map(n => ({
+      ...n,
+      id: String(n.id),
+      links: n.links.map(l => ({ nodeId: String(l.nodeId) }))
+    })));
+
+    // Определяем, на какую ноду переключиться
+    const currentId = tour.getCurrentNode()?.id;
+    const targetId = currentId && formData.nodes.some(n => n.id === currentId)
+      ? currentId
+      : activeStartId;
+
+    if (targetId) {
+      tour.setCurrentNode(String(targetId), { renderArrows: true });
+    }
+
+  }, [previewStartNodeId, formData.nodes, activeStartId]);
+
   // GPS → SVG
-  const gpsToPixel = ([lon, lat]) => ({
-    x: MAP_CENTER + (lon - 37.6761) * MAP_SCALE,
-    y: MAP_CENTER - (lat - 55.7817) * MAP_SCALE,
-  });
-  const pixelToGps = ({ x, y }) => [
-    37.6761 + (x - MAP_CENTER) / MAP_SCALE,
-    55.7817 - (y - MAP_CENTER) / MAP_SCALE,
-    1 // height по умолчанию
-  ];
+  const gpsToPixel = ([lon, lat]) => {
+    // Центр карты — не фиксированный, а динамический!
+    const centerLon = 37.6761;
+    const centerLat = 55.7817;
+    return {
+      x: MAP_CENTER + (lon - centerLon) * MAP_SCALE,
+      y: MAP_CENTER - (lat - centerLat) * MAP_SCALE,
+    };
+  };
+  const pixelToGps = ({ x, y }) => {
+    const centerLon = 37.6761;
+    const centerLat = 55.7817;
+    return [
+      centerLon + (x - MAP_CENTER) / MAP_SCALE,
+      centerLat - (y - MAP_CENTER) / MAP_SCALE,
+      1
+    ];
+  };
 
   // Генерируем "хэш изменений" — простой, но надёжный способ
   const nodesHash = formData.nodes
@@ -259,29 +352,49 @@ export default function Project360Form({ id, initialData, onSave, onCancel }) {
     pt.y = e.clientY;
     const { x, y } = pt.matrixTransform(svg.getScreenCTM().inverse());
 
-    // Рассчитываем смещение
-    const dx = x - dragState.startX;
-    const dy = y - dragState.startY;
-
-    // Новая позиция в пикселях
-    const newX = dragState.startX + dx;
-    const newY = dragState.startY + dy;
-
-    // Переводим в GPS
-    const newGps = pixelToGps({ x: newX, y: newY });
-
-    // Обновляем ТОЛЬКО одну ноду — быстро и без дрожания
-    setFormData(prev => ({
+    // Обновляем ТОЛЬКО визуальную позицию — без setFormData!
+    setTempNodePositions(prev => ({
       ...prev,
-      nodes: prev.nodes.map(n =>
-        n.id === dragState.nodeId ? { ...n, gps: newGps } : n
-      )
+      [dragState.nodeId]: { x, y }
     }));
   };
 
   // Завершение — сбрасываем состояние
   const handleSvgPointerUp = () => {
+    if (dragState) {
+      const { nodeId, startX, startY } = dragState;
+      const finalPos = tempNodePositions[nodeId];
+
+      if (finalPos) {
+        // Переводим финальную позицию в GPS
+        const newGps = pixelToGps(finalPos);
+
+        // Обновляем данные ОДИН РАЗ
+        setFormData(prev => ({
+          ...prev,
+          nodes: prev.nodes.map(n =>
+            n.id === nodeId ? { ...n, gps: newGps } : n
+          )
+        }));
+      }
+    }
+
+    // Сбрасываем всё
     setDragState(null);
+    setTempNodePositions({});
+  };
+
+  const handleClosePreview = () => {
+    if (viewerInstanceRef.current) {
+      try {
+        viewerInstanceRef.current.destroy();
+      } catch (e) {
+        console.warn('Viewer already destroyed');
+      }
+      viewerInstanceRef.current = null;
+    }
+    setPreviewStartNodeId(null);
+    setCloseButtonVisibility(false);
   };
 
   return (
@@ -396,7 +509,12 @@ export default function Project360Form({ id, initialData, onSave, onCancel }) {
 
               {/* Точки */}
               {formData.nodes.map(node => {
-                const { x, y } = gpsToPixel(node.gps);
+                // Берём позицию: сначала из временного состояния, потом из gps
+                const tempPos = tempNodePositions[node.id];
+                const { x, y } = tempPos
+                  ? { x: tempPos.x, y: tempPos.y }
+                  : gpsToPixel(node.gps);
+
                 const isSelected = selectedNodeIds.includes(node.id);
                 const isStart = node.id === (formData.startNodeId || formData.nodes[0]?.id);
 
@@ -405,12 +523,25 @@ export default function Project360Form({ id, initialData, onSave, onCancel }) {
                     key={node.id}
                     data-node-id={node.id}
                     onPointerDown={e => handleNodeDragStart(e, node)}
-                    onPointerUp={e => handleNodeClick(e, node.id)}
+                    onPointerUp={(e) => {
+                      if (e.button === 0) { // ЛКМ
+                        // Если зажат Ctrl — редактировать высоту
+                        if (e.ctrlKey || e.metaKey) {
+                          const altitude = node.gps[2] || 1;
+                          setEditingAltitude({
+                            nodeId: node.id,
+                            nodeName: node.name,
+                            altitude: altitude
+                          });
+                        } else {
+                          handleNodeClick(e, node.id);
+                        }
+                      }
+                    }}
                     onPointerEnter={() => setHoveredNodeId(node.id)}
                     onPointerLeave={() => setHoveredNodeId(null)}
                     onContextMenu={e => {
-                      e.preventDefault(); // ← для точек тоже
-                      // ПКМ по точке — сделать стартовой (если хотите)
+                      e.preventDefault();
                       setFormData(prev => ({ ...prev, startNodeId: node.id }));
                     }}
                     style={{ cursor: 'pointer' }}
@@ -436,6 +567,50 @@ export default function Project360Form({ id, initialData, onSave, onCancel }) {
             </svg>
           </div>
         </div>
+        <small style={{ color: '#aaa', marginLeft: '10px', marginBottom: '16px', display: 'block' }}>
+          Ctrl + клик по ноде — изменить высоту
+        </small>
+
+        {/* Модалка редактирования высоты */}
+        {editingAltitude && (
+          <div className={styles.altitudeOverlay}>
+            <div className={styles.altitudeModal}>
+              <h4>Высота ноды: {editingAltitude.nodeName}</h4>
+              <input
+                type="range"
+                min="-50"
+                max="200"
+                step="1"
+                value={editingAltitude.altitude}
+                onChange={(e) => {
+                  const newAlt = Number(e.target.value);
+                  setEditingAltitude(prev => ({ ...prev, altitude: newAlt }));
+
+                  // ← МГНОВЕННОЕ ОБНОВЛЕНИЕ В ПРЕВЬЮ!
+                  setFormData(prev => ({
+                    ...prev,
+                    nodes: prev.nodes.map(n =>
+                      n.id === editingAltitude.nodeId
+                        ? { ...n, gps: [n.gps[0], n.gps[1], newAlt] }
+                        : n
+                    )
+                  }));
+                }}
+                style={{ width: '100%' }}
+              />
+              <div style={{ textAlign: 'center', margin: '10px 0', fontWeight: 'bold' }}>
+                {editingAltitude.altitude} м
+              </div>
+              <button
+                type="button"
+                className={styles.saveBtn}
+                onClick={() => setEditingAltitude(null)}
+              >
+                Готово
+              </button>
+            </div>
+          </div>
+        )}
 
         {dragState && (
           <div style={{ padding: '10px', background: '#222', color: '#fff', fontFamily: 'monospace' }}>
@@ -454,19 +629,27 @@ export default function Project360Form({ id, initialData, onSave, onCancel }) {
                 {startNode && <span className={styles.startInfo}> (старт: {startNode.name})</span>}
               </h3>
               <div className={styles.previewActions}>
-                <button type="button" className={styles.refreshBtn} onClick={() => setPreviewStartNodeId(activeStartId)}>
+                <button
+                  type="button"
+                  className={styles.refreshBtn}
+                  onClick={() => {
+                    // Полностью пересоздаём viewer с текущими данными
+                    handleClosePreview(); // сначала убиваем старый
+                    setTimeout(() => {
+                      setPreviewStartNodeId(activeStartId); // через тик — чтобы сработал useEffect
+                    }, 100);
+                  }}
+                >
                   Refresh
                 </button>
-                <button type="button" className={styles.closeBtn} onClick={() => setPreviewStartNodeId(null)}>
+                <button type="button" disabled={closeButtonVisibility ? false : true} className={styles.closeBtn} onClick={handleClosePreview}>
                   Close
                 </button>
               </div>
             </div>
 
             <MiniTourPreview
-              nodes={formData.nodes}
-              startNodeId={activeStartId}
-              key={`${previewStartNodeId}-${nodesHash}`}
+              containerRef={viewerRef}
             />
 
 
@@ -484,7 +667,8 @@ export default function Project360Form({ id, initialData, onSave, onCancel }) {
               ))}
             </div>
           </div>
-        )}
+        )
+        }
 
         {/* Список нод */}
         <div className={styles.nodesList}>
@@ -523,15 +707,54 @@ export default function Project360Form({ id, initialData, onSave, onCancel }) {
             <input name="id" placeholder="ID" value={newNode.id} onChange={handleNodeChange} />
             <input name="name" placeholder="Название" value={newNode.name} onChange={handleNodeChange} />
           </div>
-          <input name="panorama" placeholder="/path/to/pano.jpg" value={newNode.panorama} onChange={handleNodeChange} style={{ marginTop: 8, width: '100%' }} />
-          <button type="button" className={styles.addBtn} onClick={addManualNode}>+ Добавить точку</button>
+          <button type="button" className={styles.addBtn} onClick={() => manualFileInputRef.current?.click()}>
+            + Добавить точку вручную
+          </button>
         </div>
 
         <div className={styles.formActions}>
           <button type="submit" className={styles.saveBtn}>{id === 'new' ? 'Создать' : 'Сохранить'}</button>
           <button type="button" className={styles.cancelBtn} onClick={onCancel}>Отмена</button>
         </div>
-      </form>
-    </div>
+      </form >
+      <input
+        ref={manualFileInputRef}
+        type="file"
+        accept="image/*"
+        style={{ display: 'none' }}
+        onChange={(e) => {
+          const file = e.target.files[0];
+          if (!file) return;
+
+          if (!newNode.id.trim() || !newNode.name.trim()) {
+            alert('Заполните ID и Название');
+            return;
+          }
+
+          const panoramaUrl = URL.createObjectURL(file);
+
+          const node = {
+            id: newNode.id,
+            name: newNode.name,
+            panorama: panoramaUrl,
+            thumbnail: panoramaUrl,
+            caption: file.name,
+            gps: [37.6761, 55.7817, 1],
+            sphereCorrection: { pan: '0deg' },
+            links: [],
+          };
+
+          setFormData(prev => ({
+            ...prev,
+            nodes: [...prev.nodes, node],
+            startNodeId: prev.startNodeId || node.id,
+          }));
+
+          setPreviewStartNodeId(node.id);
+          setNewNode({ id: '', name: '', panorama: '', thumbnail: '', caption: '' });
+          e.target.value = ''; // сброс
+        }}
+      />
+    </div >
   );
 }

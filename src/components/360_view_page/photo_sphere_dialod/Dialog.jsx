@@ -11,6 +11,7 @@ import { MarkersPlugin } from '@photo-sphere-viewer/markers-plugin';
 import CancelIcon from '@mui/icons-material/Cancel';
 import IosShareIcon from '@mui/icons-material/IosShare';
 import styles from './Dialog.module.css';
+import '../../../styles/psv-overrides.css';
 
 const Dialog = ({ project, onClose }) => {
   const viewerRef = useRef(null);

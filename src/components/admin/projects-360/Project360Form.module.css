@@ -9,7 +9,7 @@
   max-height: 92vh;
   overflow-y: auto;
   color: #e0e0e0;
-  box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
 }
 
 .section {
@@ -37,7 +37,8 @@
   transition: all 0.3s ease;
 }
 
-.dropZone:hover, .dropZone.active {
+.dropZone:hover,
+.dropZone.active {
   border-color: #b15bff;
   background: rgba(177, 91, 255, 0.08);
   transform: translateY(-2px);
@@ -74,10 +75,20 @@
 }
 
 .mapContainer {
-  background: #0a0a12;
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.mapContainer svg {
+  background-color: rgba(7, 13, 39, 0.6);
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
+  border-radius: 10px;
 }
 
 /* Preview */
@@ -103,11 +114,16 @@
   height: 420px;
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
   background: #000;
 }
 
-.refreshBtn, .closeBtn, .viewBtn, .deleteBtn, .nodeBtn, .addBtn {
+.refreshBtn,
+.closeBtn,
+.viewBtn,
+.deleteBtn,
+.nodeBtn,
+.addBtn {
   padding: 10px 16px;
   border: none;
   border-radius: 10px;
@@ -122,19 +138,24 @@
   color: #8be9fd;
 }
 
-.refreshBtn:hover { background: #44475a; }
+.refreshBtn:hover {
+  background: #44475a;
+}
 
-.closeBtn, .deleteBtn {
+.closeBtn,
+.deleteBtn {
   background: #ff5555;
   color: white;
 }
 
-.closeBtn:hover, .deleteBtn:hover {
+.closeBtn:hover,
+.deleteBtn:hover {
   background: #ff6e6e;
   transform: translateY(-1px);
 }
 
-.viewBtn, .nodeBtn[data-active="true"] {
+.viewBtn,
+.nodeBtn[data-active="true"] {
   background: #b15bff;
   color: white;
 }
@@ -163,11 +184,16 @@
   color: white;
   padding: 16px;
   font-size: 1.1rem;
+  border-radius: 10px;
 }
 
 .cancelBtn {
   background: #333;
   color: #aaa;
+  border-radius: 10px;
+
+  padding: 16px;
+
 }
 
 .nodeButtons {
@@ -209,8 +235,17 @@
 }
 
 @keyframes pulse-glow {
-  0%, 100% { r: 14; opacity: 1; }
-  50% { r: 16; opacity: 0.7; }
+
+  0%,
+  100% {
+    r: 14;
+    opacity: 1;
+  }
+
+  50% {
+    r: 16;
+    opacity: 0.7;
+  }
 }
 
 /* Визуальная подсветка при hover */
@@ -240,7 +275,7 @@
   text-align: center;
   max-width: 400px;
   width: 90%;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
 }
 
 .confirmActions {
@@ -267,3 +302,11 @@
   background: #555;
   color: white;
 }
+
+.formActions {
+  display: flex;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+
