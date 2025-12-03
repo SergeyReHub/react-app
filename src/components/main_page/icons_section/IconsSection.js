@@ -72,64 +72,65 @@ export default function IconsSection() {
     setHoveredIcon(null);
   };
 
-  // ✅ Формируем динамический класс
   const containerClass = `iconsSection${hoveredIcon ? ` ${hoveredIcon}-hover` : ''}`;
+
+  const items = [
+    {
+      name: 'shield',
+      icon: <ShieldTwoToneIcon sx={{ color: 'rgb(220, 120, 120)', fontSize: '5.2rem' }} />,
+      title: 'Прочность',
+    },
+    {
+      name: 'star',
+      icon: <AutorenewIcon sx={{ color: 'rgb(120, 200, 140)', fontSize: '5.2rem' }} />,
+      title: 'Экологичность',
+    },
+    {
+      name: 'air',
+      icon: <EmojiObjectsIcon sx={{ color: 'rgb(220, 210, 140)', fontSize: '5.2rem' }} />,
+      title: 'Уникальность',
+    },
+    {
+      name: 'swan',
+      icon: (
+        <SwanIcon
+          bodyColor="rgb(214, 119, 255)"
+          featherColor="transparent"
+          beakColor="white"
+          legColor="rgb(180, 90, 255)"
+          sx={{ fontSize: '5.2rem' }}
+        />
+      ),
+      title: 'Изящество',
+    },
+  ];
 
   return (
     <Container
       component="section"
       aria-label="Наши преимущества"
-      className={containerClass} // ✅ Теперь стили через CSS
+      className={containerClass}
       maxWidth={false}
-      sx={{ px: { xs: 2, sm: 4 } }} // минимальный MUI-микс
+      sx={{ px: 0 }}
     >
-      <Typography variant="h2" className="iconsSection-title"
-        sx={{ fontFamily: 'Inter, sans-serif !important', fontWeight: 600 }}>
+      <Typography variant="h2" className="iconsSection-title"sx={{ fontFamily: 'Inter, sans-serif !important', fontWeight: 600 }}>
         Наши преимущества
       </Typography>
 
-      <Grid container spacing={3} justifyContent="center">
-        {[
-          {
-            name: 'shield',
-            icon: <ShieldTwoToneIcon sx={{ color: 'rgb(220, 120, 120)' }} />,
-            title: 'Прочность',
-          },
-          {
-            name: 'star',
-            icon: <AutorenewIcon sx={{ color: 'rgb(120, 200, 140)' }} />,
-            title: 'Экологичность',
-          },
-          {
-            name: 'air',
-            icon: <EmojiObjectsIcon sx={{ color: 'rgb(220, 210, 140)' }} />,
-            title: 'Уникальность',
-          },
-          {
-            name: 'swan',
-            icon: (
-              <SwanIcon
-                bodyColor="rgb(214, 119, 255)"
-                featherColor="transparent"
-                beakColor="white"
-                legColor="rgb(180, 90, 255)"
-              />
-            ),
-            title: 'Изящество',
-          },
-        ].map((item) => (
-          <Grid item xs={12} sm={6} md={3} key={item.name}>
-            <Box
-              className="iconCard"
-              onMouseEnter={() => handleIconHover(item.name)}
-              onMouseLeave={handleIconLeave}
-            >
-              {item.icon}
-              <Typography className="iconCard-title"  sx={{ fontFamily: 'Inter, sans-serif !important', fontWeight: 500 }}>{item.title} </Typography>
-            </Box>
-          </Grid>
+      {/* ✅ Чистая CSS Grid-обёртка */}
+      <Box className="iconsGridWrapper">
+        {items.map((item) => (
+          <Box
+            key={item.name}
+            className="iconCard"
+            onMouseEnter={() => handleIconHover(item.name)}
+            onMouseLeave={handleIconLeave}
+          >
+            {item.icon}
+            <Typography className="iconCard-title" sx={{ fontFamily: 'Inter, sans-serif !important', fontWeight: 600 }}>{item.title} </Typography>
+          </Box>
         ))}
-      </Grid>
+      </Box>
     </Container>
   );
 }

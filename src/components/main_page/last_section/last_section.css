@@ -1,120 +1,442 @@
+/* ===== ОСНОВНОЙ КОНТЕЙНЕР ===== */
 .lastSection-container {
     background-color: black;
-    background-image: linear-gradient(to top, transparent 30%, rgba(255, 0, 238, 0.193) 100%);
+    background-image: linear-gradient(to top, transparent 30%, rgba(255, 0, 238, 0.15) 100%);
     display: flex;
-    min-height: 14vw;
     flex-direction: column;
-    padding-bottom: 5px;
+    padding-bottom: 16px;
 }
 
+/* ===== ОСНОВНОЙ БЛОК ===== */
 .lastSection-main {
     display: flex;
-    flex-direction: row;
+    flex-wrap: wrap;
     background-color: transparent;
-    border-top: 1px solid #727272;
-
+    border-top: 1px solid #444;
+    padding: 32px 20px 40px;
 }
 
+/* ===== 1. БЛОК БРЕНДА И ТЕКСТА (beauty-block) ===== */
 .beauty-block {
-    flex: 0.65;
-    display: inline-flex;
-    flex-direction: column;
-    align-items: baseline;
-    /* ← это заставит дочерние элементы растягиваться по ширине самого широкого */
-    margin-left: 20px;
-    margin-top: 30px;
-}
-
-
-
-
-
-.nadpisi {
-    display: inline-flex;
+    flex: 0 0 30%;
+    min-width: 280px;
+    display: flex;
     flex-direction: column;
     align-items: flex-start;
-    margin-top: 5px;
+    margin-top: -10px;
 }
-
-.nadpisi p {
-    /* p — определяет ширину контейнера */
-    width: fit-content;
-    /* ← сжимается по содержимому, но не растягивается */
-    /* или max-width: 500px; если нужен лимит */
-    color: rgb(195, 195, 195);
-    font-size: 1.2vw;
-    font-weight: 400;
-    white-space: normal;
-}
-
-.nadpisi h2 {
-    width: 100%;
-    white-space: normal;
-    /* ← 100% от ширины .nadpisi = ширина <p> */
-    /* Можно добавить выравнивание: */
-    text-align: justify;
-    /* или center / justify */
-    text-align-last: justify;
-    color: white;
-    font-size: 1.7vw;
-}
-
-
 
 .beauty-block-header {
     display: flex;
-    flex-direction: row;
     align-items: center;
-    column-gap: 40px;
+    gap: 24px;
 }
 
-.beauty-block .brand {
-    font-size: 2vw;
-    font-weight: bold;
+.brand {
+    font-size: clamp(1.4rem, 4vw, 2rem);
+    font-weight: 800;
     display: flex;
-    flex-direction: row;
-    column-gap: 5px;
+    gap: 6px;
     align-items: center;
 }
 
+.nadpisi {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.nadpisi h2 {
+    color: white;
+    font-size: clamp(1.3rem, 3.8vw, 2.1rem);
+    margin: 0;
+    line-height: 1.2;
+    max-width: 600px;
+}
+
+.nadpisi p {
+    color: #b0b0b0;
+    font-size: clamp(0.95rem, 2.5vw, 1.3rem);
+    line-height: 1.5;
+    margin-top: 8px;
+    max-width: 550px;
+}
+
+/* ===== 2. БЛОК МЕССЕНДЖЕРОВ — 2×2 СЕТКА ===== */
 .messagers-icons-block {
-    flex: 0.2;
+    flex: 0 0 25%;
+    min-width: 180px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    color: white;
-    padding: 0 80px
+    justify-content: flex-start;
+    padding: 0 40px 0 40px;
 }
 
-.three-messager-icons {
+.messagers-grid {
     display: grid;
-    grid-template-columns: auto auto;
-    grid-template-rows: auto auto;
-    grid-auto-flow: row;
-    row-gap: 15px;
-    /* вертикальный отступ (между строками) */
-    column-gap: 0px;
-    margin-top: 30px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-top: 24px;
     width: 100%;
-    background-color: transparent;
-    box-shadow: 0 0 0 0 transparent;
-    transition: background-color 2s ease, box-shadow 2s ease;
+    transition: all 1s ease;
+
 }
 
-.three-messager-icons img {
-    grid-column: span 1;
-    width: 3vw;
-    height: 3vw;
+.messager-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 60px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(120, 120, 120, 0.3);
+    border-radius: 10px;
     cursor: pointer;
+    transition:
+        background 0.3s ease,
+        transform 0.2s ease,
+        border-color 0.3s ease;
+    padding: 0;
 }
 
-.three-messager-icons svg {
-    grid-column: span 1;
-    width: 3vw;
-    height: 3vw;
+.messager-btn:hover,
+.messager-btn:focus {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(200, 200, 200, 0.6);
+    transform: translateY(-2px);
+    outline: none;
+}
+
+.messager-btn:active {
+    transform: translateY(0);
+}
+
+.messager-btn img,
+.messager-btn svg {
+    width: 45px;
+    height: 45px;
+    filter: brightness(1.1);
+}
+
+/* Анимация при триггере (for-imgs) */
+.messagers-grid.for-imgs .messager-btn {
+    animation: messengerPulse 0.8s ease;
+    
+}
+
+@keyframes messengerPulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.15);
+    }
+}
+
+/* ===== 3. БЛОК ССЫЛОК (clicks-block) ===== */
+.clicks-block {
+    flex: 1;
+    min-width: 280px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px 32px;
+    margin-top: 24px;
+}
+
+.one-click-block {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.one-click-block h3 {
+    color: white;
+    font-size: clamp(1rem, 2.8vw, 1.4rem);
+    margin-bottom: 12px;
+    font-weight: 700;
+}
+
+.one-click-block p {
+    color: #888;
+    font-size: clamp(0.9rem, 2.4vw, 1.15rem);
+    text-decoration: underline;
     cursor: pointer;
+    margin: 4px 0;
+    transition: color 0.2s ease;
 }
 
+.one-click-block p:hover {
+    color: #ddd;
+}
+
+.clicks-block .lighted-like-important {
+    color: #ff4d4d;
+    font-weight: 800;
+}
+
+/* ===== ПОДСВЕТКА ТЕКСТОВЫХ ССЫЛОК (underline-highlight) ===== */
+.underline-highlight {
+  position: relative;
+  color: #ff6b6b !important;
+}
+
+.underline-highlight::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: #ff6b6b;
+  border-radius: 1px;
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform 0.4s ease-out;
+}
+
+.underline-highlight.animate-underline::after {
+  transform: scaleX(1);
+}
+
+@keyframes underlinePulse {
+
+    0%,
+    100% {
+        color: inherit;
+        text-decoration-color: transparent;
+    }
+
+    50% {
+        color: #ff6b6b;
+        text-decoration-color: #ff6b6b;
+        text-decoration-thickness: 2px;
+    }
+}
+
+/* ===== ПУЛЬСАЦИЯ КНОПОК (pulse-highlight) — для Examples ===== */
+.pulse-highlight {
+    animation: pulseGlow 2s ease-in-out infinite;
+}
+
+@keyframes pulseGlow {
+
+    0%,
+    100% {
+        box-shadow: 0 0 0 0 rgba(253, 69, 69, 0.4);
+    }
+
+    50% {
+        box-shadow: 0 0 0 12px rgba(253, 69, 69, 0);
+    }
+}
+
+/* ===== ВСПЛЫВАЮЩЕЕ ОКНО АДРЕСА ===== */
+.address-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 2000;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 80px;
+    opacity: 1;
+    pointer-events: auto;
+    transition: opacity 0.3s ease;
+}
+
+.address-popup-content {
+    background: #111;
+    color: #eee;
+    border-radius: 12px;
+    padding: 24px;
+    width: 90%;
+    max-width: 420px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+    position: relative;
+    border: 1px solid #333;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.address-popup-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: #444;
+    color: white;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+
+.address-popup-close:hover {
+    background: #ff4444;
+}
+
+.address-popup-button {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    margin-top: 20px;
+    background: #631a83;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.address-popup-button:hover {
+    background: #8a2bae;
+}
+
+/* ===== FOOTER ===== */
+.footer-block {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 24px;
+    border-top: 1px dotted #555;
+    padding: 16px 20px 0;
+    color: #999;
+    font-size: 0.9rem;
+    margin-top: auto;
+}
+
+/* ===== АНИМАЦИЯ ПОДСВЕТКИ КНОПКИ "Обсудить проект" ===== */
+.contact_us.animate-contact-pulse {
+  position: relative;
+  color: white !important;
+  background-color: #ff4d4d !important;
+  box-shadow: 0 4px 20px rgba(255, 77, 77, 0.4);
+  transform: translateY(-2px);
+  transition: 
+    background-color 0.4s ease,
+    box-shadow 0.4s ease,
+    transform 0.4s ease;
+}
+
+.contact_us.animate-contact-pulse::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  border-radius: 8px;
+  background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+  opacity: 0;
+  pointer-events: none;
+  animation: contactGlowPulse 0.8s ease-out;
+}
+
+@keyframes contactGlowPulse {
+  0% { opacity: 0.8; transform: scale(0.9); }
+  50% { opacity: 0.5; transform: scale(1.1); }
+  100% { opacity: 0; transform: scale(1.3); }
+}
+
+/* 📱 АДАПТИВ */
+@media (max-width: 992px) {
+    .lastSection-main {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .beauty-block,
+    .messagers-icons-block,
+    .clicks-block {
+        flex: 1 1 100%;
+        max-width: 100%;
+        padding: 0 20px;
+    }
+
+    .beauty-block {
+        align-items: center;
+        text-align: center;
+    }
+
+    .nadpisi h2,
+    .nadpisi p {
+        text-align: center;
+    }
+
+    .messagers-icons-block {
+        margin: 32px 0;
+        order: 2;
+    }
+
+    .clicks-block {
+        grid-template-columns: 1fr;
+        gap: 20px;
+        max-width: 500px;
+        order: 3;
+    }
+
+    .clicks-block .one-click-block {
+        align-items: center;
+    }
+
+    .footer-block {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 768px) {
+    .messagers-grid {
+        grid-template-columns: 1fr;
+        max-width: 100%;
+    }
+
+    .messager-btn {
+        height: 56px;
+    }
+
+    .messager-btn img,
+    .messager-btn svg {
+        width: 38px;
+        height: 38px;
+    }
+}
+
+@media (max-width: 480px) {
+    .brand {
+        font-size: 1.6rem;
+    }
+
+    .nadpisi h2 {
+        font-size: 1.4rem;
+    }
+
+    .nadpisi p {
+        font-size: 1rem;
+    }
+
+    .footer-block {
+        font-size: 0.85rem;
+    }
+}
+
+/* ✅ UX улучшения */
+.messager-btn,
+.clicks-block p {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+}
+
+/* ===== SVG-ЦВЕТА — ОСТАВЛЕНЫ КАК ПРОСИЛИ ===== */
 .st0 {
     fill: #97CF26;
 }
@@ -129,187 +451,4 @@
 
 .st3 {
     fill: #00AAFF;
-}
-
-.three-messager-icons .icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    grid-column: span 1;
-}
-
-
-.three-messager-icons .bottom-icon {
-    grid-column: span 1;
-
-}
-
-
-.clicks-block {
-    padding-right: 50px;
-    flex: 1;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    margin-top: 30px;
-
-}
-
-.clicks-block div {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding-right: 10px;
-
-    transition: background-color 0.3s ease;
-}
-
-.clicks-block p {
-    color: #757474;
-    font-size: 1vw;
-}
-
-.clicks-block h3 {
-    color: white;
-    font-size: 1.3vw;
-    margin-bottom: 5px;
-}
-
-.one-click-block p {
-    text-decoration: underline;
-    transition: all 0.5s ease-out;
-}
-
-.clicks-block .lighted-like-important{
-    color: rgb(226, 36, 36);
-    font-weight: 900;
-}
-
-.one-click-block p:hover {
-    cursor: pointer;
-    color: rgb(209, 208, 208);
-}
-
-.footer-block {
-    position: relative;
-
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    border-top: 1px dotted #727272;
-    width: 50%;
-    margin-top: 20px;
-    margin-right: 20px;
-    text-align: start;
-    color: gray;
-    padding-top: 15px;
-    margin-left: 20px;
-}
-
-
-
-
-
-/* Всплывающая карточка адреса */
-.address-popup {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 1000;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    /* попап сверху */
-    padding-top: 80px;
-    opacity: 1;
-    pointer-events: auto;
-    transition: opacity 0.3s ease;
-}
-
-.address-popup-content {
-    background: #1a1a1a;
-    color: white;
-    border-radius: 12px;
-    padding: 20px;
-    width: 90%;
-    max-width: 400px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
-    position: relative;
-    transform: translateY(-20px);
-    transition: transform 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28);
-    border: 1px solid #333;
-}
-
-.address-popup.visible .address-popup-content {
-    transform: translateY(0);
-}
-
-/* Стрелка/хвостик (опционально) */
-.address-popup-content::before {
-    content: '';
-    position: absolute;
-    top: -10px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 0;
-    height: 0;
-    border-left: 10px solid transparent;
-    border-right: 10px solid transparent;
-    border-bottom: 10px solid #1a1a1a;
-}
-
-/* Кнопка закрытия */
-.address-popup-close {
-    position: absolute;
-    top: 12px;
-    right: 12px;
-    background: #333;
-    color: white;
-    border: none;
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    font-size: 16px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background 0.2s;
-}
-
-.address-popup-close:hover {
-    background: #fd4545;
-}
-
-/* Кнопка "Открыть в картах" */
-.address-popup-button {
-    display: block;
-    width: 100%;
-    padding: 10px;
-    margin-top: 16px;
-    background: #631a83;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.3s;
-}
-
-.address-popup-button:hover {
-    background: #8a2bae;
-}
-
-/* Адаптив: на узких экранах */
-@media (max-width: 600px) {
-    .address-popup {
-        padding-top: 60px;
-    }
-
-    .address-popup-content {
-        width: 95%;
-        padding: 16px;
-    }
 }

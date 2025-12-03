@@ -1,41 +1,118 @@
 .contact_section {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding-top: 7vh;
-    padding-right: 2vw;
-    background-color: black;
-    background-image: 
-      linear-gradient(to bottom, transparent 70%, rgba(255, 0, 238, 0.29) 100%);
-    max-height: 800px;
-    height: 45vh
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 6vh 4vw;
+  background-color: black;
+  background-image: linear-gradient(to bottom, transparent 70%, rgba(255, 0, 238, 0.25) 100%);
+  height: auto;
+  min-height: 50vh;
+  max-height: 800px;
+  position: relative;
+  overflow: hidden;
 }
-.contact_section h1 {
-    color: #FFFFFF;
-    font-size: 2.5rem;
-    font-weight: 700;
-    margin-bottom: 1vh;
-}
-.contact_section p {
-    color: #CCCCCC;
-    font-size: 1.2rem;
-    margin-bottom: 3vh;
-}
-.contact_section .contact_us  {
-    background-color: #631a83;
-    color: #FFFFFF;
-    border: none;
-    padding: 12px 24px;
-    font-size: 1.2rem;
-    font-weight: 600;
-    border-radius: 8px;
-    cursor: pointer;
-    width: 15vw;
-    height: 4vw;
-    transition: background-color 0.7s ease, color 0.8s ease, box-shadow 3s ease;
 
+/* Заголовок */
+.contact_section h1 {
+  color: #ffffff;
+  font-size: 2.6rem;
+  font-weight: 700;
+  margin: 0;
+  text-align: center;
+  max-width: 800px;
+  line-height: 1.2;
 }
-.contact_section .contact_us:hover {
-    background-color: rgb(190, 190, 190);
-    color: black
+
+/* Описание */
+.contact_section p {
+  color: #cccccc;
+  font-size: 1.3rem;
+  margin: 16px 0 32px;
+  text-align: center;
+  max-width: 700px;
+  line-height: 1.5;
+}
+
+/* Кнопка */
+.contact_section .contact_us {
+  background-color: #631a83;
+  color: #ffffff;
+  border: none;
+  padding: 14px 32px;
+  font-size: 1.25rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 
+    background-color 0.3s ease,
+    color 0.3s ease,
+    transform 0.2s ease,
+    box-shadow 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Hover + Focus (для accessibility) */
+.contact_section .contact_us:hover,
+.contact_section .contact_us:focus {
+  background-color: #e0e0e0;
+  color: #000000;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+  outline: none;
+}
+
+/* Active (нажатие) */
+.contact_section .contact_us:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* 📱 МОБИЛЬНАЯ АДАПТАЦИЯ */
+@media (max-width: 768px) {
+  .contact_section {
+    padding: 8vh 6vw;
+    min-height: 60vh;
+  }
+
+  .contact_section h1 {
+    font-size: 2.1rem;
+  }
+
+  .contact_section p {
+    font-size: 1.15rem;
+    margin-bottom: 28px;
+  }
+
+  .contact_section .contact_us {
+    width: 100%;
+    max-width: 320px;
+    padding: 16px;
+    font-size: 1.2rem;
+    height: auto; /* ← убрать фикс. высоту */
+  }
+}
+
+/* 📱 Очень узкие экраны (< 480px) */
+@media (max-width: 480px) {
+  .contact_section h1 {
+    font-size: 1.8rem;
+  }
+
+  .contact_section p {
+    font-size: 1rem;
+  }
+
+  .contact_section .contact_us {
+    padding: 14px;
+    font-size: 1.1rem;
+  }
+}
+
+/* ✅ Улучшение UX на iOS/Android */
+.contact_section .contact_us {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation; /* ускоряет отклик на tap */
 }

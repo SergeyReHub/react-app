@@ -84,31 +84,23 @@ export default function LastSection({ navigate,
 
     // Вспомогательная функция — сама анимация
     const triggerAnimation = (button) => {
-        button.classList.add('underline-highlight');
+        // button — это .contact_us (HTMLButtonElement)
 
-        const imgsContainer = imgsContainerRef?.current;
-        if (imgsContainer) {
-            imgsContainer.classList.add('for-imgs');
+        // Добавляем класс анимации
+        button.classList.add('animate-contact-pulse');
 
-            const imgs = imgsContainer.querySelectorAll('span');
-            imgs.forEach((img, index) => {
-                setTimeout(() => {
-                    img.style.transform = 'scale(1.2)';
-                    img.style.transition = 'transform 0.5s ease';
-                    setTimeout(() => {
-                        img.style.transform = 'scale(1)';
-                    }, 800);
-                }, index * 300);
-            });
-
-            // Убираем классы через 12 сек
-            setTimeout(() => {
-                button.classList.remove('underline-highlight');
-                if (imgsContainer) {
-                    imgsContainer.classList.remove('for-imgs');
-                }
-            }, 12000);
+        const grid = imgsContainerRef?.current;
+        if (grid) {
+            grid.classList.add('for-imgs');
         }
+
+        // Убираем через 1200 мс (достаточно для анимации)
+        setTimeout(() => {
+            button.classList.remove('animate-contact-pulse');
+            if (grid) {
+                grid.classList.remove('for-imgs');
+            }
+        }, 1200);
     };
 
     const underlineSocialsButtons = () => {
@@ -229,37 +221,24 @@ export default function LastSection({ navigate,
                     </div>
                 </div>
                 <div className="messagers-icons-block">
-                    <div ref={imgsContainerRef} className="three-messager-icons">
-                        <span className="icon">
-                            <img
-                                onClick={telegramHandler}
-                                src="/assets/icons8-telegram.svg" alt="telegram" />
-                        </span>
-                        <span className="icon top-icon">
-                            <img
-                                onClick={whatsappHandler}
-                                id="whatsapp" src="/assets/whatsapp-logo-4463.svg" alt="whatsapp" />
-                        </span>
-                        <span className="icon bottom-icon">
-                            <img
-                                onClick={mailHandler}
-                                src="/assets/mail_ru_logo_icon_147267.svg" alt="mail" />
-                        </span>
-                        <span className="icon bottom-icon">
-                            <svg
-                                onClick={avitoHandler}
-                                x="0px" y="0px"
-                                viewBox="0 0 600 600" >
-                                <g>
-                                    <g>
-                                        <circle class="st0" cx="423.3" cy="423.3" r="156.3" />
-                                        <circle class="st1" cx="128.6" cy="423.3" r="73.2" />
-                                        <circle class="st2" cx="423.3" cy="128.6" r="100.9" />
-                                        <circle class="st3" cx="128.6" cy="128.6" r="128.6" />
-                                    </g>
-                                </g>
+                    <div ref={imgsContainerRef} className="messagers-grid">
+                        <button className="messager-btn" onClick={telegramHandler} aria-label="Написать в Telegram">
+                            <img src="/assets/icons8-telegram.svg" alt="Telegram" />
+                        </button>
+                        <button className="messager-btn" onClick={whatsappHandler} aria-label="Написать в WhatsApp">
+                            <img src="/assets/whatsapp-logo-4463.svg" alt="WhatsApp" />
+                        </button>
+                        <button className="messager-btn" onClick={mailHandler} aria-label="Отправить email">
+                            <img src="/assets/mail_ru_logo_icon_147267.svg" alt="Email" />
+                        </button>
+                        <button className="messager-btn" onClick={avitoHandler} aria-label="Посмотреть на Avito">
+                            <svg viewBox="0 0 600 600" aria-hidden="true">
+                                <circle className="st0" cx="423.3" cy="423.3" r="156.3" />
+                                <circle className="st1" cx="128.6" cy="423.3" r="73.2" />
+                                <circle className="st2" cx="423.3" cy="128.6" r="100.9" />
+                                <circle className="st3" cx="128.6" cy="128.6" r="128.6" />
                             </svg>
-                        </span>
+                        </button>
                     </div>
                 </div>
                 <div className="clicks-block">

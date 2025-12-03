@@ -1,69 +1,157 @@
+/* projects-section.css — обновлённый блок */
+
 .projects-section {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: black;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: opacity 1s ease, transform 0.6s ease;
-  z-index: 9;
+    position: absolute;
+    top: 150px;
+    left: 0;
+    width: 100%;
+    height: 100dvh;
+    background: transparent;
+    /* <-- лучше затемнить фон */
+    display: flex;
+    align-items: flex-start;
+    /* ← важно: не center, а начало, чтобы скролл работал */
+    justify-content: flex-start;
+    transition: opacity 0.6s ease, visibility 0.6s;
+    z-index: 9;
+    overflow-y: auto;
+    /* ✅ разрешаем вертикальный скролл */
+    scrollbar-width: none;
+    /* скрыть скроллбар в Firefox */
 }
 
-.project-list {
-    margin: -200px 50px 0 50px;
-    display: grid;
-    grid-template-columns: repeat(3, minmax(300px, 45vw));
-    transition: opacity 0.6s ease, transform 0.6s ease;
-    gap: 20px;
+.projects-section::-webkit-scrollbar {
+    display: none;
+    /* скрыть в Chrome/Safari */
 }
 
 .projects-section.hidden {
-  opacity: 0;
-  background: transparent;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    display: none;
 }
 
 .projects-section.active {
-  opacity: 1;
-  transform: scale(1);
-  background: transparent;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
 }
 
+/* project-list — оберните в scrollable container и уберите center */
+.project-list {
+    width: 100%;
+    max-width: 1400px;
+    padding: 80px 20px 40px;
+    /* ↑ отступ сверху для заголовка/логотипа */
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+}
+
+/* ===== КАРТОЧКА ПРОЕКТА ===== */
 .project {
     display: flex;
     flex-direction: column;
-    position: relative;
     align-items: center;
-    border: 2px solid rgb(189, 189, 189);
-    border-radius: 8px;
-    padding: 10px;
-    margin-left: 15px;
+    border: 2px solid #555;
+    border-radius: 12px;
+    padding: 20px;
+    background: rgba(20, 20, 20, 0.4);
+    backdrop-filter: blur(4px);
     cursor: pointer;
-    
-    transition: box-shadow 0.2s, border-color 0.2s;
+    transition:
+        border-color 0.3s ease,
+        transform 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.1),
+        box-shadow 0.3s ease;
 }
 
-/* При наведении — усиливаем рамку или добавляем тень */
-.project:hover {
-    border-color: #333;
-    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.247);
+.project:hover,
+.project:focus {
+    border-color: #ff6b6b;
+    transform: translateY(-6px);
+    box-shadow: 0 8px 24px rgba(255, 107, 107, 0.15);
+    outline: none;
 }
 
-.project h3, .project p{
-    color: white;
-}
-.project h3 {
-    margin: 10px 0 5px 0;
-    font-size: 24px;
-    font-weight: 600;
-}
+.project h3,
 .project p {
-    margin: 0 0 10px 0;
-    font-size: 20px;
-    font-weight: 400;
-}
-.project img{
+    color: white;
+    text-align: center;
+    margin: 0;
     width: 100%;
+}
+
+.project h3 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin: 12px 0 8px;
+    line-height: 1.2;
+}
+
+.project p {
+    font-size: 1rem;
+    font-weight: 400;
+    color: #bbb;
+    margin-bottom: 16px;
+    line-height: 1.5;
+}
+
+.project img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 0;
+    transition: opacity 0.3s;
+}
+
+.project:hover img {
+    opacity: 0.95;
+}
+
+/* ===== УЛУЧШЕНИЯ ДЛЯ МОБИЛЬНЫХ ===== */
+@media (max-width: 768px) {
+    .project-list {
+        grid-template-columns: 1fr;
+        padding: 0 16px;
+        gap: 20px;
+    }
+
+    .project {
+        padding: 18px;
+    }
+
+    .project h3 {
+        font-size: 1.4rem;
+    }
+
+    .project p {
+        font-size: 0.95rem;
+    }
+
+    .project img {
+        height: 160px;
+    }
+}
+
+@media (max-width: 480px) {
+    .project h3 {
+        font-size: 1.3rem;
+    }
+
+    .project p {
+        font-size: 0.9rem;
+    }
+
+    .project img {
+        height: 140px;
+    }
+}
+
+/* ✅ Корректное поведение при таче */
+.project {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
 }
