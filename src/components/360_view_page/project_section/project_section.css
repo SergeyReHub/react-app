@@ -2,10 +2,10 @@
 
 .projects-section {
     position: absolute;
-    top: 150px;
+    top: 130px;
     left: 0;
     width: 100%;
-    height: 100dvh;
+    height: calc(100dvh - 130px);
     background: transparent;
     /* <-- лучше затемнить фон */
     display: flex;
@@ -18,6 +18,8 @@
     /* ✅ разрешаем вертикальный скролл */
     scrollbar-width: none;
     /* скрыть скроллбар в Firefox */
+    padding-bottom: 20px;
+    padding-top: 5px;
 }
 
 .projects-section::-webkit-scrollbar {

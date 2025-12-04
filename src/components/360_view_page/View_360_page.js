@@ -83,7 +83,7 @@ export default function View_360_Page() {
       }, 300);
     }
   };
-  
+
   useEffect(() => {
     return () => {
       if (scrollImpulseTimer.current) {
@@ -100,39 +100,43 @@ export default function View_360_Page() {
     }
   };
 
-  // Добавьте ref:
-
 
   const handleTouchMove = (e) => {
     if (selectedProject || !containerRef.current) return;
 
     const touchY = e.touches[0].clientY;
     const currentScrollTop = containerRef.current.scrollTop;
-    const diff = touchStartY.current - touchY; // >0: свайп вверх
+    const diff = touchStartY.current - touchY; // >0: свайп вверх (контент — вниз)
+    const isAtTop = currentScrollTop <= 1;
 
     if (activeSection === 'projects') {
-      // 🔹 Условие активации "натяжения вверх":
-      // — мы на самом верху (или почти)
-      // — свайп вверх (diff > 0)
-      // — и при этом не можем скроллить дальше вверх (уже наверху)
-      const isAtTop = currentScrollTop <= 1;
+      // 🔁 Сброс, если:
+      // — ушли с верха
+      // — или свайп не вниз (не "натяжение")
+      if (!isAtTop || diff >= 0) { // diff >= 0 → свайп вверх или статика
+        if (pullUpActive) setPullUpActive(false);
+        if (pullUpTimer.current) {
+          clearTimeout(pullUpTimer.current);
+          pullUpTimer.current = null;
+        }
+        return; // ← разрешаем естественный скролл вниз и внутри
+      }
 
-      if (diff > pullUpThreshold && isAtTop) {
-        e.preventDefault(); // блокируем rubber-band (если он есть)
+      // ✅ Правильное условие: свайп ВНИЗ (diff < 0), и мы наверху
+      if (diff < -pullUpThreshold && isAtTop) {
+        e.preventDefault(); // блокируем увод фона/резинку
 
-        // Активируем состояние "натяжения"
         if (!pullUpActive) {
           setPullUpActive(true);
         }
 
-        // Перезапускаем таймер — пользователь "удерживает" натяжение
+        // Перезапускаем таймер
         if (pullUpTimer.current) {
           clearTimeout(pullUpTimer.current);
         }
 
         pullUpTimer.current = setTimeout(() => {
           pullUpTimer.current = null;
-          // ✅ После 1 секунды натяжения — переключаемся
           if (pullUpActive && containerRef.current?.scrollTop <= 1) {
             setActiveSection('main');
             setPullUpActive(false);
@@ -140,28 +144,20 @@ export default function View_360_Page() {
               if (containerRef.current) containerRef.current.scrollTop = 0;
             }, 300);
           }
-        }, 1000); // ⏱ 1 секунда
-
-      } else {
-        // Сбрасываем, если вышли из зоны натяжения
-        if (pullUpActive) {
-          setPullUpActive(false);
-        }
-        if (pullUpTimer.current) {
-          clearTimeout(pullUpTimer.current);
-          pullUpTimer.current = null;
-        }
+        }, 1000);
       }
 
-    } else if (activeSection === 'main' && diff > pullUpThreshold) {
-      // main → projects (вниз) — можно оставить мгновенным или тоже с задержкой
-      e.preventDefault();
-      setActiveSection('projects');
-      setPullUpActive(false);
-      if (pullUpTimer.current) clearTimeout(pullUpTimer.current);
-      setTimeout(() => {
-        if (containerRef.current) containerRef.current.scrollTop = 0;
-      }, 300);
+    } else if (activeSection === 'main') {
+      // main → projects: свайп ВВЕРХ (листаем контент вниз) → diff > threshold
+      if (diff > pullUpThreshold) {
+        e.preventDefault();
+        setActiveSection('projects');
+        setPullUpActive(false);
+        if (pullUpTimer.current) clearTimeout(pullUpTimer.current);
+        setTimeout(() => {
+          if (containerRef.current) containerRef.current.scrollTop = 0;
+        }, 300);
+      }
     }
   };
 

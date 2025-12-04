@@ -11,8 +11,8 @@
   content: '';
   position: relative;
   z-index: 100;
-  border-top: 5px double #333333;
-  border-bottom: 5px double #333333;
+  border-top: 5px double #646464;
+  border-bottom: 5px double #646464;
   padding-top: 10px;
   padding-bottom: 10px;
 }
@@ -27,13 +27,15 @@
 }
 
 .title {
-  font-size: 18px;
+  font-size: clamp(16px, 4vw, 24px);
+  /* min 16px, max 24px, растягивается */
   font-weight: 600;
   color: #ffffff;
+  line-height: 1.2;
 }
 
 .meta {
-  font-size: 15px;
+  font-size: clamp(12px, 3vw, 15px);
   color: #acacac;
   white-space: nowrap;
   text-align: center;
@@ -42,7 +44,7 @@
 /* Grid of thumbnails — fixed aspect, consistent sizing */
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 200px));
+  grid-template-columns: repeat(auto-fit, minmax(160px, 250px));
   gap: 10px;
   justify-content: center;
   align-items: center;
@@ -50,34 +52,37 @@
 
 .thumbWrap {
   position: relative;
-  padding-top: 100%; /* 1:1 square */
   overflow: hidden;
   cursor: pointer;
   border-radius: 8px;
-  background: #2c2c2c; /* тёмная тема → заменил #f5f5f5 */
+ 
+  background: #2c2c2ca4;
+  /* тёмная тема → заменил #f5f5f5 */
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   transition: transform 0.2s, box-shadow 0.2s;
+
+  aspect-ratio: 4 / 3; /* ← можно 1/1, 16/9, 3/2 — выбирайте */
+  width: 100%;
 }
 
 .thumbWrap:hover {
   transform: scale(1.02);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+  border: 2px solid #d45a08a9;
 }
 
 .thumb {
-  position: absolute;
-  top: 0;
-  left: 0;
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  height: 70%;
+  object-fit: cover; /* ← обрезает с центрированием */
+  object-position: center;
   display: block;
 }
 
 .caption {
-  font-size: 13px;
+  position: relative;
+  font-size: clamp(12px, 2.8vw, 14px);
   color: #ffffff;
-  margin-top: 6px;
   line-height: 1.4;
   text-align: center;
 }
@@ -105,7 +110,8 @@
 }
 
 .navBtn:hover {
-  background: rgba(177, 91, 255, 0.8); /* фиолетовый акцент M.GROUP */
+  background: rgba(177, 91, 255, 0.8);
+  /* фиолетовый акцент M.GROUP */
   transform: translateY(-50%) scale(1.05);
 }
 

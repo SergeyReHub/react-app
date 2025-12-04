@@ -37,18 +37,14 @@ export default function ProjectSection({ projects, set_light_box }) {
                   alt={ph.caption || `${project.name} photo`}
                   className={styles.thumb}
                   loading="lazy"
-                />
+                />,
+                <div key={`${project.id}-cap-${ph.id}`} className={styles.caption}>
+                  {ph.caption}
+                </div>
               </div>
             ))}
           </div>
 
-          {project.photos.map((ph) =>
-            ph.caption ? (
-              <div key={`${project.id}-cap-${ph.id}`} className={styles.caption}>
-                {ph.caption}
-              </div>
-            ) : null
-          )}
         </section>
       ))}
     </div>

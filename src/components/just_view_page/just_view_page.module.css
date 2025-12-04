@@ -12,8 +12,7 @@
       rgba(224, 138, 138, 0.3) 0%,
       transparent 40%,
       transparent 60%,
-      rgba(224, 138, 138, 0.3) 100%
-    );
+      rgba(224, 138, 138, 0.3) 100%);
   overflow: auto;
 }
 
@@ -125,5 +124,19 @@
     width: 48px;
     height: 48px;
     font-size: 20px;
+  }
+
+  .brand {
+    position: relative;
+    justify-content: center;
+  }
+
+  .header{
+    flex-direction: column;
+  }
+
+  .header .title{
+    text-align: center;
+    margin-top: 5px;
   }
 }

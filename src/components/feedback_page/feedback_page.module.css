@@ -1,0 +1,257 @@
+/* ===== Контейнер и фон ===== */
+.container {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  width: 100vw;
+  min-height: 100vh;
+  background-color: black;
+  background-image:
+    /* 1. Вертикальный розовый градиент */
+    linear-gradient(
+      to top,
+      rgba(7, 7, 7, 0.726) 0%,
+      rgba(255, 0, 238, 0.219) 100%
+    ),
+    /* 2. Горизонтальный градиент (розово-красный → чёрный) */
+    linear-gradient(
+      to right,
+      rgba(202, 37, 37, 0.3) 0%,
+      transparent 40%,
+      transparent 60%,
+      rgba(202, 37, 37, 0.3) 100%
+    );
+}
+
+/* ===== Шапка ===== */
+.header {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding-bottom: 10px;
+  padding-top: 16px;
+}
+
+.title {
+  font-size: 34px;
+  font-weight: 600;
+  color: #ffffff;
+  text-decoration: underline #4a4a4a34;
+  text-align: center;
+  margin: 0;
+}
+
+.brand {
+  position: absolute;
+  left: 0;
+  margin: 0;
+  font-size: 34px;
+  font-weight: 600;
+  color: #ffffff;
+  cursor: pointer;
+  text-decoration: underline #ffffff34;
+}
+
+.brand:hover {
+  text-decoration: underline #ffffffaa;
+}
+
+.brandLetterM {
+  color: rgba(253, 69, 69, 0.58);
+}
+
+/* ===== Форма ===== */
+.formContainer {
+  position: relative;
+  align-self: center;
+  width: 90%;
+  max-width: 600px;
+  margin-top: 40px;
+  background-image: linear-gradient(
+    to right,
+    transparent 0%,
+    rgba(97, 15, 15, 0.123) 15%,
+    rgba(105, 28, 28, 0.267) 75%,
+    transparent 100%
+  );
+  box-shadow: 0 17px 60px rgba(0, 0, 0, 0.671);
+  border-radius: 10px;
+  padding: 20px;
+  z-index: 4;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  color: white;
+  width: 100%;
+}
+
+/* ===== Поля ввода ===== */
+.formGroup {
+  width: 100%;
+  margin-top: 20px;
+}
+
+.label {
+  font-size: 18px;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.descLabel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.input,
+.textarea {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  box-sizing: border-box;
+  border: 1px solid #55555596;
+  border-radius: 4px;
+  background-color: rgba(30, 30, 30, 0.349);
+  color: white;
+  font-size: 16px;
+}
+
+.textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+/* ===== Блок email + код ===== */
+.emailGroup {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.codeSection {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  margin-top: 20px;
+  align-items: center;
+  width: 100%;
+}
+
+.codeInput {
+  padding: 8px 12px;
+  font-size: 16px;
+  border-radius: 4px;
+  background-color: rgba(30, 30, 30, 0.349);
+  color: white;
+  border: 1px solid #55555596;
+  box-sizing: border-box;
+  flex: 1;
+  min-width: 100px;
+}
+
+/* ===== Кнопки ===== */
+.button {
+  align-self: center;
+  padding: 10px 20px;
+  background-color: #c20554;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 15px;
+  transition: background-color ease-out 0.3s;
+}
+
+.button:hover:not(:disabled) {
+  background-color: #eb50af;
+}
+
+.codeButton {
+  align-self: flex-start;
+  background-color: #8f3359;
+  padding: 7px 15px;
+  margin: auto 0;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.2s;
+}
+
+.codeButton:hover:not(:disabled) {
+  background-color: #b14b70;
+}
+
+/* Состояние: кнопка исчезает */
+.codeButtonDisappear {
+  display: none;
+  pointer-events: none;
+}
+
+/* ===== Ошибки ===== */
+.inputError {
+  border: 2px solid #ff5555 !important;
+  box-shadow: 0 0 6px rgba(255, 85, 85, 0.6) !important;
+  background-color: #a0364e !important;
+}
+
+/* ===== Отправка ===== */
+.submitButton {
+  composes: button;
+}
+
+.submitButtonDisabled {
+  background-color: #777 !important;
+  cursor: not-allowed !important;
+}
+
+.submitButtonDisabled:hover {
+  background-color: #777 !important;
+}
+
+/* ===== Адаптив для мобильных ===== */
+@media (max-width: 600px) {
+  .header {
+    padding-top: 12px;
+    padding-bottom: 8px;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .title {
+    font-size: 28px;
+  }
+
+  .brand {
+    position: static; /* ← отключаем absolute */
+    left: auto;
+    align-self: flex-start;
+    margin-bottom: 12px;
+    font-size: 28px;
+    align-self: center;
+  }
+
+  .formContainer {
+    width: 94%;
+    padding: 16px;
+  }
+
+  .codeSection {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .codeButton {
+    width: 100%;
+    justify-content: center;
+  }
+}

@@ -1,93 +1,129 @@
+/* ===== ОСНОВНАЯ СЕКЦИЯ ===== */
 .main-section {
   position: absolute;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
+  min-height: 100dvh;
+  /* лучше для iOS */
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   background: #000;
   color: white;
-  transition: opacity 0.6s ease, transform 0.6s ease, translateY 1.9s ease, background 0.6s ease,;
+  transition:
+    opacity 0.6s ease,
+    transform 0.6s ease,
+    background 0.6s ease;
   z-index: 10;
+  padding: 0 16px;
+  /* ← отступы по краям */
+  box-sizing: border-box;
 }
 
 .main-section.hidden {
-  background: transparent;
-  pointer-events: none;
-}
-
-.header-container h1{
-  transition: background 0.6s ease, transform 0.6s ease;
-}
-.main-section.hidden .header-container h1{
-  background: transparent;
-  transform: scale(1) translateY(-30vh);
-  pointer-events: none;
-}
-
-.main-section.hidden .header-container .scroll-gif .active{
-  background: transparent;
-  transform: scale(1) translateY(-30vh);
-  pointer-events: none;
-}
-
-.main-section.active {
-  transform: scale(1);
-  
-}
-
-.scroll-gif {
-  width: 200px;
-  height: auto;
-  margin-top: 20px;
-  transition: opacity 0.6s ease, transform 0.6s ease;
-}
-
-.scroll-gif.active {
   opacity: 1;
+  background: transparent;
+  pointer-events: none;
+  /* Не используем transform scale/translate здесь — лучше управлять через дочерние элементы */
 }
 
-.scroll-gif.hidden {
-  opacity: 0;
-}
-
+/* ===== КОНТЕЙНЕР ЗАГОЛОВКА ===== */
 .header-container {
   display: flex;
-  flex-direction: row;
-  width: 100%;
-  align-items: center;
-}
-
-.header-container div{
-  display: flex;
-  margin: auto auto;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  text-align: center;
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
 }
-.header-container .header-top{
-  position: absolute;
-  cursor: pointer;
-  margin-left: 52px;
+
+.header-container div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .header-container h1 {
-  text-align: center;
-  justify-content: center;
-  font-size: 50px;
-  color: white;
+  font-size: clamp(32px, 8vw, 50px);
+  /* ✅ Адаптивный шрифт */
   font-weight: 400;
-  margin-left: 10px;
+  color: white;
+  margin: 0;
+  line-height: 1.2;
+  transition: transform 0.6s ease, opacity 0.6s ease;
 }
 
-
-.linked-p.hidden{
+/* Анимация исчезновения (вместо translateY(-30vh)) */
+.main-section.hidden .header-container h1 {
+  transform: translateY(-26vh) scale(0.95);
   opacity: 1;
-  cursor: pointer;
 }
-.linked-p.active{
+
+/* ===== ГИФКА ПРОКРУТКИ ===== */
+.scroll-gif {
+  width: clamp(120px, 24vw, 200px);
+  /* ✅ Адаптивная ширина */
+  height: auto;
+  margin-top: clamp(16px, 4vh, 24px);
   opacity: 0;
-  display: none;
+  transform: translateY(20px);
+  transition:
+    opacity 0.6s ease,
+    transform 0.6s ease;
+}
+
+.main-section.active .scroll-gif {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.main-section.hidden .scroll-gif {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+/* ===== ДОПОЛНИТЕЛЬНО: поддержка notch / status bar ===== */
+@supports (padding-top: env(safe-area-inset-top)) {
+  .main-section {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+/* ===== МЕДИАЗАПРОСЫ ДЛЯ ТОНКОЙ НАСТРОЙКИ ===== */
+@media (max-height: 600px) {
+  .header-container h1 {
+    font-size: clamp(28px, 7vw, 40px);
+  }
+
+  .scroll-gif {
+    margin-top: 12px;
+    width: clamp(100px, 20vw, 160px);
+  }
+}
+
+@media (max-width: 480px) {
+  .header-container h1 {
+    font-weight: 500;
+    /* чуть жирнее для читаемости */
+  }
+
+  .main-section.hidden .header-container h1 {
+    transform: translateY(-40px) scale(0.95);
+    opacity: 0;
+  }
+
+}
+
+/* Опционально: убрать гифку на совсем маленьких экранах */
+@media (max-height: 500px) and (max-width: 375px) {
+  .scroll-gif {
+    display: none;
+  }
 }
