@@ -30,25 +30,34 @@ export default function LastSection({ navigate,
     const moveToExamples = () => {
         const button1 = examplesButtonRef?.current;
         const button2 = view360ButtonRef?.current;
-        if (!button1 || !button2) return;
 
-        // 1. Прокручиваем к кнопке
+        // Выходим, если хотя бы одна кнопка отсутствует
+        if (!button1 || !button2) {
+            console.warn('[moveToExamples] One or both buttons are not mounted yet.');
+            return;
+        }
+
+        // 1. Плавная прокрутка к первой кнопке (центрируем)
         button1.scrollIntoView({
             behavior: 'smooth',
-            block: 'center'
+            block: 'center',
+            inline: 'nearest'
         });
 
-        // 2. Добавляем класс анимации
-        setTimeout(() => {
+        // 2. Добавляем анимацию с задержкой (ждём завершения прокрутки ~1000 мс)
+        const addClassTimer = setTimeout(() => {
             button1.classList.add('pulse-highlight');
             button2.classList.add('pulse-highlight');
         }, 1000);
 
-        // 3. Убираем класс через 1.5 секунды (длительность анимации)
-        setTimeout(() => {
+        // 3. Убираем через 7 секунд (или 1.5 сек, если анимация короче — у вас указано 7000 мс, оставим так)
+        const removeClassTimer = setTimeout(() => {
             button1.classList.remove('pulse-highlight');
             button2.classList.remove('pulse-highlight');
         }, 7000);
+
+        // Опционально: очистка таймеров при размонтировании (если нужно — можно вынести в отдельный useEffect с cleanup)
+        // Но в данном случае это разовый эффект → можно не чистить, т.к. кнопки остаются в DOM.
     };
 
     const underlineContactButtons = () => {
@@ -147,6 +156,21 @@ export default function LastSection({ navigate,
             return () => clearTimeout(timer);
         }
     }, []);
+
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        if (params.get('action') === 'examples') {
+            // 1. Чистим URL без перезагрузки
+            navigate('.', { replace: true }); // '.' означает текущий путь без query
+
+            // 2. Запускаем анимацию после рендера (следующий тик + небольшая задержка)
+            const timer = setTimeout(() => {
+                moveToExamples();
+            }, 100); // 100 мс — достаточно для монтирования DOM-элементов
+
+            return () => clearTimeout(timer);
+        }
+    }, [location.search, navigate]);
 
     useEffect(() => {
         const handleClickOutside = (e) => {

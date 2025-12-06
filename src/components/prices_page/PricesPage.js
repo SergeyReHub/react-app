@@ -1,7 +1,6 @@
-// src/components/prices_page/PricesPage.js
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './prices_page.css';
+import styles from './prices_page.module.css';
 
 // ——— ДАННЫЕ ———
 const CONCRETE_TYPES = [
@@ -35,7 +34,6 @@ const GUARANTEES = [
 
 export default function PricesPage() {
     const navigate = useNavigate();
-
     const [activeTab, setActiveTab] = useState('prices'); // 'prices' | 'stages' | 'contract' | 'guarantees'
 
     const handleRequest = () => {
@@ -47,51 +45,49 @@ export default function PricesPage() {
     };
 
     useEffect(() => {
-        // Скроллим наверх при монтировании
         window.scrollTo(0, 0);
     }, []);
 
     return (
-        <div className="prices-full">
-            <div className="prices-max-width">
+        <div className={styles.full}>
+            <div className={styles.maxWidth}>
                 {/* Hero */}
-                <div className="prices-full__hero">
-                    <div className="header">
-                        <span className="brand"
-                            onClick={navToMain}>
+                <div className={styles.hero}>
+                    <div className={styles.header}>
+                        <span className={styles.brand} onClick={navToMain}>
                             <span style={{ color: '#d42920ff' }}>M</span>
                             <span style={{ color: 'rgba(253, 253, 253, 1)' }}>.</span>
                             <span style={{ color: 'rgba(200, 200, 200, 1)' }}>GROUP</span>
                         </span>
                     </div>
                     <h1>Цены и условия сотрудничества</h1>
-                    <p className="prices-full__subtitle">
+                    <p className={styles.subtitle}>
                         Прозрачные расценки, чёткий регламент и юридическая надёжность — для архитекторов, подрядчиков и частных клиентов.
                     </p>
                 </div>
 
                 {/* Tabs / Nav */}
-                <nav className="prices-full__tabs">
+                <nav className={styles.tabs}>
                     <button
-                        className={`prices-full__tab ${activeTab === 'prices' ? 'prices-full__tab--active' : ''}`}
+                        className={`${styles.tab} ${activeTab === 'prices' ? styles.tabActive : ''}`}
                         onClick={() => setActiveTab('prices')}
                     >
                         📊 Цены
                     </button>
                     <button
-                        className={`prices-full__tab ${activeTab === 'stages' ? 'prices-full__tab--active' : ''}`}
+                        className={`${styles.tab} ${activeTab === 'stages' ? styles.tabActive : ''}`}
                         onClick={() => setActiveTab('stages')}
                     >
                         🔄 Этапы работ
                     </button>
                     <button
-                        className={`prices-full__tab ${activeTab === 'contract' ? 'prices-full__tab--active' : ''}`}
+                        className={`${styles.tab} ${activeTab === 'contract' ? styles.tabActive : ''}`}
                         onClick={() => setActiveTab('contract')}
                     >
                         📝 Условия
                     </button>
                     <button
-                        className={`prices-full__tab ${activeTab === 'guarantees' ? 'prices-full__tab--active' : ''}`}
+                        className={`${styles.tab} ${activeTab === 'guarantees' ? styles.tabActive : ''}`}
                         onClick={() => setActiveTab('guarantees')}
                     >
                         🛡 Гарантии
@@ -99,24 +95,24 @@ export default function PricesPage() {
                 </nav>
 
                 {/* Content */}
-                <div className="prices-full__content">
+                <div className={styles.content}>
                     {/* ——— ЦЕНЫ ——— */}
                     {activeTab === 'prices' && (
                         <>
-                            <p className="prices-full__intro">
+                            <p className={styles.intro}>
                                 Стоимость указана за <strong>1 м²</strong> готовой поверхности. Включено: материалы, работа, финишная обработка.
                             </p>
-                            <div className="prices-full__grid">
+                            <div className={styles.grid}>
                                 {CONCRETE_TYPES.map((type) => (
                                     <div
                                         key={type.id}
-                                        className={`prices-full__card ${type.highlight ? 'prices-full__card--highlight' : ''}`}
+                                        className={`${styles.card} ${type.highlight ? styles.cardHighlight : ''}`}
                                     >
                                         <h3>{type.name}</h3>
-                                        <p className="prices-full__card-desc">{type.desc}</p>
-                                        <div className="prices-full__price">
-                                            <span className="prices-full__price-value">{type.basePrice.toLocaleString()}</span>
-                                            <span className="prices-full__price-unit">₽ / м²</span>
+                                        <p className={styles.cardDesc}>{type.desc}</p>
+                                        <div className={styles.price}>
+                                            <span className={styles.priceValue}>{type.basePrice.toLocaleString()}</span>
+                                            <span className={styles.priceUnit}>₽ / м²</span>
                                         </div>
                                     </div>
                                 ))}
@@ -126,12 +122,12 @@ export default function PricesPage() {
 
                     {/* ——— ЭТАПЫ ——— */}
                     {activeTab === 'stages' && (
-                        <div className="prices-full__stages">
+                        <div className={styles.stages}>
                             {WORK_STAGES.map((stage) => (
-                                <div key={stage.step} className="prices-full__stage">
-                                    <div className="prices-full__stage-number">{stage.step}</div>
+                                <div key={stage.step} className={styles.stage}>
+                                    <div className={styles.stageNumber}>{stage.step}</div>
                                     <div>
-                                        <h3 className="prices-full__stage-title">{stage.title}</h3>
+                                        <h3 className={styles.stageTitle}>{stage.title}</h3>
                                         <p>{stage.desc}</p>
                                     </div>
                                 </div>
@@ -141,9 +137,9 @@ export default function PricesPage() {
 
                     {/* ——— УСЛОВИЯ ——— */}
                     {activeTab === 'contract' && (
-                        <div className="prices-full__terms">
+                        <div className={styles.terms}>
                             {CONTRACT_TERMS.map((term, i) => (
-                                <div key={i} className="prices-full__term-item">
+                                <div key={i} className={styles.termItem}>
                                     <h4>{term.title}</h4>
                                     <p>{term.desc}</p>
                                 </div>
@@ -153,9 +149,9 @@ export default function PricesPage() {
 
                     {/* ——— ГАРАНТИИ ——— */}
                     {activeTab === 'guarantees' && (
-                        <div className="prices-full__guarantees">
+                        <div className={styles.guarantees}>
                             {GUARANTEES.map((g, i) => (
-                                <div key={i} className="prices-full__guarantee-item">
+                                <div key={i} className={styles.guaranteeItem}>
                                     <h4>{g.title}</h4>
                                     <p>{g.desc}</p>
                                 </div>
@@ -164,13 +160,13 @@ export default function PricesPage() {
                     )}
 
                     {/* Общий CTA */}
-                    <div className="prices-full__cta-section">
-                        <h2 className="prices-full__cta-title">Готовы начать?</h2>
+                    <div className={styles.ctaSection}>
+                        <h2 className={styles.ctaTitle}>Готовы начать?</h2>
                         <p>Получите точный расчёт и коммерческое предложение за <strong>1 час</strong>.</p>
-                        <button className="prices-full__cta-btn" onClick={handleRequest}>
+                        <button className={styles.ctaBtn} onClick={handleRequest}>
                             Отправить запрос
                         </button>
-                        <p className="prices-full__contact-note">
+                        <p className={styles.contactNote}>
                             Или позвоните: <a href="tel:+74951234567">+7 (495) 123-45-67</a>
                         </p>
                     </div>

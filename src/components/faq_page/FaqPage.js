@@ -244,7 +244,7 @@ export default function FaqPage() {
       } else {
         setSubmitError(
           'Не удалось отправить вопрос. ' +
-          'Возможно, временные неполадки — напишите нам напрямую:'
+          'Возможно, временные неполадки— напишите нам напрямую:'
         );
       }
     } finally {
@@ -253,7 +253,7 @@ export default function FaqPage() {
   };
 
   const goToPrices = () => navigate('/prices_and_conditions');
-  const goToExamples = () => navigate('/just_view');
+  const goToExamples = () => navigate('/?action=examples');
 
   const openTelegram = () => {
     window.open('https://t.me/+79774517692', '_blank', 'noopener,noreferrer');

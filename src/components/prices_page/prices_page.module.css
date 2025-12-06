@@ -1,5 +1,4 @@
-/* src/components/prices_page/prices_page.css */
-.prices-full {
+.full {
   padding: 40px 20px;
   color: #e0e0e0;
   background-color: #0f0f0f;
@@ -7,33 +6,33 @@
   max-width: 100vw;
 }
 
-.header{
-    position: absolute;
-    left: 0px;
-    right: 0px;
-    margin-left: 20px;
-    width: fit-content;
-
-    
+.maxWidth {
+  max-width: 1000px;
+  margin: 0 auto;
 }
 
-.header .brand{
-    font-size: 2.2vw;
+/* === Header / Brand === */
+.header {
+  position: absolute;
+  left: 0;
+  right: 0;
+  margin-left: 20px;
+  width: fit-content;
 }
 
-
-.prices-max-width{
-    max-width: 1000px;
-    margin: 0 auto;
+.brand {
+  font-size: 2.2vw;
+  cursor: pointer;
+  text-decoration: underline #ffffff34;
 }
 
 /* === Hero === */
-.prices-full__hero {
+.hero {
   text-align: center;
   margin-bottom: 48px;
 }
 
-.prices-full__hero h1 {
+.hero h1 {
   font-size: 2.6rem;
   font-weight: 700;
   margin: 0 0 16px;
@@ -44,7 +43,7 @@
   text-shadow: 0 2px 8px rgba(177, 91, 255, 0.15);
 }
 
-.prices-full__subtitle {
+.subtitle {
   font-size: 1.2rem;
   color: #aaa;
   max-width: 720px;
@@ -53,7 +52,7 @@
 }
 
 /* === Tabs === */
-.prices-full__tabs {
+.tabs {
   display: flex;
   gap: 12px;
   justify-content: center;
@@ -63,7 +62,7 @@
   border-bottom: 1px solid #333;
 }
 
-.prices-full__tab {
+.tab {
   padding: 12px 32px;
   background: rgba(45, 45, 45, 0.6);
   border: 1px solid #444;
@@ -76,14 +75,14 @@
   backdrop-filter: blur(4px);
 }
 
-.prices-full__tab:hover {
+.tab:hover {
   background: rgba(60, 60, 60, 0.8);
   border-color: #b15bff;
   color: #fff;
   transform: translateY(-2px);
 }
 
-.prices-full__tab--active {
+.tabActive {
   background: linear-gradient(135deg, #b15bff, #8a2be2);
   color: white;
   border: none;
@@ -92,7 +91,7 @@
 }
 
 /* === Intro text === */
-.prices-full__intro {
+.intro {
   text-align: center;
   font-size: 1.15rem;
   margin-bottom: 40px;
@@ -103,14 +102,14 @@
 }
 
 /* === Grid (prices) === */
-.prices-full__grid {
+.grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 28px;
   margin-bottom: 60px;
 }
 
-.prices-full__card {
+.card {
   background: #1a1a1a;
   border-radius: 16px;
   padding: 32px 24px;
@@ -121,7 +120,7 @@
   overflow: hidden;
 }
 
-.prices-full__card::before {
+.card::before {
   content: '';
   position: absolute;
   top: 0;
@@ -132,26 +131,26 @@
   transition: 0.3s;
 }
 
-.prices-full__card:hover {
+.card:hover {
   transform: translateY(-8px);
   border-color: #b15bff;
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6), 0 0 0 2px rgba(177, 91, 255, 0.2);
 }
 
-.prices-full__card:hover::before {
+.card:hover::before {
   background: linear-gradient(90deg, #b15bff, #ff3b30);
 }
 
-.prices-full__card--highlight {
+.cardHighlight {
   background: #15151f;
   border-color: #b15bff;
 }
 
-.prices-full__card--highlight::before {
+.cardHighlight::before {
   background: linear-gradient(90deg, #b15bff, #ff3b30);
 }
 
-.prices-full__card--highlight::after {
+.cardHighlight::after {
   content: '★ Популярно';
   position: absolute;
   top: 16px;
@@ -166,27 +165,27 @@
   box-shadow: 0 3px 10px rgba(255, 215, 0, 0.3);
 }
 
-.prices-full__card h3 {
+.card h3 {
   font-size: 1.4rem;
   margin: 0 0 14px;
   color: #fff;
 }
 
-.prices-full__card-desc {
+.cardDesc {
   font-size: 1rem;
   color: #aaa;
   margin: 0 0 24px;
   line-height: 1.5;
 }
 
-.prices-full__price {
+.price {
   display: flex;
   justify-content: center;
   align-items: baseline;
   gap: 6px;
 }
 
-.prices-full__price-value {
+.priceValue {
   font-size: 2.4rem;
   font-weight: 800;
   background: linear-gradient(to bottom, #ff3b30, #ff6b6b);
@@ -195,7 +194,7 @@
   color: transparent;
 }
 
-.prices-full__price-unit {
+.priceUnit {
   font-size: 1.2rem;
   color: #888;
   align-self: flex-end;
@@ -203,14 +202,14 @@
 }
 
 /* === Stages === */
-.prices-full__stages {
+.stages {
   display: flex;
   flex-direction: column;
   gap: 32px;
   margin-bottom: 60px;
 }
 
-.prices-full__stage {
+.stage {
   display: flex;
   gap: 24px;
   align-items: flex-start;
@@ -221,15 +220,16 @@
   transition: all 0.3s ease;
 }
 
-.prices-full__stage:hover {
+.stage:hover {
   border-color: #b15bff;
   background: #1c1c24;
   transform: translateX(6px);
 }
 
-.prices-full__stage-number {
+.stageNumber {
   flex: 0 0 50px;
   height: 50px;
+  width: 50px;
   background: linear-gradient(135deg, #b15bff, #8a2be2);
   color: white;
   border-radius: 50%;
@@ -241,7 +241,7 @@
   box-shadow: 0 4px 12px rgba(177, 91, 255, 0.25);
 }
 
-.prices-full__stage-title {
+.stageTitle {
   font-size: 1.4rem;
   margin: 0 0 10px;
   color: #fff;
@@ -249,16 +249,16 @@
 }
 
 /* === Terms / Guarantees === */
-.prices-full__terms,
-.prices-full__guarantees {
+.terms,
+.guarantees {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: 28px;
   margin-bottom: 60px;
 }
 
-.prices-full__term-item,
-.prices-full__guarantee-item {
+.termItem,
+.guaranteeItem {
   background: #181818;
   padding: 28px;
   border-radius: 14px;
@@ -266,15 +266,15 @@
   transition: all 0.3s ease;
 }
 
-.prices-full__term-item:hover,
-.prices-full__guarantee-item:hover {
+.termItem:hover,
+.guaranteeItem:hover {
   border-color: #ff3b30;
   transform: scale(1.015);
   box-shadow: 0 6px 20px rgba(255, 59, 48, 0.15);
 }
 
-.prices-full__term-item h4,
-.prices-full__guarantee-item h4 {
+.termItem h4,
+.guaranteeItem h4 {
   font-size: 1.3rem;
   color: #ff3b30;
   margin: 0 0 14px;
@@ -283,8 +283,8 @@
   gap: 8px;
 }
 
-.prices-full__term-item h4::before,
-.prices-full__guarantee-item h4::before {
+.termItem h4::before,
+.guaranteeItem h4::before {
   content: '●';
   color: #ffd700;
   font-size: 1.6rem;
@@ -292,7 +292,7 @@
 }
 
 /* === CTA Section === */
-.prices-full__cta-section {
+.ctaSection {
   background: linear-gradient(145deg, #151520, #1a1a2f);
   border: 1px solid #333;
   border-radius: 20px;
@@ -303,7 +303,7 @@
   overflow: hidden;
 }
 
-.prices-full__cta-section::before {
+.ctaSection::before {
   content: '';
   position: absolute;
   top: -50%;
@@ -314,7 +314,7 @@
   z-index: 0;
 }
 
-.prices-full__cta-title {
+.ctaTitle {
   font-size: 2.2rem;
   margin: 0 0 20px;
   color: #fff;
@@ -322,7 +322,7 @@
   z-index: 1;
 }
 
-.prices-full__cta-section p {
+.ctaSection p {
   font-size: 1.2rem;
   color: #ccc;
   max-width: 640px;
@@ -331,7 +331,7 @@
   z-index: 1;
 }
 
-.prices-full__cta-btn {
+.ctaBtn {
   background: linear-gradient(135deg, #b15bff, #ff3b30);
   color: white;
   border: none;
@@ -347,16 +347,16 @@
   letter-spacing: 0.5px;
 }
 
-.prices-full__cta-btn:hover {
+.ctaBtn:hover {
   transform: translateY(-4px) scale(1.03);
   box-shadow: 0 10px 30px rgba(177, 91, 255, 0.5), 0 0 0 3px rgba(255, 215, 0, 0.2);
 }
 
-.prices-full__cta-btn:active {
+.ctaBtn:active {
   transform: translateY(0) scale(1);
 }
 
-.prices-full__contact-note {
+.contactNote {
   margin-top: 28px;
   font-size: 1.05rem;
   color: #aaa;
@@ -364,7 +364,7 @@
   z-index: 1;
 }
 
-.prices-full__contact-note a {
+.contactNote a {
   color: #ffd700;
   text-decoration: none;
   font-weight: 600;
@@ -372,66 +372,62 @@
   transition: all 0.2s;
 }
 
-.prices-full__contact-note a:hover {
+.contactNote a:hover {
   color: #ffaa00;
   border-bottom: 1px solid #ffaa00;
 }
 
-/* === Scrollbar (optional, for dark theme) === */
-.prices-full ::-webkit-scrollbar {
-  width: 8px;
-}
-
-.prices-full ::-webkit-scrollbar-track {
-  background: #0a0a0a;
-}
-
-.prices-full ::-webkit-scrollbar-thumb {
-  background: #333;
-  border-radius: 4px;
-}
-
-.prices-full ::-webkit-scrollbar-thumb:hover {
-  background: #b15bff;
-}
-
-/* Mobile */
+/* === Mobile === */
 @media (max-width: 600px) {
-  .prices-full {
+  .full {
     padding: 28px 16px;
   }
 
-  .prices-full__hero h1 {
+  .hero h1 {
     font-size: 2.1rem;
   }
 
-  .prices-full__tabs {
+  .tabs {
     flex-direction: column;
     align-items: center;
   }
 
-  .prices-full__tab {
+  .tab {
     width: 100%;
     max-width: 320px;
   }
 
-  .prices-full__stage {
+  .stage {
     flex-direction: column;
     text-align: center;
     padding: 20px;
   }
 
-  .prices-full__stage-number {
+  .stageNumber {
     align-self: center;
   }
 
-  .prices-full__cta-section {
+  .ctaSection {
     padding: 40px 20px;
   }
 
-  .prices-full__cta-btn {
+  .ctaBtn {
     width: 100%;
     max-width: 320px;
     padding: 16px;
   }
+
+  .header {
+    align-items: center;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+    margin-left: 0;
+  }
+  .brand{
+    font-size: 30px;
+  }
+
 }
