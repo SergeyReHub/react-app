@@ -1,5 +1,5 @@
-// Dialog.jsx
-import React, { useEffect, useRef } from 'react';
+// Dialog.jsx — ✅ Полная поддержка VirtualTour, работает в build
+import React, { useEffect, useRef, useCallback } from 'react';
 import '@photo-sphere-viewer/core/index.css';
 import '@photo-sphere-viewer/markers-plugin/index.css';
 import '@photo-sphere-viewer/gallery-plugin/index.css';
@@ -16,133 +16,113 @@ import '../../../styles/psv-overrides.css';
 const Dialog = ({ project, onClose }) => {
   const viewerRef = useRef(null);
   const viewerInstance = useRef(null);
+  const initAttempt = useRef(0);
+  const MAX_ATTEMPTS = 5;
 
-  useEffect(() => {
-    // 🔴 Проверка данных перед инициализацией (оставлена как в оригинале — возврат JSX из useEffect!)
-    if (!project?.nodes || project.nodes.length === 0) {
-      console.error('Project has no nodes or is invalid');
-      return (
-        <div
-          className={styles.dialogOverlay}
-          onClick={onClose}
-        >
-          <div
-            onClick={(e) => e.stopPropagation()}
-            style={{
-              background: '#333',
-              padding: '20px',
-              borderRadius: '8px',
-            }}
-          >
-            <p>Ошибка: проект не содержит панорам.</p>
-          </div>
-        </div>
-      );
+  // Инициализация — с защитой и повторными попытками
+  const initViewer = useCallback(() => {
+    if (!project?.nodes?.length) {
+      console.error('[Dialog] Invalid project');
+      return;
     }
 
-    const viewer = new Viewer({
-      container: viewerRef.current,
-      loadingImg: '/assets/loader.gif',
-      touchmoveTwoFingers: true,
-      mousewheelCtrlKey: true,
-      defaultYaw: '130deg',
-      navbar: 'zoom move gallery caption fullscreen',
-      plugins: [
-        MarkersPlugin,
-        GalleryPlugin.withConfig({
-          thumbnailSize: { width: 100, height: 100 },
-        }),
-        VirtualTourPlugin.withConfig({
-          positionMode: 'gps',
-          renderMode: '3d',
-          nodes: project.nodes,
-          startNodeId: project.startNodeId || project.nodes[0]?.id,
-        }),
-      ],
-    });
+    if (!viewerRef.current) {
+      if (initAttempt.current < MAX_ATTEMPTS) {
+        initAttempt.current++;
+        // Повтор через короткую задержку
+        setTimeout(initViewer, 100);
+      } else {
+        console.error('[Dialog] viewerRef never resolved');
+      }
+      return;
+    }
 
-    // Cleanup on unmount (оставлен как в оригинале — viewerInstance.current не присваивается!)
+    try {
+      // ✅ Создаём viewer
+      const viewer = new Viewer({
+        container: viewerRef.current,
+        loadingImg: '/assets/loader.gif',
+        touchmoveTwoFingers: true,
+        mousewheelCtrlKey: true,
+        defaultZoomLvl: 0,
+        defaultYaw: '130deg',
+        navbar: 'zoom move gallery caption fullscreen',
+        plugins: [
+          [MarkersPlugin],
+          [GalleryPlugin, { thumbnailSize: { width: 100, height: 100 } }],
+          [VirtualTourPlugin, {
+            positionMode: 'gps', 
+            renderMode: '3d',       
+            nodes: project.nodes.map(node => ({
+              ...node,
+              id: String(node.id), // ✅ всегда строка
+            })),
+            startNodeId: String(project.startNodeId || project.nodes[0]?.id),
+          }],
+        ],
+      });
+
+      viewerInstance.current = viewer;
+
+      // ✅ Дожидаемся готовности перед стартом тура
+      viewer.addEventListener('ready', () => {
+        const tour = viewer.plugins.virtualTour;
+        if (tour && tour.setCurrentNode) {
+          const startId = String(project.startNodeId || project.nodes[0]?.id);
+          tour.setCurrentNode(startId).catch(err => {
+            console.error('[Dialog] Failed to set start node:', err);
+          });
+        }
+      });
+
+    } catch (err) {
+      console.error('[Dialog] Viewer init failed:', err);
+    }
+  }, [project]);
+
+  // Запускаем инициализацию
+  useEffect(() => {
+    initAttempt.current = 0;
+    initViewer();
+
     return () => {
       if (viewerInstance.current) {
         viewerInstance.current.destroy();
         viewerInstance.current = null;
       }
     };
-  }, [project]);
+  }, [initViewer]);
 
-  function onShare() {
+  // Share
+  const onShare = () => {
     const title = project?.title || '360° тур';
     const text = project?.description || 'Посмотрите этот интерактивный 360° тур.';
-    const url = window.location.href + '/' + project.id;
+    const url = `${window.location.origin}${window.location.pathname}#${project?.id || ''}`;
 
     if (navigator.share) {
-      navigator.share({
-        title,
-        text,
-        url,
-      })
-        .then(() => console.log('Контент успешно отправлен'))
-        .catch((error) => {
-          if (error.name !== 'AbortError') {
-            console.warn('Ошибка при шеринге:', error);
-          }
-        });
+      navigator.share({ title, text, url })
+        .catch(err => err.name !== 'AbortError' && console.warn('Share failed:', err));
     } else {
-      navigator.clipboard
-        .writeText(url)
-        .then(() => {
-          alert('Ссылка скопирована в буфер обмена!');
-        })
-        .catch((err) => {
-          console.error('Не удалось скопировать ссылку:', err);
-          alert('Не удалось скопировать ссылку. Попробуйте вручную.');
-        });
+      navigator.clipboard.writeText(url)
+        .then(() => alert('Ссылка скопирована!'))
+        .catch(() => alert('Не удалось скопировать ссылку.'));
     }
-  }
+  };
 
   return (
     <div className={styles.dialogOverlay}>
-      <div
-        onClick={(e) => e.stopPropagation()}
-        className={styles.psvContainer}
-      >
-        <CancelIcon
-          onClick={onClose}
-          sx={{
-            position: 'absolute',
-            top: '10px',
-            right: '16px',
-            fontSize: 60,
-            cursor: 'pointer',
-            color: 'rgba(0, 0, 0, 1)',
-            backgroundColor: 'rgba(146, 146, 146, 1)',
-            borderRadius: '50%',
-            transition: 'transform 0.3s ease',
-            '&:hover': {
-              transform: 'scale(1.1)',
-            },
-            zIndex: 1001,
-          }}
-        />
-        <IosShareIcon
-          onClick={onShare}
-          sx={{
-            position: 'absolute',
-            top: '10px',
-            left: '16px',
-            fontSize: 60,
-            cursor: 'pointer',
-            color: 'rgba(48, 48, 48, 1)',
-            backgroundColor: 'rgba(0, 0, 0, 0.16)',
-            borderRadius: '10%',
-            transition: 'transform 0.3s ease',
-            '&:hover': {
-              transform: 'scale(1.1)',
-            },
-            zIndex: 1001,
-          }}
-        />
-        <div id="viewer" ref={viewerRef} style={{ width: '100%', height: '100%' }}></div>
+      <div onClick={e => e.stopPropagation()} className={styles.psvContainer}>
+        <CancelIcon onClick={onClose} sx={{
+          position: 'absolute', top: '10px', right: '16px', fontSize: 60,
+          cursor: 'pointer', color: 'rgba(0,0,0,1)', bgcolor: 'rgba(146,146,146,1)',
+          borderRadius: '50%', transition: 'transform 0.3s', '&:hover': { transform: 'scale(1.1)' }, zIndex: 1001
+        }} />
+        <IosShareIcon onClick={onShare} sx={{
+          position: 'absolute', top: '10px', left: '16px', fontSize: 60,
+          cursor: 'pointer', color: 'rgba(48,48,48,1)', bgcolor: 'rgba(0,0,0,0.16)',
+          borderRadius: '10%', transition: 'transform 0.3s', '&:hover': { transform: 'scale(1.1)' }, zIndex: 1001
+        }} />
+        <div ref={viewerRef} style={{ width: '100%', height: '100%' }} />
       </div>
     </div>
   );

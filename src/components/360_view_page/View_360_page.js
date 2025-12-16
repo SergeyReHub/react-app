@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react';
-import './view_360_page.css'
+import { useState, useEffect, useRef } from 'react';
+import './view_360_page.css';
 import Dialog from './photo_sphere_dialod/Dialog';
 import ProjectsSection from './project_section/ProjectsSection';
 import MainSection from './main_section/MainSection';
-import '@photo-sphere-viewer/core/index.css';           // основной стиль (иногда нужен)
+import '@photo-sphere-viewer/core/index.css'; // основной стиль (иногда нужен)
 import '@photo-sphere-viewer/markers-plugin/index.css'; // маркеры (стрелки)
 import '@photo-sphere-viewer/gallery-plugin/index.css'; // галерея
 import '@photo-sphere-viewer/virtual-tour-plugin/index.css'; // 🔥 критично для hotspots и карты
@@ -20,10 +20,6 @@ export default function View_360_Page() {
   const touchStartY = useRef(0);
   const containerRef = useRef(null);
   const [activeSection, setActiveSection] = useState('main'); // 'main' | 'projects'
-  const [isAtTop, setIsAtTop] = useState(false);
-  const topHoldTimer = useRef(null); // для clearTimeout
-
-  const [scrollImpulseCount, setScrollImpulseCount] = useState(0);
   const scrollImpulseTimer = useRef(null);
 
   const [pullUpActive, setPullUpActive] = useState(false); // активно ли "натяжение"
@@ -220,7 +216,7 @@ export default function View_360_Page() {
                 ]
               },
               {
-                id: 1,
+                id: 2,
                 title: "Office Tour",
                 description: "asdfhj",
                 nodes: [
@@ -257,7 +253,7 @@ export default function View_360_Page() {
                 ]
               },
               {
-                id: 1,
+                id: 3,
                 title: "Office Tour",
                 description: "asdfhj",
                 nodes: [
@@ -353,6 +349,8 @@ export default function View_360_Page() {
   }, []);
 
   const openProject = (project) => {
+    const safeProject = JSON.parse(JSON.stringify(project));
+    
     setSelectedProject(project);
   };
 
