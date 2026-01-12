@@ -11,6 +11,7 @@ export default function ProjectsFlatList() {
     const [loading, setLoading] = useState(true);
     const [editingId, setEditingId] = useState(null);
     const [confirmId, setConfirmId] = useState(null);
+    const [error, setError] = useState(null);
 
     const fetchProjects = async () => {
         setLoading(true);
@@ -20,6 +21,7 @@ export default function ProjectsFlatList() {
             const data = await res.json();
             setProjects(data);
         } catch (err) {
+            setError('Не удалось загрузить проекты');
             console.error(err);
         } finally {
             setLoading(false);
@@ -75,6 +77,9 @@ export default function ProjectsFlatList() {
                     ))}
                 </div>
             )}
+
+            {error && <div className={styles.error}>{error}</div>}
+
 
             {editingId && (
                 <div className={styles.overlay}>

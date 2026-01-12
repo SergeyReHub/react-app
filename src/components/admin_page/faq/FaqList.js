@@ -9,6 +9,7 @@ const API_URL = '/api/admin/faq';
 export default function FaqList() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [editingId, setEditingId] = useState(null);
   const [confirmId, setConfirmId] = useState(null); // ← состояние подтверждения
 
@@ -20,6 +21,7 @@ export default function FaqList() {
       const data = await res.json();
       setItems(data);
     } catch (err) {
+      setError('Не удалось загрузить проекты');
       console.error(err);
     } finally {
       setLoading(false);
@@ -74,6 +76,7 @@ export default function FaqList() {
           ))}
         </div>
       )}
+      {error && <div className={styles.error}>{error}</div>}
 
       {editingId && (
         <div className={styles.overlay}>

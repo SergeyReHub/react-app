@@ -1,4 +1,6 @@
 /* ProjectFlatForm.module.css */
+.page { padding: 20px; }
+
 .formCard {
   background: #15151f;
   border-radius: 16px;
@@ -120,3 +122,17 @@
 
 .btnCancel { background: #2c2c2c; color: #aaa; }
 .btnDelete { background: #ff5252; color: white; }
+
+.header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+.btnAdd {
+  background: linear-gradient(135deg, #b15bff, #8a2be2);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.loader, .error { text-align: center; padding: 40px; }
+.error { color: #ff5252; }

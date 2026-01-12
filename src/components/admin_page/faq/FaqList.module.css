@@ -102,8 +102,8 @@
 }
 
 .loader {
-  text-align: center;
-  padding: 40px;
   color: #aaa;
   font-size: 1.1rem;
 }
+.loader, .error { text-align: center; padding: 40px; }
+.error { color: #ff5252; }
