@@ -1,5 +1,11 @@
-import React, { useState, useRef } from 'react';
+// src/components/FeedBackPage.jsx (или где у тебя лежит)
+import React, { useState, useRef, useEffect } from 'react';
 import styles from './feedback_page.module.css';
+
+// ⚙️ Настройки reCAPTCHA Enterprise
+const RECAPTCHA_SITE_KEY = '6LeAk0csAAAAAB1TynYZzrHQO_pt9Lu4LNoVR6V-';
+const RECAPTCHA_ACTION = 'submit_lead';
+const API_BASE = 'http://localhost:8080';
 
 function FeedBackPage() {
   const [isCodeSent, setIsCodeSent] = useState(false);
@@ -12,45 +18,103 @@ function FeedBackPage() {
   const [disappearCodeSent, setDisappearCodeSent] = useState(false);
   const [rawPhoneDigits, setRawPhoneDigits] = useState('');
   const [phoneError, setPhoneError] = useState(false);
-  
-  const [verificationCode] = useState(
-    Math.floor(100000 + Math.random() * 900000).toString()
-  );
+  const [loading, setLoading] = useState(false);
 
   const emailInputRef = useRef(null);
   const codeInputRef = useRef(null);
   const phoneInputRef = useRef(null);
 
+  // 📥 Загружаем скрипт reCAPTCHA при монтировании компонента
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = `https://www.google.com/recaptcha/api.js?render=${RECAPTCHA_SITE_KEY}`;
+    script.async = true;
+    script.defer = true;
+    document.head.appendChild(script);
+
+    return () => {
+      // Удаляем скрипт при размонтировании
+      if (document.head.contains(script)) {
+        document.head.removeChild(script);
+      }
+    };
+  }, []);
+
   const handleClick = () => {
     window.location.href = '/';
   };
 
-  const handleSendCode = () => {
+  // 📤 Отправка запроса на получение кода подтверждения
+  const handleSendCode = async () => {
     const email = emailInputRef.current?.value;
     if (!email || !/\S+@\S+\.\S+/.test(email)) {
       setEmailError(true);
       return;
     }
     setEmailError(false);
-    console.log(`Отправляем код на ${email}. Код: ${verificationCode}`);
-    setIsCodeSent(true);
-    setCodeError(false);
-    setTimeout(() => codeInputRef.current?.focus(), 0);
-  };
+    setLoading(true);
+    try {
+      const response = await fetch(`${API_BASE}/leads/email/request-code`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({ email }),
+      });
 
-  const handleConfirmCode = () => {
-    if (userCode.trim() === verificationCode) {
-      setIsEmailConfirmed(true);
-      setIsCodeSent(false);
-      setUserCode('');
-      setCodeError(false);
-      setDisappearCodeSent(true);
-    } else {
-      setCodeError(true);
-      alert('Неверный код подтверждения.');
+      if (response.ok) {
+        setIsCodeSent(true);
+        setCodeError(false);
+        setTimeout(() => codeInputRef.current?.focus(), 0);
+      } else {
+        const errorText = await response.text();
+        alert(`Ошибка: ${errorText}`);
+        setEmailError(true);
+      }
+    } catch (err) {
+      console.error('Ошибка при отправке кода:', err);
+      alert('Не удалось отправить код. Проверьте соединение.');
+    } finally {
+      setLoading(false);
     }
   };
 
+  // ✅ Подтверждение кода через API
+  const handleConfirmCode = async () => {
+    const email = emailInputRef.current?.value;
+    const code = userCode.trim();
+
+    if (!code) {
+      setCodeError(true);
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await fetch(`${API_BASE}/leads/email/confirm-code`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({ email, code }),
+      });
+
+      if (response.ok) {
+        setIsEmailConfirmed(true);
+        setIsCodeSent(false);
+        setUserCode('');
+        setCodeError(false);
+        setDisappearCodeSent(true);
+      } else {
+        const errorText = await response.text();
+        setCodeError(true);
+        alert(`Ошибка: ${errorText}`);
+      }
+    } catch (err) {
+      console.error('Ошибка при подтверждении кода:', err);
+      alert('Не удалось подтвердить код. Попробуйте позже.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 📱 Форматирование телефона
   const formatPhone = (digits) => {
     const cleaned = digits.replace(/\D/g, '').slice(0, 10);
     if (cleaned.length === 0) return '+7';
@@ -95,7 +159,8 @@ function FeedBackPage() {
     }, 0);
   };
 
-  const handleSubmit = (e) => {
+  // 📤 Отправка заявки с reCAPTCHA
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const name = nameValue.trim();
@@ -106,6 +171,7 @@ function FeedBackPage() {
 
     if (!isEmailConfirmed) {
       setCodeError(true);
+      alert('Сначала подтвердите email.');
       return;
     }
 
@@ -115,14 +181,43 @@ function FeedBackPage() {
       return;
     }
 
-    const data = {
-      name,
-      email: emailInputRef.current?.value,
-      phone: `+7${rawPhoneDigits}`,
-      projectDescription: e.target.projectDescription.value,
-    };
-    console.log('Форма отправлена:', data);
-    alert('Заявка успешно отправлена!');
+    setLoading(true);
+    try {
+      // Получаем токен от reCAPTCHA Enterprise
+      const recaptchaToken = await window.grecaptcha.execute(RECAPTCHA_SITE_KEY, {
+        action: RECAPTCHA_ACTION,
+      });
+
+      const data = {
+        fullName: name,
+        email: emailInputRef.current?.value,
+        phone: `+7${rawPhoneDigits}`,
+        message: e.target.projectDescription.value,
+        recaptchaToken,
+        recaptchaAction: RECAPTCHA_ACTION,
+      };
+
+      const response = await fetch(`${API_BASE}/leads/submit`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log('Заявка успешно отправлена:', result);
+        alert('Заявка успешно отправлена!');
+        // Опционально: сброс формы или редирект
+      } else {
+        const errorText = await response.text();
+        alert(`Ошибка: ${errorText}`);
+      }
+    } catch (err) {
+      console.error('Ошибка при отправке заявки:', err);
+      alert('Не удалось отправить заявку. Попробуйте позже.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -155,6 +250,7 @@ function FeedBackPage() {
                   if (e.target.value.trim().length >= 2) setNameError(false);
                 }}
                 onBlur={() => setNameError(nameValue.trim().length < 2)}
+                disabled={loading}
               />
             </label>
           </div>
@@ -171,6 +267,7 @@ function FeedBackPage() {
                   const val = e.target.value;
                   setEmailError(val !== '' && !/\S+@\S+\.\S+/.test(val));
                 }}
+                disabled={loading}
               />
               <div className={styles.codeSection}>
                 {!isCodeSent ? (
@@ -180,8 +277,9 @@ function FeedBackPage() {
                       disappearCodeSent ? styles.codeButtonDisappear : ''
                     } ${codeError ? styles.inputError : ''}`}
                     onClick={handleSendCode}
+                    disabled={loading}
                   >
-                    отправить код подтверждения
+                    {loading ? 'Отправка...' : 'отправить код подтверждения'}
                   </button>
                 ) : (
                   <>
@@ -194,13 +292,15 @@ function FeedBackPage() {
                       onChange={(e) => setUserCode(e.target.value.replace(/\D/g, ''))}
                       placeholder="Код из письма"
                       className={`${styles.codeInput} ${codeError ? styles.inputError : ''}`}
+                      disabled={loading}
                     />
                     <button
                       type="button"
                       className={`${styles.codeButton} ${codeError ? styles.inputError : ''}`}
                       onClick={handleConfirmCode}
+                      disabled={loading}
                     >
-                      подтвердить
+                      {loading ? 'Проверка...' : 'подтвердить'}
                     </button>
                   </>
                 )}
@@ -223,11 +323,12 @@ function FeedBackPage() {
                 onFocus={handlePhoneFocus}
                 inputMode="numeric"
                 placeholder="+7 (___) ___-__-__"
+                disabled={loading}
               />
             </label>
           </div>
 
-          {/* Описание */}
+          {/* Описание проекта */}
           <div className={`${styles.formGroup} ${styles.descLabel}`}>
             <label>
               Описание проекта:
@@ -236,19 +337,22 @@ function FeedBackPage() {
                 className={styles.textarea}
                 rows="5"
                 required
+                disabled={loading}
               />
             </label>
           </div>
 
-          {/* Отправка */}
+          {/* Кнопка отправки */}
           <button
             type="submit"
             className={`${styles.submitButton} ${
-              !isEmailConfirmed ? styles.submitButtonDisabled : ''
+              !isEmailConfirmed || loading ? styles.submitButtonDisabled : ''
             }`}
-            disabled={!isEmailConfirmed}
+            disabled={!isEmailConfirmed || loading}
           >
-            {isEmailConfirmed ? 'Отправить заявку' : 'Подтвердите email, чтобы отправить'}
+            {loading 
+              ? 'Отправка...' 
+              : (isEmailConfirmed ? 'Отправить заявку' : 'Подтвердите email, чтобы отправить')}
           </button>
         </form>
       </div>
