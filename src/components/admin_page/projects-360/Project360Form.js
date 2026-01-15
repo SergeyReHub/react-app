@@ -11,6 +11,7 @@ import { Viewer } from '@photo-sphere-viewer/core';
 import { VirtualTourPlugin } from '@photo-sphere-viewer/virtual-tour-plugin';
 import { GalleryPlugin } from '@photo-sphere-viewer/gallery-plugin';
 import { MarkersPlugin } from '@photo-sphere-viewer/markers-plugin';
+import { useAuth } from '../../../context/AuthContext';
 
 const EMPTY_PROJECT = { id: Date.now().toString(), title: '', description: '', nodes: [] };
 const MAP_SIZE = 400;
@@ -40,6 +41,8 @@ export default function Project360Form({ id, initialData, onSave, onCancel }) {
   const viewerInstanceRef = useRef(null); // ← один источник правды
 
   const [editingAltitude, setEditingAltitude] = useState(null); // { nodeId, altitude }
+
+  const { authToken } = useAuth();
 
 
 
@@ -72,7 +75,7 @@ export default function Project360Form({ id, initialData, onSave, onCancel }) {
         thumbnail: URL.createObjectURL(file),
         caption: file.name,
         gps: [lon, lat, 1], // ← ИСПРАВЛЕНО: lon, lat (долгота, широта)
-        sphereCorrection: { pan: '0deg' },
+        sphereCorrection: { pan: 0, roll: 0, tilt: 0 },
         links: [],
       };
     });
@@ -174,8 +177,8 @@ export default function Project360Form({ id, initialData, onSave, onCancel }) {
     e.preventDefault();
     try {
       const method = id === 'new' ? 'POST' : 'PUT';
-      const url = id === 'new' ? '/api/admin/projects-360' : `/api/admin/projects-360/${id}`;
-      await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(formData) });
+      const url = id === 'new' ? 'http://localhost:8080/api/admin/projects/360-view' : `http://localhost:8080/api/admin/projects/360-view/${id}`;
+      await fetch(url, { method, headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` }, body: JSON.stringify(formData) });
       onSave();
     } catch { alert('Ошибка сохранения'); }
   };
@@ -403,10 +406,6 @@ export default function Project360Form({ id, initialData, onSave, onCancel }) {
 
       <form onSubmit={handleSubmit}>
         {/* Основные поля */}
-        <div className={styles.formGroup}>
-          <label>ID проекта</label>
-          <input name="id" value={formData.id} onChange={handleChange} required disabled={id !== 'new'} />
-        </div>
         <div className={styles.formGroup}>
           <label>Название</label>
           <input name="title" value={formData.title} onChange={handleChange} required />
@@ -740,7 +739,7 @@ export default function Project360Form({ id, initialData, onSave, onCancel }) {
             thumbnail: panoramaUrl,
             caption: file.name,
             gps: [37.6761, 55.7817, 1],
-            sphereCorrection: { pan: '0deg' },
+            sphereCorrection: { pan: 0, roll: 0, tilt: 0 },
             links: [],
           };
 

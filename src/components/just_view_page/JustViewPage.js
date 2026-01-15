@@ -45,7 +45,7 @@ const FALLBACK_PROJECTS = [
   },
 ];
 
-export default function JustViewPage({ apiUrl = "/api/projects/photos" }) {
+export default function JustViewPage({ apiUrl = "http://localhost:8080/api/projects/just-view?page=0&size=10" }) {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);

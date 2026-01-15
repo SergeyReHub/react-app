@@ -161,7 +161,7 @@ export default function View_360_Page() {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const res = await fetch('/api/projects');
+        const res = await fetch('http://localhost:8080/api/projects/360-view?page=0&size=10');
 
         // 🔍 DEBUG: inspect raw response
         const text = await res.text();

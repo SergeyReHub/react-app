@@ -71,7 +71,7 @@ export default function ProjectFlatForm({ id, initialData, onSave, onCancel }) {
     e.preventDefault();
     try {
       const method = id === 'new' ? 'POST' : 'PUT';
-      const url = id === 'new' ? '/api/admin/projects-flat' : `/api/admin/projects-flat/${id}`;
+      const url = id === 'new' ? 'http://localhost:8080/api/admin/projects-flat' : `http://localhost:8080/api/admin/projects-flat/${id}`;
       await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },

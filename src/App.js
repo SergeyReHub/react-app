@@ -25,14 +25,9 @@ function App() {
         <Route path="/prices_and_conditions" element={<PricesAndConditions />} />
         <Route path="/faq" element={<FaqPage />} />
         <Route path='/about' element={<AboutUs />} />
-        <Route
-          path="/admin"
-          element={
-            <RequireAdmin>
-              <AdminPage />
-            </RequireAdmin>
-          }
-        />
+        <Route element={<RequireAdmin />}>
+          <Route path="/admin/*" element={<AdminPage />} />
+        </Route>
       </Routes>
     </Router>
   );

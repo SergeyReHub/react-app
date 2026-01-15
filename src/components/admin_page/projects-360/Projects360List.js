@@ -3,8 +3,10 @@ import React, { useState, useEffect } from 'react';
 import styles from './Projects360List.module.css';
 import Project360Form from './Project360Form';
 import ConfirmDialog from '../shared/ConfirmDialog';
+import { useAuth } from '../../../context/AuthContext';
 
-const API_URL = '/api/admin/projects-360';
+
+const API_URL = 'http://localhost:8080/api/public/projects/360-view';
 
 export default function Projects360List() {
   const [projects, setProjects] = useState([]);
@@ -12,6 +14,8 @@ export default function Projects360List() {
   const [error, setError] = useState(null);
   const [editingId, setEditingId] = useState(null);
   const [confirmId, setConfirmId] = useState(null);
+  const { authToken } = useAuth();
+  
 
   const fetchProjects = async () => {
     setLoading(true);
@@ -38,7 +42,7 @@ export default function Projects360List() {
     if (!confirmId) return;
     try {
       // Ваш код удаления (fetch DELETE)
-      await fetch(`/api/admin/.../${confirmId}`, { method: 'DELETE' });
+      await fetch(`http://localhost:8080/api/admin/projects/360-view/${confirmId}`, { method: 'DELETE', headers: {'Authorization': `Bearer ${authToken}` }});
       // Обновите состояние
       setProjects(projects.filter(i => i.id !== confirmId));
     } catch (err) {

@@ -22,7 +22,7 @@ export default function AdminSidebar({ activeTab, onTabChange }) {
             <span className={styles.navIcon}>{tab.icon}</span>
             {tab.label}
           </button>
-        ))}
+        ))} 
       </nav>
     </aside>
   );

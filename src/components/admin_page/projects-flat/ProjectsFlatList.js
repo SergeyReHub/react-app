@@ -4,7 +4,7 @@ import styles from './ProjectsFlatList.module.css';
 import ProjectFlatForm from './ProjectFlatForm';
 import ConfirmDialog from '../shared/ConfirmDialog';
 
-const API_URL = '/api/admin/projects-flat';
+const API_URL = 'http://localhost:8080/api/public/projects/just-view';
 
 export default function ProjectsFlatList() {
     const [projects, setProjects] = useState([]);
