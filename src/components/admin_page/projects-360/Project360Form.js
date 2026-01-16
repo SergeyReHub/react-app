@@ -12,6 +12,7 @@ import { VirtualTourPlugin } from '@photo-sphere-viewer/virtual-tour-plugin';
 import { GalleryPlugin } from '@photo-sphere-viewer/gallery-plugin';
 import { MarkersPlugin } from '@photo-sphere-viewer/markers-plugin';
 import { useAuth } from '../../../context/AuthContext';
+import { UploadFile } from '../../../utils/UploadFile';
 
 const EMPTY_PROJECT = { id: Date.now().toString(), title: '', description: '', nodes: [] };
 const MAP_SIZE = 400;
@@ -60,25 +61,33 @@ export default function Project360Form({ id, initialData, onSave, onCancel }) {
     e.target.value = '';
   };
 
-  const uploadFiles = (files) => {
+  const uploadFiles = async (files) => {
     const imageFiles = files.filter(f => f.type.startsWith('image/'));
 
-    const newNodes = imageFiles.map((file, i) => {
-      const nodeId = `node_${Date.now()}_${i}`;
-      const lat = 55.7817 + (Math.random() - 0.99) * 0.001;
-      const lon = 37.6761 + (Math.random() - 0.99) * 0.001;
+    const newNodes = [];
+    for (const file of imageFiles) {
+      try {
+        const url = await UploadFile(file, authToken); // ← загружаем на сервер
 
-      return {
-        id: nodeId,
-        name: file.name.replace(/\.[^/.]+$/, ''),
-        panorama: URL.createObjectURL(file),
-        thumbnail: URL.createObjectURL(file),
-        caption: file.name,
-        gps: [lon, lat, 1], // ← ИСПРАВЛЕНО: lon, lat (долгота, широта)
-        sphereCorrection: { pan: 0, roll: 0, tilt: 0 },
-        links: [],
-      };
-    });
+        const nodeId = `node_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+        const lat = 55.7817 + (Math.random() - 0.99) * 0.001;
+        const lon = 37.6761 + (Math.random() - 0.99) * 0.001;
+        console.log(url);
+        newNodes.push({
+          id: nodeId,
+          name: file.name.replace(/\.[^/.]+$/, ''),
+          panorama: url,        // ← публичный путь
+          thumbnail: url,       // ← тот же путь
+          caption: file.name,
+          gps: [lon, lat, 1],
+          sphereCorrection: { pan: 0, roll: 0, tilt: 0 },
+          links: [],
+        });
+      } catch (err) {
+        console.error('Failed to upload file:', file.name, err);
+        alert(`Не удалось загрузить файл: ${file.name}`);
+      }
+    }
 
     setFormData(prev => ({
       ...prev,
@@ -721,37 +730,40 @@ export default function Project360Form({ id, initialData, onSave, onCancel }) {
         type="file"
         accept="image/*"
         style={{ display: 'none' }}
-        onChange={(e) => {
+        onChange={async (e) => {
           const file = e.target.files[0];
           if (!file) return;
-
           if (!newNode.id.trim() || !newNode.name.trim()) {
             alert('Заполните ID и Название');
             return;
           }
 
-          const panoramaUrl = URL.createObjectURL(file);
+          try {
+            const url = await UploadFile(file, authToken); // ← загружаем
 
-          const node = {
-            id: newNode.id,
-            name: newNode.name,
-            panorama: panoramaUrl,
-            thumbnail: panoramaUrl,
-            caption: file.name,
-            gps: [37.6761, 55.7817, 1],
-            sphereCorrection: { pan: 0, roll: 0, tilt: 0 },
-            links: [],
-          };
+            const node = {
+              id: newNode.id,
+              name: newNode.name,
+              panorama: url,
+              thumbnail: url,
+              caption: file.name,
+              gps: [37.6761, 55.7817, 1],
+              sphereCorrection: { pan: 0, roll: 0, tilt: 0 },
+              links: [],
+            };
 
-          setFormData(prev => ({
-            ...prev,
-            nodes: [...prev.nodes, node],
-            startNodeId: prev.startNodeId || node.id,
-          }));
+            setFormData(prev => ({
+              ...prev,
+              nodes: [...prev.nodes, node],
+              startNodeId: prev.startNodeId || node.id,
+            }));
 
-          setPreviewStartNodeId(node.id);
-          setNewNode({ id: '', name: '', panorama: '', thumbnail: '', caption: '' });
-          e.target.value = ''; // сброс
+            setPreviewStartNodeId(node.id);
+            setNewNode({ id: '', name: '', panorama: '', thumbnail: '', caption: '' });
+          } catch (err) {
+            alert('Ошибка загрузки файла');
+          }
+          e.target.value = '';
         }}
       />
     </div >
