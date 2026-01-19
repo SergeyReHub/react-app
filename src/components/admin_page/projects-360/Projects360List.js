@@ -4,9 +4,9 @@ import styles from './Projects360List.module.css';
 import Project360Form from './Project360Form';
 import ConfirmDialog from '../shared/ConfirmDialog';
 import { useAuth } from '../../../context/AuthContext';
+import { API_BASE_URL } from '../../../config/config';
 
-
-const API_URL = 'http://localhost:8080/api/public/projects/360-view';
+const API_URL = API_BASE_URL + '/api/public/projects/360-view';
 
 export default function Projects360List() {
   const [projects, setProjects] = useState([]);
@@ -42,7 +42,7 @@ export default function Projects360List() {
     if (!confirmId) return;
     try {
       // Ваш код удаления (fetch DELETE)
-      await fetch(`http://localhost:8080/api/admin/projects/360-view/${confirmId}`, { method: 'DELETE', headers: {'Authorization': `Bearer ${authToken}` }});
+      await fetch(`${API_BASE_URL}/api/admin/projects/360-view/${confirmId}`, { method: 'DELETE', headers: {'Authorization': `Bearer ${authToken}` }});
       // Обновите состояние
       setProjects(projects.filter(i => i.id !== confirmId));
     } catch (err) {

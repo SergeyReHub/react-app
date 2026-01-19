@@ -3,8 +3,10 @@ import React, { useState, useEffect } from 'react';
 import styles from './ProjectsFlatList.module.css';
 import ProjectFlatForm from './ProjectFlatForm';
 import ConfirmDialog from '../shared/ConfirmDialog';
+import { API_BASE_URL } from '../../../config/config';
+import { useAuth } from '../../../context/AuthContext';
 
-const API_URL = 'http://localhost:8080/api/public/projects/just-view';
+const API_URL = `${API_BASE_URL}/api/public/projects/just-view`;
 
 export default function ProjectsFlatList() {
     const [projects, setProjects] = useState([]);
@@ -12,6 +14,8 @@ export default function ProjectsFlatList() {
     const [editingId, setEditingId] = useState(null);
     const [confirmId, setConfirmId] = useState(null);
     const [error, setError] = useState(null);
+    const { authToken } = useAuth();
+    
 
     const fetchProjects = async () => {
         setLoading(true);

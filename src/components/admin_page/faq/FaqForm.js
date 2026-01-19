@@ -1,6 +1,7 @@
 // src/components/admin/faq/FaqForm.js
 import React, { useState, useEffect, useRef } from 'react';
 import styles from './FaqForm.module.css';
+import { API_BASE_URL } from '../../../config/config';
 
 export default function FaqForm({ id, initialData, onSave, onCancel }) {
   const [question, setQuestion] = useState('');

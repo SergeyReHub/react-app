@@ -9,6 +9,7 @@ import '@photo-sphere-viewer/gallery-plugin/index.css'; // галерея
 import '@photo-sphere-viewer/virtual-tour-plugin/index.css'; // 🔥 критично для hotspots и карты
 
 import { useNavigate } from 'react-router-dom';
+import { API_BASE_URL } from '../../config/config';
 
 
 
@@ -161,7 +162,7 @@ export default function View_360_Page() {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const res = await fetch('http://localhost:8080/api/public/projects/360-view?page=0&size=10');
+        const res = await fetch(`${API_BASE_URL}/api/public/projects/360-view?page=0&size=10`);
 
         // 🔍 DEBUG: inspect raw response
         const text = await res.text();

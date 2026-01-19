@@ -1,11 +1,11 @@
 // src/components/FeedBackPage.jsx (или где у тебя лежит)
 import React, { useState, useRef, useEffect } from 'react';
 import styles from './feedback_page.module.css';
+import { API_BASE_URL } from '../../config/config';
 
 // ⚙️ Настройки reCAPTCHA Enterprise
 const RECAPTCHA_SITE_KEY = '6LeAk0csAAAAAB1TynYZzrHQO_pt9Lu4LNoVR6V-';
 const RECAPTCHA_ACTION = 'submit_lead';
-const API_BASE = 'http://localhost:8080';
 
 function FeedBackPage() {
   const [isCodeSent, setIsCodeSent] = useState(false);
@@ -54,7 +54,7 @@ function FeedBackPage() {
     setEmailError(false);
     setLoading(true);
     try {
-      const response = await fetch(`${API_BASE}/leads/email/request-code`, {
+      const response = await fetch(`${API_BASE_URL}/api/public/leads/email/request-code`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: new URLSearchParams({ email }),
@@ -89,7 +89,7 @@ function FeedBackPage() {
 
     setLoading(true);
     try {
-      const response = await fetch(`${API_BASE}/leads/email/confirm-code`, {
+      const response = await fetch(`${API_BASE_URL}/api/public/leads/email/confirm-code`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: new URLSearchParams({ email, code }),
@@ -197,7 +197,7 @@ function FeedBackPage() {
         recaptchaAction: RECAPTCHA_ACTION,
       };
 
-      const response = await fetch(`${API_BASE}/leads/submit`, {
+      const response = await fetch(`${API_BASE_URL}/api/public/leads/submit`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),

@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom'; // ← добавлено
 import styles from './AdminLogin.module.css';
 import { useAuth } from '../../../context/AuthContext';
+import { API_BASE_URL } from '../../../config/config';
 
 export default function AdminLogin() {
     const [login, setLogin] = useState('');
@@ -18,7 +19,7 @@ export default function AdminLogin() {
         setLoading(true);
 
         try {
-            const res = await fetch('http://localhost:8080/api/admin/login', {
+            const res = await fetch(API_BASE_URL + '/api/admin/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ login, password })

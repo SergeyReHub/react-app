@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
+import { API_BASE_URL } from '../../config/config';
 
 // CSS Modules
 import styles from './project_page.module.css';
@@ -114,7 +115,7 @@ export default function ProjectPage() {
     setError(null);
     const controller = new AbortController();
     try {
-      const res = await fetch(`/api/page/${id}`, { signal: controller.signal });
+      const res = await fetch(`${API_BASE_URL}/api/page/${id}`, { signal: controller.signal });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
       setProject(data);

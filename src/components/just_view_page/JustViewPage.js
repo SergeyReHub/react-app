@@ -8,6 +8,7 @@ import styles from './just_view_page.module.css';
 // ✅ Child components (должны тоже использовать свои модули)
 import ProjectSection from "./projects_section/ProjectSection";
 import LightBox from "./light_box/LightBox";
+import { API_BASE_URL } from "../../config/config";
 
 // Fallback data
 const FALLBACK_PROJECTS = [
@@ -45,7 +46,7 @@ const FALLBACK_PROJECTS = [
   },
 ];
 
-export default function JustViewPage({ apiUrl = "http://localhost:8080/api/public/projects/just-view?page=0&size=10" }) {
+export default function JustViewPage({ apiUrl = `${API_BASE_URL}/api/public/projects/just-view?page=0&size=10` }) {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);

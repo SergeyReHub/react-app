@@ -1,17 +1,28 @@
 // src/components/admin/projects-flat/ProjectFlatForm.js
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import styles from './ProjectFlatForm.module.css';
+import { API_BASE_URL } from '../../../config/config';
+import FlatPreview from './FlatPreview'; // ← новый компонент
+import { useAuth } from '../../../context/AuthContext';
 
-const EMPTY_PROJECT = { id: '', name: '', photos: [] };
+const EMPTY_PROJECT = { name: '', photos: [] };
 
 export default function ProjectFlatForm({ id, initialData, onSave, onCancel }) {
   const [formData, setFormData] = useState(initialData || EMPTY_PROJECT);
   const [dragActive, setDragActive] = useState(false);
+  const [previewOpen, setPreviewOpen] = useState(false); // управление видимостью превью
   const fileInputRef = useRef(null);
+  const { authToken } = useAuth();
+  
+
+  // Синхронизируем initialData при изменении (например, при редактировании)
+  useEffect(() => {
+    setFormData(initialData || EMPTY_PROJECT);
+  }, [initialData]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handlePhotosChange = (e) => {
@@ -33,84 +44,87 @@ export default function ProjectFlatForm({ id, initialData, onSave, onCancel }) {
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+    if (e.dataTransfer.files?.length) {
       const files = Array.from(e.dataTransfer.files);
       uploadFiles(files);
     }
   };
 
   const uploadFiles = async (files) => {
-    const imageFiles = files.filter(f => f.type.startsWith('image/'));
+    const imageFiles = files.filter((f) => f.type.startsWith('image/'));
 
-    const newPhotos = await Promise.all(
-      imageFiles.map(async (file) => {
-        // Simulate upload (in real: POST /api/upload → get URL)
-        const url = `/uploads/${encodeURIComponent(file.name)}`;
-        return {
-          id: Date.now() + Math.random().toString(36).slice(2),
-          url,
-          caption: file.name,
-        };
-      })
-    );
+    // ⚠️ В реальности здесь должен быть вызов API для загрузки файлов
+    // Сейчас эмулируем URL — замените на реальный UploadFile + authToken
+    const newPhotos = imageFiles.map((file) => ({
+      id: Date.now() + Math.random().toString(36).slice(2),
+      url: URL.createObjectURL(file), // ← временный URL для предпросмотра
+      caption: file.name,
+      file, // ← сохраняем файл для последующей загрузки
+    }));
 
-    setFormData({
-      ...formData,
-      photos: [...formData.photos, ...newPhotos],
-    });
+    setFormData((prev) => ({
+      ...prev,
+      photos: [...prev.photos, ...newPhotos],
+    }));
   };
 
   const removePhoto = (photoId) => {
-    setFormData({
-      ...formData,
-      photos: formData.photos.filter(p => p.id !== photoId),
-    });
+    setFormData((prev) => ({
+      ...prev,
+      photos: prev.photos.filter((p) => p.id !== photoId),
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // TODO: здесь нужно отправить файлы на сервер и получить постоянные URL
+    // Пока оставим как есть, но в продакшене — заменить!
+
     try {
       const method = id === 'new' ? 'POST' : 'PUT';
-      const url = id === 'new' ? 'http://localhost:8080/api/admin/projects-flat' : `http://localhost:8080/api/admin/projects-flat/${id}`;
+      const url =
+        id === 'new'
+          ? `${API_BASE_URL}/api/admin/projects/just-view`
+          : `${API_BASE_URL}/api/admin/projects/just-view/${id}`;
+
+      // Подготовка данных: убираем временные поля (file, blob URL)
+      const payload = {
+        ...formData,
+        photos: formData.photos.map((p) => ({
+          url: p.url.startsWith('blob:') ? p.caption : p.url, // ← временно! замените после загрузки
+          caption: p.caption,
+        })),
+      };
+
       await fetch(url, {
         method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
+        body: JSON.stringify(payload),
       });
+
       onSave();
     } catch (err) {
+      console.error(err);
       alert('Ошибка сохранения');
     }
   };
 
-  
   return (
     <div className={styles.formCard}>
       <h2>{id === 'new' ? 'Новый фото-проект' : 'Редактировать проект'}</h2>
 
       <form onSubmit={handleSubmit}>
         <div className={styles.formGroup}>
-          <label>ID</label>
-          <input
-            name="id"
-            value={formData.id}
-            onChange={handleInputChange}
-            required
-            disabled={id !== 'new'}
-          />
-        </div>
-        <div className={styles.formGroup}>
           <label>Название</label>
-          <input
-            name="name"
-            value={formData.name}
-            onChange={handleInputChange}
-            required
-          />
+          <input name="name" value={formData.name} onChange={handleInputChange} required />
         </div>
 
         <div className={styles.photosSection}>
-          <h3>Фотографии ({formData.photos.length})</h3>
+          <div className={styles.photosHeader}>
+            <h3>Фотографии ({formData.photos.length})</h3>
+
+          </div>
 
           {/* Drag & Drop Zone */}
           <div
@@ -141,12 +155,12 @@ export default function ProjectFlatForm({ id, initialData, onSave, onCancel }) {
                   type="text"
                   value={photo.caption}
                   onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      photos: formData.photos.map(p =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      photos: prev.photos.map((p) =>
                         p.id === photo.id ? { ...p, caption: e.target.value } : p
                       ),
-                    })
+                    }))
                   }
                 />
                 <button
@@ -161,6 +175,16 @@ export default function ProjectFlatForm({ id, initialData, onSave, onCancel }) {
           </div>
         </div>
 
+        {formData.photos.length > 0 && (
+          <button
+            type="button"
+            className={styles.previewBtn}
+            onClick={() => setPreviewOpen(true)}
+          >
+            Предпросмотр
+          </button>
+        )}
+
         <div className={styles.actions}>
           <button type="submit" className={styles.saveBtn}>
             {id === 'new' ? 'Создать' : 'Сохранить'}
@@ -170,6 +194,14 @@ export default function ProjectFlatForm({ id, initialData, onSave, onCancel }) {
           </button>
         </div>
       </form>
+
+      {/* Модальное окно предпросмотра */}
+      {previewOpen && (
+        <FlatPreview
+          photos={formData.photos}
+          onClose={() => setPreviewOpen(false)}
+        />
+      )}
     </div>
   );
 }

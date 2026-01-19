@@ -2,9 +2,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './faq_page.css';
+import { API_BASE_URL } from '../../config/config';
 
-const FAQ_API_URL = '/api/faq';
-const SUBMIT_QUESTION_URL = '/api/faq/ask';
+const FAQ_API_URL = `${API_BASE_URL}/api/faq`;
+const SUBMIT_QUESTION_URL = `${API_BASE_URL}/api/faq/ask`;
 
 // 🎯 Тестовые (резервные) данные — если бэк недоступен
 const FALLBACK_FAQS = [

@@ -13,16 +13,28 @@ import { GalleryPlugin } from '@photo-sphere-viewer/gallery-plugin';
 import { MarkersPlugin } from '@photo-sphere-viewer/markers-plugin';
 import { useAuth } from '../../../context/AuthContext';
 import { UploadFile } from '../../../utils/UploadFile';
+import { API_BASE_URL } from '../../../config/config';
 
-const EMPTY_PROJECT = { id: Date.now().toString(), title: '', description: '', nodes: [] };
-const MAP_SIZE = 400;
+const EMPTY_PROJECT = {
+  title: '',
+  description: '',
+  nodes: [],
+  startNodeId: null
+};
+const MAP_SIZE = 800;
 const MAP_CENTER = MAP_SIZE / 2;
 const MAP_SCALE = 100000; // 0.01° ≈ 1.1 м → 800 пикселей
 
 export default function Project360Form({ id, initialData, onSave, onCancel }) {
   const [formData, setFormData] = useState(initialData || EMPTY_PROJECT);
+  const formDataRef = useRef(formData);
+  useEffect(() => {
+    formDataRef.current = formData;
+  }, [formData]);
   const [newNode, setNewNode] = useState({ id: '', name: '', panorama: '', thumbnail: '', caption: '' });
-  const [previewStartNodeId, setPreviewStartNodeId] = useState(null);
+  const [previewStartNodeId, setPreviewStartNodeId] = useState(
+    initialData?.startNodeId || null
+  );
   const [dragActive, setDragActive] = useState(false);
   const [selectedNodeIds, setSelectedNodeIds] = useState([]);
   const [hoveredNodeId, setHoveredNodeId] = useState(null);
@@ -42,6 +54,7 @@ export default function Project360Form({ id, initialData, onSave, onCancel }) {
   const viewerInstanceRef = useRef(null); // ← один источник правды
 
   const [editingAltitude, setEditingAltitude] = useState(null); // { nodeId, altitude }
+
 
   const { authToken } = useAuth();
 
@@ -186,23 +199,19 @@ export default function Project360Form({ id, initialData, onSave, onCancel }) {
     e.preventDefault();
     try {
       const method = id === 'new' ? 'POST' : 'PUT';
-      const url = id === 'new' ? 'http://localhost:8080/api/admin/projects/360-view' : `http://localhost:8080/api/admin/projects/360-view/${id}`;
-      await fetch(url, { method, headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` }, body: JSON.stringify(formData) });
+      const url = id === 'new' ?  API_BASE_URL + '/api/admin/projects/360-view' : API_BASE_URL + `/api/admin/projects/360-view/${id}`;
+      await fetch(url, { method, headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` }, body: JSON.stringify(formDataRef.current) });
       onSave();
     } catch { alert('Ошибка сохранения'); }
   };
 
   // После createLinks()
   const handleNodeClick = (e, nodeId) => {
-    // ПКМ — сделать стартовой
-    if (e.button === 2) {
-      e.preventDefault();
-      setFormData(prev => ({ ...prev, startNodeId: nodeId }));
-      return;
+    // Только ЛКМ — селекция
+    if (e.button === 0) {
+      toggleNodeSelection(nodeId);
     }
-
-    // ЛКМ — обычная селекция (как было)
-    toggleNodeSelection(nodeId);
+    // ПКМ обрабатывается отдельно через onContextMenu
   };
 
   // АКТУАЛЬНЫЙ ID стартовой ноды
@@ -307,13 +316,14 @@ export default function Project360Form({ id, initialData, onSave, onCancel }) {
       y: MAP_CENTER - (lat - centerLat) * MAP_SCALE,
     };
   };
-  const pixelToGps = ({ x, y }) => {
+  const pixelToGps = ({ x, y }, currentAltitude) => {
     const centerLon = 37.6761;
     const centerLat = 55.7817;
+    console.log(currentAltitude);
     return [
       centerLon + (x - MAP_CENTER) / MAP_SCALE,
       centerLat - (y - MAP_CENTER) / MAP_SCALE,
-      1
+      currentAltitude
     ];
   };
 
@@ -378,10 +388,13 @@ export default function Project360Form({ id, initialData, onSave, onCancel }) {
       const finalPos = tempNodePositions[nodeId];
 
       if (finalPos) {
-        // Переводим финальную позицию в GPS
-        const newGps = pixelToGps(finalPos);
+        // Получаем текущую высоту ноды
+        const currentNode = formData.nodes.find(n => n.id === nodeId);
+        const currentAlt = currentNode?.gps[2] || 1;
+        console.log(currentAlt);
 
-        // Обновляем данные ОДИН РАЗ
+        const newGps = pixelToGps(finalPos, currentAlt);
+
         setFormData(prev => ({
           ...prev,
           nodes: prev.nodes.map(n =>
@@ -390,8 +403,6 @@ export default function Project360Form({ id, initialData, onSave, onCancel }) {
         }));
       }
     }
-
-    // Сбрасываем всё
     setDragState(null);
     setTempNodePositions({});
   };
@@ -550,7 +561,9 @@ export default function Project360Form({ id, initialData, onSave, onCancel }) {
                     onPointerLeave={() => setHoveredNodeId(null)}
                     onContextMenu={e => {
                       e.preventDefault();
+                      console.log('Setting start node to:', node.id);
                       setFormData(prev => ({ ...prev, startNodeId: node.id }));
+
                     }}
                     style={{ cursor: 'pointer' }}
                   >
@@ -593,13 +606,26 @@ export default function Project360Form({ id, initialData, onSave, onCancel }) {
                 onChange={(e) => {
                   const newAlt = Number(e.target.value);
                   setEditingAltitude(prev => ({ ...prev, altitude: newAlt }));
-
-                  // ← МГНОВЕННОЕ ОБНОВЛЕНИЕ В ПРЕВЬЮ!
+                }}
+                onMouseUp={(e) => {
+                  const finalAlt = Number(e.target.value); // ← берём значение из события!
                   setFormData(prev => ({
                     ...prev,
                     nodes: prev.nodes.map(n =>
                       n.id === editingAltitude.nodeId
-                        ? { ...n, gps: [n.gps[0], n.gps[1], newAlt] }
+                        ? { ...n, gps: [n.gps[0], n.gps[1], finalAlt] }
+                        : n
+                    )
+                  }));
+                  
+                }}
+                onTouchEnd={(e) => {
+                  const finalAlt = Number(e.target.value);
+                  setFormData(prev => ({
+                    ...prev,
+                    nodes: prev.nodes.map(n =>
+                      n.id === editingAltitude.nodeId
+                        ? { ...n, gps: [n.gps[0], n.gps[1], finalAlt] }
                         : n
                     )
                   }));

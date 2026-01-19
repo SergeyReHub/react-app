@@ -3,8 +3,9 @@ import React, { useState, useEffect } from 'react';
 import styles from './FaqList.module.css';
 import FaqForm from './FaqForm';
 import ConfirmDialog from '../shared/ConfirmDialog';
+import { API_BASE_URL } from '../../../config/config';
 
-const API_URL = 'http://localhost:8080/api/public/faqs';
+const API_URL = `${API_BASE_URL}/api/public/faqs`;
 
 export default function FaqList() {
   const [items, setItems] = useState([]);
@@ -37,7 +38,7 @@ export default function FaqList() {
   const handleDeleteConfirm = async () => {
     if (!confirmId) return;
     try {
-      await fetch(`http://localhost:8080/api/admin/faqs/${confirmId}`, { method: 'DELETE' });
+      await fetch(`${API_BASE_URL}/api/admin/faqs/${confirmId}`, { method: 'DELETE' });
       setItems(items.filter(i => i.id !== confirmId));
     } catch (err) {
       alert('Ошибка удаления');
