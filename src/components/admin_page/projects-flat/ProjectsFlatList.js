@@ -15,7 +15,7 @@ export default function ProjectsFlatList() {
     const [confirmId, setConfirmId] = useState(null);
     const [error, setError] = useState(null);
     const { authToken } = useAuth();
-    
+
 
     const fetchProjects = async () => {
         setLoading(true);
@@ -42,7 +42,13 @@ export default function ProjectsFlatList() {
         if (!confirmId) return;
         try {
             // Ваш код удаления (fetch DELETE)
-            await fetch(`/api/admin/.../${confirmId}`, { method: 'DELETE' });
+            await fetch(`${API_BASE_URL}/api/admin/projects/just-view/${confirmId}`,
+                {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                    },
+                },);
             // Обновите состояние
             setProjects(projects.filter(i => i.id !== confirmId));
         } catch (err) {

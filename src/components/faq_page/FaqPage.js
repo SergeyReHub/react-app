@@ -4,12 +4,11 @@ import { useNavigate } from 'react-router-dom';
 import './faq_page.css';
 import { API_BASE_URL } from '../../config/config';
 
-const FAQ_API_URL = `${API_BASE_URL}/api/faq`;
-const SUBMIT_QUESTION_URL = `${API_BASE_URL}/api/faq/ask`;
+const FAQ_API_URL = `${API_BASE_URL}/api/public/faqs`;
+const SUBMIT_QUESTION_URL = `${API_BASE_URL}/api/public/faq/ask`;
 
-// 🎯 Тестовые (резервные) данные — если бэк недоступен
+// 🎯 Резервные данные — если бэкенд недоступен
 const FALLBACK_FAQS = [
-  // ... (оставьте ваш существующий массив из 10 вопросов — он не изменился)
   {
     id: 'f1',
     question: 'Какова минимальная площадь заказа?',
@@ -65,120 +64,71 @@ const FALLBACK_FAQS = [
 export default function FaqPage() {
   const navigate = useNavigate();
 
-  const [faqs, setFaqs] = useState([]); // изначально пусто — резерв подгрузим после проверки
+  const [faqs, setFaqs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [fromFallback, setFromFallback] = useState(false);
-  const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true); // только если API жив
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
+  const [pageSize] = useState(10);
 
   const [openIndex, setOpenIndex] = useState(null);
   const [submitting, setSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [submitError, setSubmitError] = useState(null);
-
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    question: '',
-  });
-
+  const [formData, setFormData] = useState({ creator_name: '', creator_email: '', question: '' });
   const askFormRef = useRef(null);
-  const scrollTriggerRef = useRef(null);
 
-  // === Загрузка порции вопросов (page ≥ 1) ===
-  const loadFaqs = async (pageNum) => {
-    if (!hasMore || !loading) return;
-
+  // === Загрузка одной страницы с бэкенда ===
+  const loadPage = async (page) => {
     setLoading(true);
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 6000);
 
-      const res = await fetch(`${FAQ_API_URL}?page=${pageNum}&limit=10`, {
+      const res = await fetch(`${FAQ_API_URL}?page=${page}&size=${pageSize}`, {
         signal: controller.signal,
       });
 
       clearTimeout(timeoutId);
 
-      // 🔹 Сначала проверяем статус и тип контента
-      if (!res.ok) {
-        throw new Error(`HTTP ${res.status}`);
-      }
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
       const contentType = res.headers.get('content-type');
       if (!contentType || !contentType.includes('application/json')) {
-        console.warn('⚠️ Получен не-JSON (возможно, капча). Используем fallback.');
         throw new Error('not_json');
       }
 
-      // 🔹 Только теперь парсим
+      // Ожидаем формат: { content: [...], totalPages: N, ... }
       const data = await res.json();
 
-      if (!Array.isArray(data.items)) {
-        throw new Error('invalid_format');
-      }
-
-      setFaqs((prev) => [...prev, ...data.items]);
-      setHasMore(data.items.length === 10);
-      setPage(pageNum);
+      setFaqs(data.content || []);
+      setTotalPages(data.totalPages || 1);
       setFromFallback(false);
     } catch (err) {
-      console.error('Загрузка FAQ прервана:', err.message || err);
-
-      // 🔹 ГАРАНТИРОВАННО выходим из loading
-      if (pageNum === 1) {
+      console.error('Ошибка загрузки FAQ:', err);
+      if (page === 0) {
         // Первая страница → fallback
-        setFaqs(FALLBACK_FAQS);
-        setHasMore(false);
+        setFaqs(FALLBACK_FAQS.slice(0, pageSize));
+        setTotalPages(Math.ceil(FALLBACK_FAQS.length / pageSize));
         setFromFallback(true);
       }
-      // Для page > 1 — просто останавливаем подгрузку, но не меняем список
     } finally {
-      // 🔹 КРИТИЧЕСКИ ВАЖНО: всегда снимаем loading
       setLoading(false);
     }
   };
 
-  // === Первая загрузка ===
   useEffect(() => {
-    loadFaqs(1);
-  }, []);
+    loadPage(currentPage);
+  }, [currentPage]);
 
   useEffect(() => {
-    // Скроллим наверх при монтировании
     window.scrollTo(0, 0);
-  }, []);
+  }, [currentPage]);
 
-  // === Бесконечный скролл (только если API работает) ===
-  useEffect(() => {
-    if (!hasMore || fromFallback) return; // fallback → нет пагинации
-
-    const handleScroll = () => {
-      if (loading) return;
-
-      const trigger = scrollTriggerRef.current;
-      if (!trigger) return;
-
-      const rect = trigger.getBoundingClientRect();
-      // Скроллим, когда триггер в 200px от низа viewport
-      if (rect.top < window.innerHeight + 200) {
-        loadFaqs(page + 1);
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [loading, hasMore, page, fromFallback]);
-
-  // === Скролл к форме ===
   const scrollToAskForm = () => {
-    askFormRef.current?.scrollIntoView({
-      behavior: 'smooth',
-      block: 'start',
-    });
+    askFormRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
-  // === Обработчики ===
   const toggleQuestion = (index) => {
     setOpenIndex(openIndex === index ? null : index);
   };
@@ -193,13 +143,13 @@ export default function FaqPage() {
     e.preventDefault();
     if (submitting) return;
 
-    const { name, email, question } = formData;
-    if (!name.trim() || !email.trim() || !question.trim()) {
+    const { creator_name, creator_email, question } = formData;
+    if (!creator_name.trim() || !creator_email.trim() || !question.trim()) {
       setSubmitError('Пожалуйста, заполните все поля.');
       return;
     }
 
-    if (!/\S+@\S+\.\S+/.test(email)) {
+    if (!/\S+@\S+\.\S+/.test(creator_email)) {
       setSubmitError('Некорректный email.');
       return;
     }
@@ -215,7 +165,11 @@ export default function FaqPage() {
       const res = await fetch(SUBMIT_QUESTION_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, question }),
+        body: JSON.stringify({
+          creatorName: formData.creator_name,     // ← camelCase
+          creatorEmail: formData.creator_email,
+          question
+        }),
         signal: controller.signal,
       });
 
@@ -230,12 +184,12 @@ export default function FaqPage() {
       }
 
       setSubmitSuccess(true);
-      setFormData({ name: '', email: '', question: '' });
+      setFormData({ creator_name: '', creator_email: '', question: '' });
       setTimeout(() => setSubmitSuccess(false), 5000);
     } catch (err) {
       console.error('Submit failed:', err);
 
-      if (err.name === 'AbortError') {
+      if (err.creator_name === 'AbortError') {
         setSubmitError('Превышено время ожидания. Попробуйте позже.');
       } else if (err.message === 'captcha') {
         setSubmitError(
@@ -263,6 +217,12 @@ export default function FaqPage() {
     window.open('https://wa.me/79774517692', '_blank', 'noopener,noreferrer');
   };
 
+  const goToPage = (page) => {
+    if (page >= 0 && page < totalPages) {
+      setCurrentPage(page);
+    }
+  };
+
   return (
     <div className="full-faq-page">
       <div className="faq-page">
@@ -272,12 +232,7 @@ export default function FaqPage() {
             Здесь собраны ответы на частые вопросы о работе с артбетоном.
             Не нашли нужное?
           </p>
-          {/* ✅ Кнопка "Задать свой вопрос" */}
-          <button
-            onClick={scrollToAskForm}
-            className="faq-page__ask-top-btn"
-            aria-label="Задать свой вопрос"
-          >
+          <button onClick={scrollToAskForm} className="faq-page__ask-top-btn">
             Задать свой вопрос
           </button>
         </div>
@@ -289,7 +244,9 @@ export default function FaqPage() {
         )}
 
         <div className="faq-page__list">
-          {faqs.length > 0 ? (
+          {loading ? (
+            <div className="faq-page__loader">Загрузка вопросов…</div>
+          ) : faqs.length > 0 ? (
             faqs.map((faq, index) => (
               <div
                 key={faq.id}
@@ -306,22 +263,59 @@ export default function FaqPage() {
                   </span>
                 </button>
                 <div className="faq-page__answer">
-                  <div dangerouslySetInnerHTML={{ __html: faq.answer || faq.answerText }} />
+                  <div dangerouslySetInnerHTML={{ __html: faq.answer }} />
                 </div>
               </div>
             ))
-          ) : loading ? (
-            <div className="faq-page__loader">Загрузка вопросов…</div>
           ) : (
             <div className="faq-page__empty">Вопросов пока нет.</div>
           )}
-
-          {/* Триггер для бесконечного скролла */}
-          {hasMore && !fromFallback && <div ref={scrollTriggerRef} style={{ height: '1px' }} />}
-          {loading && page > 1 && (
-            <div className="faq-page__loader-more">Загружаем ещё вопросы…</div>
-          )}
         </div>
+
+        {/* Пагинация */}
+        {!loading && totalPages > 1 && (
+          <div className="faq-page__pagination">
+            <button
+              onClick={() => goToPage(currentPage - 1)}
+              disabled={currentPage === 0}
+              className="faq-page__pagination-btn"
+            >
+              «
+            </button>
+
+            {[...Array(Math.min(totalPages, 10))].map((_, i) => (
+              <button
+                key={i}
+                onClick={() => goToPage(i)}
+                className={`faq-page__pagination-btn ${currentPage === i ? 'faq-page__pagination-btn--active' : ''
+                  }`}
+              >
+                {i + 1}
+              </button>
+            ))}
+
+            {totalPages > 10 && (
+              <>
+                <span className="faq-page__pagination-ellipsis">...</span>
+                <button
+                  onClick={() => goToPage(totalPages - 1)}
+                  className={`faq-page__pagination-btn ${currentPage === totalPages - 1 ? 'faq-page__pagination-btn--active' : ''
+                    }`}
+                >
+                  {totalPages}
+                </button>
+              </>
+            )}
+
+            <button
+              onClick={() => goToPage(currentPage + 1)}
+              disabled={currentPage === totalPages - 1}
+              className="faq-page__pagination-btn"
+            >
+              »
+            </button>
+          </div>
+        )}
 
         {/* === Форма — задать вопрос === */}
         <section ref={askFormRef} className="faq-page__ask">
@@ -355,53 +349,24 @@ export default function FaqPage() {
           <form className="faq-page__form" onSubmit={handleSubmit}>
             <div className="faq-page__form-group">
               <label htmlFor="name">Имя *</label>
-              <input
-                id="name"
-                name="name"
-                type="text"
-                value={formData.name}
-                onChange={handleInputChange}
-                required
-              />
+              <input id="name" name="creator_name" type="text" value={formData.creator_name} onChange={handleInputChange} required />
             </div>
             <div className="faq-page__form-group">
               <label htmlFor="email">Email *</label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                value={formData.email}
-                onChange={handleInputChange}
-                required
-              />
+              <input id="email" name="creator_email" type="email" value={formData.creator_email} onChange={handleInputChange} required />
             </div>
             <div className="faq-page__form-group">
               <label htmlFor="question">Ваш вопрос *</label>
-              <textarea
-                id="question"
-                name="question"
-                rows="4"
-                value={formData.question}
-                onChange={handleInputChange}
-                required
-              />
+              <textarea id="question" name="question" rows="4" value={formData.question} onChange={handleInputChange} required />
             </div>
-            <button
-              type="submit"
-              className="faq-page__submit-btn"
-              disabled={submitting}
-            >
+            <button type="submit" className="faq-page__submit-btn" disabled={submitting}>
               {submitting ? 'Отправка…' : 'Отправить вопрос'}
             </button>
           </form>
 
           <div className="faq-page__help-links">
-            <button onClick={goToPrices} className="faq-page__link-btn">
-              💰 Цены и условия
-            </button>
-            <button onClick={goToExamples} className="faq-page__link-btn">
-              🖼 Примеры работ
-            </button>
+            <button onClick={goToPrices} className="faq-page__link-btn">💰 Цены и условия</button>
+            <button onClick={goToExamples} className="faq-page__link-btn">🖼 Примеры работ</button>
           </div>
         </section>
       </div>

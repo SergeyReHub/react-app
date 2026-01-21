@@ -2,11 +2,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styles from './FaqForm.module.css';
 import { API_BASE_URL } from '../../../config/config';
+import { useAuth } from '../../../context/AuthContext';
 
 export default function FaqForm({ id, initialData, onSave, onCancel }) {
   const [question, setQuestion] = useState('');
   const editorRef = useRef(null);
   const [isInitialized, setIsInitialized] = useState(false);
+  const { authToken } = useAuth();
 
   // Инициализация данных
   useEffect(() => {
@@ -49,11 +51,13 @@ export default function FaqForm({ id, initialData, onSave, onCancel }) {
 
     const answer = editorRef.current?.innerHTML || '<p></p>';
 
-    onSave({
-      id: id === 'new' ? Date.now().toString() : id,
+    const faqData = {
+      id: id === 'new' ? null : id, // ← для нового — null или не передавать
       question: question.trim(),
       answer: answer.trim() === '<p><br></p>' ? '<p></p>' : answer,
-    });
+    };
+
+    onSave(faqData); // ← передаём объект с данными
   };
 
   return (

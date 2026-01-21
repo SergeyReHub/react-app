@@ -1,9 +1,9 @@
 // src/utils/uploadFile.js
-export const UploadFile = async (file, authToken) => {
+export const UploadFile = async (file, authToken, url) => {
   const formData = new FormData();
   formData.append('file', file);
 
-  const res = await fetch('http://localhost:8080/api/admin/upload/360-view', {
+  const res = await fetch(url, {
     method: 'POST',
     headers: { 'Authorization': `Bearer ${authToken}` },
     body: formData
