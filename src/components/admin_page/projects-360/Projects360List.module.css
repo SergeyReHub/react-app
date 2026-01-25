@@ -1,6 +1,10 @@
 /* Projects360List.module.css */
 .page { padding: 20px; }
 .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+.header h1{
+  font-size: 24px;
+  color: #e8eb48;
+}
 .btnAdd {
   background: linear-gradient(135deg, #b15bff, #8a2be2);
   color: white;

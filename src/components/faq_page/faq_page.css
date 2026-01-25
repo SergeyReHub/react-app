@@ -42,7 +42,7 @@
 
 /* === FAQ List === */
 .faq-page__list {
-    margin-bottom: 64px;
+    margin-bottom: 20px;
 }
 
 .faq-page__item {
@@ -72,6 +72,18 @@
     justify-content: space-between;
     align-items: center;
     transition: background 0.2s;
+}
+
+.faq-page__pagination{
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+.faq-page__pagination-btn{
+    margin-right: 5px;
+    font-size: 20px;
+   
 }
 
 .faq-page__question:hover {

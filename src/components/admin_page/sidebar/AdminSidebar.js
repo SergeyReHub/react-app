@@ -7,6 +7,7 @@ export default function AdminSidebar({ activeTab, onTabChange }) {
     { id: '360', label: '360° Проекты', icon: '🌐' },
     { id: 'flat', label: 'Фото-проекты', icon: '🖼️' },
     { id: 'faq', label: 'Вопросы и ответы', icon: '❓' },
+    { id: 'lead', label: 'Заявки', icon: '✉️' },
   ];
 
   return (

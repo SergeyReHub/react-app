@@ -1,0 +1,126 @@
+/* LeadList.module.css */
+
+.page {
+  padding: 24px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.tabs {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 8px;
+}
+
+.tab {
+  padding: 8px 20px;
+  border: none;
+  background: #f8f9fa;
+  color: #495057;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 6px 6px 0 0;
+  transition: all 0.2s ease;
+}
+
+.tab:hover {
+  background: #e9ecef;
+  color: #212529;
+}
+
+.tab.activeTab {
+  background: #0d6efd;
+  color: white;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.leadCard {
+  padding: 16px;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* LeadList.module.css */
+
+.field {
+  display: flex;
+  flex-wrap: wrap;        /* позволяет содержимому переноситься */
+  align-items: flex-start;
+  gap: 6px;               /* отступ между strong и p */
+  margin-bottom: 6px;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.field strong {
+  color: #333;
+  font-weight: bold;
+  flex-shrink: 0;         /* не сжимается и не переносится */
+}
+
+.field p {
+  color: #212529;
+  margin: 0;
+  word-wrap: break-word;        /* сохраняет \n из textarea */
+  line-height: 1.4;
+  min-width: 0;               /* важно для flex-контейнеров! */
+}
+
+.actions {
+  margin-top: 12px;
+  display: flex;
+  gap: 10px;
+}
+#text{
+  color: #0d6efd;
+}
+
+.btnAccept,
+.btnReject {
+  padding: 6px 14px;
+  border: none;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.btnAccept {
+  background: #28a745;
+  color: white;
+}
+
+.btnAccept:hover {
+  opacity: 0.9;
+}
+
+.btnReject {
+  background: #dc3545;
+  color: white;
+}
+
+.btnReject:hover {
+  opacity: 0.9;
+}
+
+.loader,
+.empty,
+.error {
+  text-align: center;
+  padding: 24px;
+  font-size: 16px;
+  color: #6c757d;
+}
+
+.error {
+  color: #dc3545;
+}

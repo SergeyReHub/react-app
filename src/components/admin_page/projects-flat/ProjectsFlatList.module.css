@@ -12,6 +12,28 @@
   color: #e0e0e0;
 }
 
+.card{
+  background: #1a1a1a;
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid #2c2c2c;
+}
+.card h3{
+  margin-bottom: 15px;
+}
+.photosCount{
+  margin-bottom: 15px;
+}
+.cardActions{
+  display: flex;
+  gap: 8px;
+}
+.grid{
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
 .formGroup { margin-bottom: 20px; }
 .formGroup label { display: block; margin-bottom: 6px; color: #ddd; }
 .formGroup input { width: 100%; padding: 10px; background: #222; border: 1px solid #333; border-radius: 6px; color: white; }
@@ -121,9 +143,30 @@
 }
 
 .btnCancel { background: #2c2c2c; color: #aaa; }
-.btnDelete { background: #ff5252; color: white; }
+.btnDelete { 
+  flex: 1 1;
+  background: #2c2c2c;
+  color: #ff5252;
+  border: 1px solid #ff5252;
+  padding: 8px;
+  border-radius: 6px;
+  cursor: pointer;
+ }
+ .btnUpdate{
+  flex: 1 1;
+  background: #2c2c3a;
+  color: #b15bff;
+  border: 1px solid #b15bff;
+  padding: 8px;
+  border-radius: 6px;
+  cursor: pointer;
+ }
 
 .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+.header h1{
+  font-size: 24px;
+  color: #e8eb48;
+}
 .btnAdd {
   background: linear-gradient(135deg, #b15bff, #8a2be2);
   color: white;

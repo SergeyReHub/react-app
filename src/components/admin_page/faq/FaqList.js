@@ -6,22 +6,17 @@ import ConfirmDialog from '../shared/ConfirmDialog';
 import { API_BASE_URL } from '../../../config/config';
 import { useAuth } from '../../../context/AuthContext';
 
-
-const API_URL = `${API_BASE_URL}/api/public/faqs`;
-// page and size
+const API_URL = `${API_BASE_URL}/api/admin/faqs`;
 const ADMIN_API = `${API_BASE_URL}/api/admin/faqs`;
 const PENDING_COUNT_URL = `${API_BASE_URL}/api/admin/faqs/pending/count`;
-const PENDING_LIST_URL = `${API_BASE_URL}/api/admin/faqs/pending`;
 
 export default function FaqList() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [editingId, setEditingId] = useState(null);
-  const [confirmId, setConfirmId] = useState(null); // ← состояние подтверждения
+  const [editingState, setEditingState] = useState(null); // null | { id: ..., mode: 'edit' | 'moderation' }
+  const [confirmDeleteId, setConfirmDeleteId] = useState(null);
   const [pendingCount, setPendingCount] = useState(0);
-  const [pendingItems, setPendingItems] = useState([]);
-  const [showPending, setShowPending] = useState(false); // показывать ли модерацию
   const { authToken } = useAuth();
 
   useEffect(() => {
@@ -31,14 +26,9 @@ export default function FaqList() {
 
   const fetchPendingCount = async () => {
     try {
-      const res = await fetch(
-        PENDING_COUNT_URL,
-        {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${authToken}`
-          },
-        });
+      const res = await fetch(PENDING_COUNT_URL, {
+        headers: { Authorization: `Bearer ${authToken}` },
+      });
       if (res.ok) {
         const { count } = await res.json();
         setPendingCount(count);
@@ -51,12 +41,11 @@ export default function FaqList() {
   const fetchItems = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`${API_URL}?page=0&size=1000`); // или без page/size, если хотите всё
+      const res = await fetch(`${API_URL}?page=0&size=1000`, {method: 'GET', headers: { Authorization: `Bearer ${authToken}` },});
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
-
-      // Если бэкенд возвращает Page<T>, то данные в data.content
       const faqs = Array.isArray(data) ? data : (data.content || []);
+      console.log(faqs);
       setItems(faqs);
     } catch (err) {
       setError('Не удалось загрузить вопросы');
@@ -66,28 +55,57 @@ export default function FaqList() {
     }
   };
 
-
-
-  const handleDeleteClick = (id) => {
-    setConfirmId(id); // ← показать диалог
-  };
+  const handleDeleteClick = (id) => setConfirmDeleteId(id);
 
   const handleDeleteConfirm = async () => {
-    if (!confirmId) return;
+    if (!confirmDeleteId) return;
     try {
-      await fetch(`${API_BASE_URL}/api/admin/faqs/${confirmId}`,
-        {
-          method: 'DELETE',
-          headers: {
-            'Authorization': `Bearer ${authToken}`
-          },
-        });
-      setItems(items.filter(i => i.id !== confirmId));
+      await fetch(`${ADMIN_API}/${confirmDeleteId}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${authToken}` },
+      });
+      setItems(items.filter(i => i.id !== confirmDeleteId));
     } catch (err) {
       alert('Ошибка удаления');
     } finally {
-      setConfirmId(null);
+      setConfirmDeleteId(null);
     }
+  };
+
+  const handleModerationClick = async () => {
+    // Загружаем один элемент (можно сделать выбор, но для простоты — первый)
+    try {
+      const res = await fetch(`${ADMIN_API}/pending`, {
+        headers: { Authorization: `Bearer ${authToken}` },
+      });
+      if (!res.ok) throw new Error('No pending items');
+      const pendingItems = await res.json();
+      if (pendingItems.length === 0) {
+        alert('Нет вопросов на модерации');
+        return;
+      }
+      // Берём первый (или можно открыть список выбора — но по ТЗ: "в FaqForm")
+      const item = pendingItems[0];
+      console.log(item);
+      setEditingState({ id: item.id, mode: 'moderation', data: item });
+    } catch (err) {
+      console.error('Failed to load pending item', err);
+      alert('Не удалось загрузить вопрос на модерацию');
+    }
+  };
+
+  const handleEdit = (id) => {
+    setEditingState({ id, mode: 'edit', data: items.find(i => i.id === id) });
+  };
+
+  const handleCreate = () => {
+    setEditingState({ id: 'new', mode: 'edit', data: null });
+  };
+
+  const handleFormClose = () => {
+    setEditingState(null);
+    fetchItems(); // обновляем основной список
+    fetchPendingCount(); // обновляем счётчик
   };
 
   return (
@@ -95,27 +113,11 @@ export default function FaqList() {
       <h1>Вопросы и ответы</h1>
       <div className={styles.headerActions}>
         {pendingCount > 0 && (
-          <button
-            className={styles.btnModeration}
-            onClick={() => {
-              setShowPending(true);
-              // Загружаем список при открытии
-              fetch(PENDING_LIST_URL, {
-                method: 'GET',
-                headers: {
-                  'Authorization': `Bearer ${authToken}`
-                },
-              }
-              )
-                .then(res => res.json())
-                .then(data => setPendingItems(data))
-                .catch(console.error);
-            }}
-          >
+          <button className={styles.btnModeration} onClick={handleModerationClick}>
             📬 Модерация ({pendingCount})
           </button>
         )}
-        <button className={styles.btnAdd} onClick={() => setEditingId('new')}>
+        <button className={styles.btnAdd} onClick={handleCreate}>
           + Новый вопрос
         </button>
       </div>
@@ -132,7 +134,7 @@ export default function FaqList() {
                 dangerouslySetInnerHTML={{ __html: item.answer }}
               />
               <div className={styles.actions}>
-                <button onClick={() => setEditingId(item.id)}>Редактировать</button>
+                <button onClick={() => handleEdit(item.id)}>Редактировать</button>
                 <button className={styles.btnDelete} onClick={() => handleDeleteClick(item.id)}>
                   Удалить
                 </button>
@@ -143,116 +145,25 @@ export default function FaqList() {
       )}
       {error && <div className={styles.error}>{error}</div>}
 
-      {editingId && (
+      {editingState && (
         <div className={styles.overlay}>
           <FaqForm
-            id={editingId}
-            initialData={editingId === 'new' ? null : items.find(i => i.id === editingId)}
-            onSave={async (faqData) => {
-              try {
-                if (editingId === 'new') {
-                  // Создание
-                  const res = await fetch(`${ADMIN_API}`, {
-                    method: 'POST',
-                    headers: {
-                      'Content-Type': 'application/json',
-                      'Authorization': `Bearer ${authToken}`
-                    },
-                    body: JSON.stringify(faqData)
-                  });
-                  if (!res.ok) throw new Error('Failed to create FAQ');
-                } else {
-                  // Обновление
-                  const res = await fetch(`${ADMIN_API}/${faqData.id}`, {
-                    method: 'PUT',
-                    headers: {
-                      'Content-Type': 'application/json',
-                      'Authorization': `Bearer ${authToken}`
-                    },
-                    body: JSON.stringify(faqData)
-                  });
-                  if (!res.ok) throw new Error('Failed to update FAQ');
-                }
-                // Обновляем список
-                setEditingId(null);
-                fetchItems();
-              } catch (err) {
-                console.error(err);
-                alert('Ошибка сохранения FAQ');
-              }
-            }}
-            onCancel={() => setEditingId(null)}
+            mode={editingState.mode}
+            id={editingState.id}
+            initialData={editingState.data}
+            onClose={handleFormClose}
+            authToken={authToken}
+            adminApiUrl={ADMIN_API}
           />
         </div>
       )}
 
-      {showPending && (
-        <div className={styles.overlay}>
-          <div className={styles.moderationModal}>
-            <div className={styles.modalHeader}>
-              <h2>Модерация вопросов ({pendingCount})</h2>
-              <button className={styles.closeBtn} onClick={() => setShowPending(false)}>×</button>
-            </div>
-            <div className={styles.pendingList}>
-              {pendingItems.length === 0 ? (
-                <p>Нет вопросов на модерации</p>
-              ) : (
-                pendingItems.map((item) => (
-                  <div key={item.id} className={styles.pendingItem}>
-                    <div className={styles.q}>{item.question}</div>
-                    <div
-                      className={styles.a}
-                      dangerouslySetInnerHTML={{ __html: item.answer }}
-                    />
-                    <div className={styles.moderationActions}>
-                      <button
-                        className={styles.btnApprove}
-                        onClick={async () => {
-                          await fetch(`${ADMIN_API}/${item.id}/approve`,
-                            {
-                              method: 'POST',
-                              headers: {
-                                'Authorization': `Bearer ${authToken}`
-                              },
-                            });
-                          setPendingItems(pendingItems.filter(i => i.id !== item.id));
-                          setPendingCount(prev => prev - 1);
-                          fetchItems(); // обновить основной список
-                        }}
-                      >
-                        ✅ Одобрить
-                      </button>
-                      <button
-                        className={styles.btnReject}
-                        onClick={async () => {
-                          await fetch(`${ADMIN_API}/${item.id}/reject`,
-                            {
-                              method: 'DELETE',
-                              headers: {
-                                'Authorization': `Bearer ${authToken}`
-                              },
-                            });
-                          setPendingItems(pendingItems.filter(i => i.id !== item.id));
-                          setPendingCount(prev => prev - 1);
-                        }}
-                      >
-                        ❌ Отклонить
-                      </button>
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-
       <ConfirmDialog
-        isOpen={!!confirmId}
+        isOpen={!!confirmDeleteId}
         title="Удалить вопрос?"
         message="Вы уверены? Этот вопрос будет удалён из FAQ навсегда."
         onConfirm={handleDeleteConfirm}
-        onCancel={() => setConfirmId(null)}
+        onCancel={() => setConfirmDeleteId(null)}
       />
     </div>
   );

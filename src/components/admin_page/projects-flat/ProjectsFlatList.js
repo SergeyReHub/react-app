@@ -78,7 +78,7 @@ export default function ProjectsFlatList() {
                                 {project.photos?.length || 0} фото
                             </div>
                             <div className={styles.cardActions}>
-                                <button onClick={() => setEditingId(project.id)}>Редактировать</button>
+                                <button className={styles.btnUpdate} onClick={() => setEditingId(project.id)}>Редактировать</button>
                                 <button className={styles.btnDelete} onClick={() => handleDeleteClick(project.id)}>
                                     Удалить
                                 </button>
