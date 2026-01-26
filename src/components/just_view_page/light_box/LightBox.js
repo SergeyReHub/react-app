@@ -50,7 +50,7 @@ export default function LightBox({ set_lightbox, lightbox, projects }) {
         if (!currentProject) return;
 
         // ✅ Корректная ссылка: например, /project/abc123
-        const projectUrl = `${window.location.origin}/${encodeURIComponent(currentProject.id)}`;
+        const projectUrl = `${window.location.origin}/just_view/${encodeURIComponent(currentProject.id)}`;
 
         // Опционально: можно добавить #photo-5 для якоря, если нужно
         // const fullUrl = `${projectUrl}#photo-${photoIndex}`;

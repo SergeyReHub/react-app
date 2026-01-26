@@ -34,8 +34,7 @@ export default function SingleProjectLightBox({
 
   const onShare = () => {
     // ✅ Улучшенная ссылка: добавляем якорь #photo-N
-    const baseUrl = `${window.location.origin}/project/${encodeURIComponent(projectId)}`;
-    const fullUrl = `${baseUrl}#photo-${photoIndex + 1}`; // фото нумеруются с 1
+    const baseUrl = `${window.location.origin}/just_view/${encodeURIComponent(projectId)}`;
 
     const title = projectName || 'M.GROUP — Артбетон';
     const text = currentPhoto.caption
@@ -43,12 +42,12 @@ export default function SingleProjectLightBox({
       : `Проект «${projectName}» от M.GROUP`;
 
     if (navigator.share) {
-      navigator.share({ title, text, url: fullUrl })
+      navigator.share({ title, text, url: baseUrl })
         .catch(err => {
           if (err.name !== 'AbortError') console.warn('Share failed:', err);
         });
     } else {
-      navigator.clipboard.writeText(fullUrl)
+      navigator.clipboard.writeText(baseUrl)
         .then(() => alert('Ссылка на фото скопирована!'))
         .catch(() => alert('Не удалось скопировать ссылку.'));
     }

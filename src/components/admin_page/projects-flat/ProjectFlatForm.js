@@ -6,7 +6,8 @@ import FlatPreview from './FlatPreview';
 import { useAuth } from '../../../context/AuthContext';
 import { UploadFile } from '../../../utils/UploadFile';
 
-const EMPTY_PROJECT = { name: '', photos: [] };
+// ✅ Добавили description
+const EMPTY_PROJECT = { name: '', description: '', photos: [] };
 
 export default function ProjectFlatForm({ id, initialData, onSave, onCancel }) {
   const [formData, setFormData] = useState(initialData || EMPTY_PROJECT);
@@ -15,12 +16,10 @@ export default function ProjectFlatForm({ id, initialData, onSave, onCancel }) {
   const fileInputRef = useRef(null);
   const { authToken } = useAuth();
 
-  // Храним File объекты для новых фото (ещё не загружены)
   const [pendingFiles, setPendingFiles] = useState([]);
 
   useEffect(() => {
     setFormData(initialData || EMPTY_PROJECT);
-    // При редактировании — сбрасываем pendingFiles
     if (initialData) {
       setPendingFiles([]);
     }
@@ -56,13 +55,12 @@ export default function ProjectFlatForm({ id, initialData, onSave, onCancel }) {
     }
   };
 
-  // Добавляем файлы в память (не загружаем!)
   const addFiles = (files) => {
     const imageFiles = files.filter((f) => f.type.startsWith('image/'));
     const newPhotos = imageFiles.map(file => ({
       id: Date.now() + Math.random().toString(36).slice(2),
-      file, // ← храним оригинал
-      previewUrl: URL.createObjectURL(file), // ← для превью
+      file,
+      previewUrl: URL.createObjectURL(file),
       caption: file.name,
     }));
 
@@ -85,7 +83,6 @@ export default function ProjectFlatForm({ id, initialData, onSave, onCancel }) {
     e.preventDefault();
 
     try {
-      // Разделяем фото на "существующие" и "новые"
       const existingPhotos = [];
       const newPhotosToUpload = [];
 
@@ -97,7 +94,6 @@ export default function ProjectFlatForm({ id, initialData, onSave, onCancel }) {
         }
       }
 
-      // Загружаем новые файлы
       const uploadedPhotos = [];
       for (const photo of newPhotosToUpload) {
         const url = await UploadFile(photo.file, authToken, `${API_BASE_URL}/api/admin/upload/just-view`);
@@ -107,9 +103,10 @@ export default function ProjectFlatForm({ id, initialData, onSave, onCancel }) {
         });
       }
 
-      // Формируем финальный payload
+      // ✅ Включаем description в payload
       const payload = {
         name: formData.name,
+        description: formData.description, // ← вот оно
         photos: [...existingPhotos, ...uploadedPhotos],
       };
 
@@ -128,7 +125,6 @@ export default function ProjectFlatForm({ id, initialData, onSave, onCancel }) {
         body: JSON.stringify(payload),
       });
 
-      // Освобождаем blob URL
       newPhotosToUpload.forEach(p => URL.revokeObjectURL(p.previewUrl));
 
       onSave();
@@ -145,7 +141,24 @@ export default function ProjectFlatForm({ id, initialData, onSave, onCancel }) {
       <form onSubmit={handleSubmit}>
         <div className={styles.formGroup}>
           <label>Название</label>
-          <input name="name" value={formData.name} onChange={handleInputChange} required />
+          <input
+            name="name"
+            value={formData.name}
+            onChange={handleInputChange}
+            required
+          />
+        </div>
+
+        {/* ✅ Новое поле: Описание */}
+        <div className={styles.formGroup}>
+          <label>Описание</label>
+          <textarea
+            name="description"
+            value={formData.description}
+            onChange={handleInputChange}
+            rows="4"
+            placeholder="Опишите проект..."
+          />
         </div>
 
         <div className={styles.photosSection}>
@@ -175,7 +188,6 @@ export default function ProjectFlatForm({ id, initialData, onSave, onCancel }) {
           <div className={styles.photosGrid}>
             {formData.photos.map((photo) => (
               <div key={photo.id} className={styles.photoItem}>
-                {/* Используем previewUrl для новых, url для существующих */}
                 <img src={photo.previewUrl || photo.url} alt={photo.caption} />
                 <input
                   type="text"
@@ -225,7 +237,7 @@ export default function ProjectFlatForm({ id, initialData, onSave, onCancel }) {
         <FlatPreview
           photos={formData.photos.map(p => ({
             ...p,
-            url: p.previewUrl || p.url // для превью тоже нужен правильный URL
+            url: p.previewUrl || p.url
           }))}
           onClose={() => setPreviewOpen(false)}
         />

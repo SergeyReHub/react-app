@@ -97,7 +97,7 @@ const Dialog = ({ project, onClose }) => {
   const onShare = () => {
     const title = project?.title || '360° тур';
     const text = project?.description || 'Посмотрите этот интерактивный 360° тур.';
-    const url = `${window.location.origin}${window.location.pathname}#${project?.id || ''}`;
+    const url = `${window.location.origin}${window.location.pathname}${project?.id || ''}`;
 
     if (navigator.share) {
       navigator.share({ title, text, url })

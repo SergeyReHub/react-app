@@ -1,10 +1,17 @@
 import React from 'react';
 import './project_section.css';
 
+// Хелпер для обрезки текста
+const truncateText = (text, maxLength = 120) => {
+  if (!text) return '';
+  if (text.length <= maxLength) return text;
+  return text.slice(0, maxLength).trimEnd() + '…';
+};
+
 const ProjectsSection = ({ isActive, projects, openProject }) => {
-    return (
+  return (
     <section className={`projects-section ${isActive ? 'active' : 'hidden'}`}>
-        <div className='project-list'>
+      <div className='project-list'>
         {projects.map((project) => (
           <div
             className='project'
@@ -12,11 +19,11 @@ const ProjectsSection = ({ isActive, projects, openProject }) => {
             onClick={() => openProject(project)}
           >
             <h3>{project.title}</h3>
-            <p>{project.description}</p>
-            <img src={project.nodes[0].panorama} alt={project.title} />
+            <p>{truncateText(project.description, 120)}</p>
+            <img src={project.nodes[0]?.panorama} alt={project.title} />
           </div>
         ))}
-        </div>
+      </div>
     </section>
   );
 };

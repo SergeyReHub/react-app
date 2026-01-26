@@ -21,6 +21,45 @@
   z-index: 0;
 }
 
+.descriptionContainer {
+  padding-left: 52px;
+  display: flex;
+  flex-direction: column;
+  margin-top: 30px;
+  padding-right: 20px;
+
+}
+
+.titleSection {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.paragraph {
+  margin: 0 0 0.9em 0;
+  /* отступ снизу между абзацами */
+  text-indent: 1.8em;
+  /* 🔴 Красная строка — основное! */
+  font-size: 18px;
+  line-height: 1.65;
+  color: #e3e3e3;
+  letter-spacing: -0.01em;
+  font-weight: 500;
+  z-index: 6;
+
+  /* Переносы */
+  text-align: left;
+  overflow-wrap: break-word;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+  -ms-hyphens: auto;
+
+  /* Для старых браузеров (опционально) */
+  word-break: break-word;
+
+}
+
 .projectPage::after {
   content: '';
   position: absolute;
@@ -46,8 +85,13 @@
 }
 
 @keyframes fadeInGradient {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 .globalHeader {
@@ -71,9 +115,8 @@
   display: flex;
   flex-direction: column;
   background-color: transparent;
-  min-height: 100vh;
   width: 100vw;
-  padding: 20px;
+  margin-top: 15px;
   padding-top: 0;
   overflow: hidden;
   align-items: center;
@@ -96,28 +139,17 @@
   margin-top: 5px;
 }
 
-.description {
-  z-index: 5;
-  color: white;
-  width: 100%;
-  font-size: 1.5vw;
-  margin-top: 20px;
-  hyphens: auto;
-  margin: 0;
-}
+
 
 .viewerContainer {
   min-height: 0;
   min-width: 0;
-  z-index: 4;
-  margin-top: 30px;
+  width: 90%;
+  height: 70vh;
+  z-index: 100000;
 }
 
-.viewerContainer > div {
-  /* контейнер Photo Sphere Viewer */
-  width: 70vw;
-  height: 90vh;
-}
+
 
 /* Loader / Error states */
 .loader,
@@ -133,4 +165,72 @@
 
 .error {
   color: #ff5252;
+}
+
+@media (max-width:1150px) {
+  .titleSection {
+    display: flex;
+    justify-content: center;
+    margin-top: 25px;
+  }
+}
+
+@media (max-width:800px) {
+
+  .titleSection {
+    display: flex;
+    justify-content: center;
+    margin-top: 90px;
+  }
+
+  .title {
+    font-size: 30px;
+  }
+
+  .globalHeader {
+    display: flex;
+    justify-content: center;
+    width: 100vw;
+  }
+
+  .brand {
+    margin-left: 0;
+  }
+
+  .descriptionContainer {
+    margin-top: 20px;
+    padding-left: 20px;
+    padding-right: 10px;
+  }
+
+  .paragraph {
+    margin: 0 0 0.4em 0;
+    /* отступ снизу между абзацами */
+    text-indent: 1.4em;
+    /* 🔴 Красная строка — основное! */
+    font-size: 16px;
+    line-height: 1.6;
+    color: #e3e3e3;
+    font-weight: 500;
+    z-index: 6;
+  }
+
+  .viewerContainer {
+    width: 85%;
+  }
+
+}
+
+.viewerSection {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background-color: transparent;
+  width: 100vw;
+  margin-top: 15px;
+  margin-bottom: 30px;
+  padding-top: 0;
+  overflow: hidden;
+  align-items: center;
+  z-index: 2;
 }

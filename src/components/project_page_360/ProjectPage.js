@@ -115,7 +115,7 @@ export default function ProjectPage() {
     setError(null);
     const controller = new AbortController();
     try {
-      const res = await fetch(`${API_BASE_URL}/api/page/${id}`, { signal: controller.signal });
+      const res = await fetch(`${API_BASE_URL}/api/public/projects/360-view/${id}`, { signal: controller.signal });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
       setProject(data);
@@ -171,13 +171,27 @@ export default function ProjectPage() {
         </span>
       </div>
 
-      <div className={styles.projectSection}>
+      <div className={styles.titleSection}>
         <h1 className={styles.title}>{project.title || "Untitled Project"}</h1>
-        <div className={styles.descriptionWrapper}>
-          <p className={styles.description}>{project.description || ""}</p>
-        </div>
-        <div className={styles.viewerContainer} ref={viewerRef} />
+      </div>
+      <div className={styles.descriptionContainer}>
+        {project.description && (
+          <>
+            {project.description
+              .split(/\n\s*\n/) // разделяет по одной или нескольким пустым строкам
+              .filter(paragraph => paragraph.trim() !== '') // убирает пустые
+              .map((paragraph, index) => (
+                <p key={index} className={styles.paragraph}>
+                  {paragraph}
+                </p>
+              ))}
+          </>
+        )}
+      </div>
+      <div className={styles.viewerSection}>
+          <div className={styles.viewerContainer} ref={viewerRef} />
       </div>
     </div>
+
   );
 }

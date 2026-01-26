@@ -12,8 +12,7 @@
       rgba(224, 138, 138, 0.25) 0%,
       transparent 40%,
       transparent 60%,
-      rgba(224, 138, 138, 0.25) 100%
-    );
+      rgba(224, 138, 138, 0.25) 100%);
   overflow-x: hidden;
   overflow-y: auto;
   box-sizing: border-box;
@@ -27,10 +26,14 @@
   justify-content: center;
   position: relative;
   width: 100%;
-  max-width: 1000px;
   margin: 0 auto 32px;
   gap: 20px;
   padding: 0 12px;
+}
+
+.descriptionContainer{
+  margin-bottom: 15px;
+  padding-left: 15px;
 }
 
 /* Бренд M.GROUP — как в JustViewPage */
@@ -67,16 +70,29 @@
   text-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 }
 
-/* Описание проекта */
-.description {
-  font-size: 19px;
+
+
+.paragraph {
+  margin: 0 0 0.9em 0; /* отступ снизу между абзацами */
+  text-indent: 1.8em;   /* 🔴 Красная строка — основное! */
+  font-size: 18px;
   line-height: 1.65;
   color: #e0e0e0;
-  margin: 0;
-  max-width: 800px;
-  font-weight: 400;
   opacity: 0.94;
   letter-spacing: -0.01em;
+  font-weight: 500;
+  
+  
+  /* Переносы */
+  text-align: left;
+  overflow-wrap: break-word;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+  -ms-hyphens: auto;
+
+  /* Для старых браузеров (опционально) */
+  word-break: break-word;
+  
 }
 
 /* Загрузка / ошибка */

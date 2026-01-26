@@ -1,6 +1,7 @@
 // src/components/single_project_page/SingleProjectPage.js
 import React, { useEffect, useState, useCallback } from "react";
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
+import { API_BASE_URL } from "../../config/config";
 
 import styles from './single_project_page.module.css';
 import SingleProjectLightBox from './light_box/SingleProjectLightBox';
@@ -17,12 +18,19 @@ const FALLBACK_PROJECT = {
   ],
 };
 
-export default function SingleProjectPage({ apiUrl = "/api/projects" }) {
-  const { projectId } = useParams();
+
+
+export default function SingleProjectPage() {
+  const location = useLocation(); // Получаем текущий путь: /path/to/segment
+  // Разбиваем по '/' и берем последний элемент
+  const segments = location.pathname.split('/').filter(Boolean);
+  const projectId = segments[segments.length - 1];
   const [project, setProject] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [lightbox, setLightbox] = useState({ open: false, photoIndex: 0 });
+
+  const API_PROJECT = `${API_BASE_URL}/api/public/projects/just-view/${projectId}`;
 
   const navigate = useNavigate();
 
@@ -39,7 +47,7 @@ export default function SingleProjectPage({ apiUrl = "/api/projects" }) {
     const controller = new AbortController();
 
     try {
-      const res = await fetch(`${apiUrl}/${projectId}`, { signal: controller.signal });
+      const res = await fetch(API_PROJECT, { signal: controller.signal });
 
       if (!res.ok) throw new Error(`HTTP ${res.status}: ${res.statusText}`);
 
@@ -57,7 +65,7 @@ export default function SingleProjectPage({ apiUrl = "/api/projects" }) {
         photos: Array.isArray(data.photos)
           ? data.photos.map((ph) => ({
             id: ph.id ?? ph.url,
-            url: ph.url.startsWith('/') ? ph.url : `/${ph.url}`, // ✅ гарантируем абсолютный путь
+            url: ph.url, // ← просто используйте как есть
             caption: ph.caption ?? '',
           }))
           : [],
@@ -75,7 +83,7 @@ export default function SingleProjectPage({ apiUrl = "/api/projects" }) {
     }
 
     return () => controller.abort();
-  }, [apiUrl, projectId]);
+  }, [API_BASE_URL, projectId]);
 
   useEffect(() => {
     const cleanup = fetchData();
@@ -139,11 +147,26 @@ export default function SingleProjectPage({ apiUrl = "/api/projects" }) {
 
         <div className={styles.titleContainer}>
           <h1 className={styles.title}>{project.name}</h1>
-          {project.description && (
-            <p className={styles.description}>{project.description}</p>
-          )}
+
         </div>
+
       </div>
+
+      <div className={styles.descriptionContainer}>
+        {project.description && (
+          <>
+            {project.description
+              .split(/\n\s*\n/) // разделяет по одной или нескольким пустым строкам
+              .filter(paragraph => paragraph.trim() !== '') // убирает пустые
+              .map((paragraph, index) => (
+                <p key={index} className={styles.paragraph}>
+                  {paragraph}
+                </p>
+              ))}
+          </>
+        )}
+      </div>
+
 
       <ProjectSection
         project={project}

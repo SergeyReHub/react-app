@@ -70,7 +70,7 @@
     color: #ffffff;
     cursor: pointer;
     justify-content: start;
-    margin-left: 40px;
+    padding-left: 40px;
     width: 100%;
     text-decoration: underline #ffffff34;
     gap: 0;
@@ -82,5 +82,6 @@
   .global-header .brand {
     justify-content: center;
      margin-left: 0px;
+     padding-left: 0px;
 }
 }
